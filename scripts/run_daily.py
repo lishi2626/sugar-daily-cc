@@ -124,20 +124,8 @@ def get_market_data(target_date: str) -> dict:
     return result
 
 
-def basis_description(basis_val: float) -> str:
-    """Python生成基差描述，DeepSeek不得自行解释。"""
-    if basis_val is None:
-        return "基差数据不可用。"
-    if basis_val > 0:
-        return f"现货升水期货{abs(basis_val):.0f}元/吨。"
-    elif basis_val < 0:
-        return f"现货贴水期货{abs(basis_val):.0f}元/吨。"
-    else:
-        return "现货与期货平水。"
-
-
 def build_market_summary(market: dict) -> str:
-    # 郑糖主力 — SR0展示，不是SR2609
+    """构建市场表现正文。只客观展示价格、基差、利润，不加方向性解释。"""
     zz_display = market.get("zz_display_name", "郑糖主力合约")
     zz_close = fv_int(market.get("zz_close"))
     zz_chg = float(fv(market.get("zz_change_pct"), ".2f").replace("N/A", "0"))
@@ -153,28 +141,16 @@ def build_market_summary(market: dict) -> str:
         ice_dir = "涨幅" if ice_chg >= 0 else "跌幅"
         parts.append(f"{ice_display}收{ice_close_val}美分/磅，{ice_dir}{abs(ice_chg):.2f}%。")
 
-    # 基差 + Python生成描述
-    basis_val = market.get("basis", {}).get("value")
-    try:
-        basis_val = float(basis_val) if basis_val is not None else None
-    except (ValueError, TypeError):
-        basis_val = None
-    basis_text = basis_description(basis_val)
-    parts.append(f"广西白糖现货－{zz_display}基差为{fv_int(market.get('basis'))}元/吨，{basis_text}")
+    # 基差 — 只写客观数值，不加方向性解释
+    basis_val_str = fv_int(market.get("basis"))
+    if basis_val_str != "N/A":
+        parts.append(f"广西白糖现货－{zz_display}基差为{basis_val_str}元/吨。")
 
-    # 泛糖科技进口利润 — 全文只此一处
+    # 进口利润 — 只写数值
     brazil_field = market.get("brazil_profit", {})
     brazil_val = fv_int(brazil_field)
-    brazil_date = brazil_field.get("data_date", "")
-    meta = market.get("_import_profit_meta", {})
-
-    if meta.get("source") == "泛糖科技" and brazil_val != "N/A":
-        parts.append(
-            f"配额外巴西糖加工完税估算利润为{brazil_val}元/吨"
-            f"（泛糖科技，数据截至{brazil_date}，以日照白糖现货价测算）。"
-        )
-    elif brazil_val != "N/A":
-        parts.append(f"配额外巴西糖加工完税估算利润为{brazil_val}元/吨（{brazil_date}）。")
+    if brazil_val != "N/A":
+        parts.append(f"配额外巴西糖加工完税估算利润为{brazil_val}元/吨。")
 
     return " ".join(parts)
 
@@ -614,20 +590,8 @@ def get_market_data(target_date: str) -> dict:
     return result
 
 
-def basis_description(basis_val: float) -> str:
-    """Python生成基差描述，DeepSeek不得自行解释。"""
-    if basis_val is None:
-        return "基差数据不可用。"
-    if basis_val > 0:
-        return f"现货升水期货{abs(basis_val):.0f}元/吨。"
-    elif basis_val < 0:
-        return f"现货贴水期货{abs(basis_val):.0f}元/吨。"
-    else:
-        return "现货与期货平水。"
-
-
 def build_market_summary(market: dict) -> str:
-    # 郑糖主力 — SR0展示，不是SR2609
+    """构建市场表现正文。只客观展示价格、基差、利润，不加方向性解释。"""
     zz_display = market.get("zz_display_name", "郑糖主力合约")
     zz_close = fv_int(market.get("zz_close"))
     zz_chg = float(fv(market.get("zz_change_pct"), ".2f").replace("N/A", "0"))
@@ -643,28 +607,16 @@ def build_market_summary(market: dict) -> str:
         ice_dir = "涨幅" if ice_chg >= 0 else "跌幅"
         parts.append(f"{ice_display}收{ice_close_val}美分/磅，{ice_dir}{abs(ice_chg):.2f}%。")
 
-    # 基差 + Python生成描述
-    basis_val = market.get("basis", {}).get("value")
-    try:
-        basis_val = float(basis_val) if basis_val is not None else None
-    except (ValueError, TypeError):
-        basis_val = None
-    basis_text = basis_description(basis_val)
-    parts.append(f"广西白糖现货－{zz_display}基差为{fv_int(market.get('basis'))}元/吨，{basis_text}")
+    # 基差 — 只写客观数值，不加方向性解释
+    basis_val_str = fv_int(market.get("basis"))
+    if basis_val_str != "N/A":
+        parts.append(f"广西白糖现货－{zz_display}基差为{basis_val_str}元/吨。")
 
-    # 泛糖科技进口利润 — 全文只此一处
+    # 进口利润 — 只写数值
     brazil_field = market.get("brazil_profit", {})
     brazil_val = fv_int(brazil_field)
-    brazil_date = brazil_field.get("data_date", "")
-    meta = market.get("_import_profit_meta", {})
-
-    if meta.get("source") == "泛糖科技" and brazil_val != "N/A":
-        parts.append(
-            f"配额外巴西糖加工完税估算利润为{brazil_val}元/吨"
-            f"（泛糖科技，数据截至{brazil_date}，以日照白糖现货价测算）。"
-        )
-    elif brazil_val != "N/A":
-        parts.append(f"配额外巴西糖加工完税估算利润为{brazil_val}元/吨（{brazil_date}）。")
+    if brazil_val != "N/A":
+        parts.append(f"配额外巴西糖加工完税估算利润为{brazil_val}元/吨。")
 
     return " ".join(parts)
 
@@ -801,18 +753,32 @@ def final_consistency_check(market: dict, fundamentals_ai: str | None,
     if "SR2609" in zz_display:
         failures.append("行情显示名包含SR2609（SR0不得写成SR2609）")
 
-    # 2. 基差数值与方向描述一致
-    basis_val = market.get("basis", {}).get("value")
-    if basis_val is not None:
-        try:
-            bv = float(basis_val)
-            bd = basis_description(bv)
-            if bv < 0 and "现货升水" in bd:
-                failures.append("负基差错误描述为现货升水")
-            if bv > 0 and "现货贴水" in bd:
-                failures.append("正基差错误描述为现货贴水")
-        except (ValueError, TypeError):
-            pass
+    # 2. 基本面中不得出现方向性基差描述和ICE价格
+    if fundamentals_ai:
+        # 基差不得作为支撑/压力判断
+        basis_direction_forbidden = ["现货升水提供支撑", "现货相对坚挺", "限制下方空间",
+                                     "基差对盘面形成支撑", "现货升水期货", "现货贴水期货"]
+        for term in basis_direction_forbidden:
+            if term in fundamentals_ai:
+                failures.append(f"基本面中出现基差方向性描述: '{term}'")
+
+        # 基差方向一致性: 正基差不得写"贴水"，负基差不得写"升水"
+        basis_val = market.get("basis", {}).get("value")
+        if basis_val is not None:
+            try:
+                bv = float(basis_val)
+                if bv > 0 and "现货贴水" in fundamentals_ai:
+                    failures.append(f"基差为正({bv})，但基本面写'现货贴水'")
+                if bv < 0 and "现货升水" in fundamentals_ai:
+                    failures.append(f"基差为负({bv})，但基本面写'现货升水'")
+            except (ValueError, TypeError):
+                pass
+
+        # ICE价格不得穿插到国家分析中
+        if "ICE原糖主力收" in fundamentals_ai or "ICE原糖收" in fundamentals_ai:
+            ice_in_fundamentals = re.search(r"(巴西|印度|泰国|综合).{0,50}ICE原糖.{0,20}(收|美分)", fundamentals_ai)
+            if ice_in_fundamentals:
+                failures.append("基本面国家分析中穿插了ICE价格")
 
     # 3. 进口利润全文只有一个数值 (检查基本面正文不包含利润数字)
     if fundamentals_ai:
@@ -863,7 +829,7 @@ def final_consistency_check(market: dict, fundamentals_ai: str | None,
 # ============================================================
 
 def _clean_model_response(text: str) -> str:
-    """清理模型返回文本：去除 Markdown 代码块、多余前后说明、重复加粗标记。"""
+    """清理模型返回文本：去除 Markdown 代码块、多余前后说明、重复加粗标记、风险提示。"""
     if not text:
         return ""
 
@@ -889,6 +855,10 @@ def _clean_model_response(text: str) -> str:
     text = re.sub(r"\*\*[^*]+\*\*\*\*", "", text)
     # 去除开头的加粗标记（如果有）
     text = re.sub(r"^\*\*[^*]+\*\*\s*", "", text)
+
+    # 去除基本面正文中不应出现的风险提示
+    # DeepSeek有时会在基本面末尾加上"风险提示：宏观、政策、天气、进口量。"
+    text = re.sub(r"\n*风险提示[：:]\s*宏观、政策、天气、进口量[。.]?\s*$", "", text)
 
     return text.strip()
 
@@ -959,12 +929,11 @@ def _check_logic_consistency(text: str, fundamentals_input: str) -> list[str]:
 
     if india_section:
         if has_no_new_export and not has_new_export:
+            # 无新增出口 = 利多/支撑，不得写成"中性偏多"或"压制"
             if "出口" in india_section and ("压制" in india_section or "形成压力" in india_section):
-                if "中性偏多" not in india_section and "支撑" not in india_section:
-                    issues.append("印度无新增出口信号，但正文写成'压制'或'形成压力'，应为中性偏多")
-            # 检查是否写成"明显支撑"或"主要利多"
-            if "明显支撑" in india_section or "主要利多" in india_section or "供应收紧" in india_section:
-                issues.append("印度无新增出口，但正文写成'明显支撑'或'主要利多'，应为中性偏多")
+                issues.append("印度无新增出口信号，但正文写成'压制'或'形成压力'，应为利多/支撑")
+            if "中性偏多" in india_section or "中性" in india_section:
+                issues.append("印度无新增出口，但正文写成'中性偏多'或'中性'，应为利多/支撑")
 
         if has_new_export:
             if "压制" not in india_section and "偏空" not in india_section and "供应增加" not in india_section:
@@ -973,6 +942,10 @@ def _check_logic_consistency(text: str, fundamentals_input: str) -> list[str]:
         if has_export_restriction:
             if "支撑" not in india_section and "偏多" not in india_section:
                 issues.append("印度限制出口，但正文未体现支撑效果")
+
+        # 检查印度是否使用了Lmts单位（应转换为万吨）
+        if "Lmts" in india_section or "lmts" in india_section:
+            issues.append("印度正文出现'Lmts'单位，应转换为万吨（1 Lmts = 10万吨）")
 
     # ── 2. 巴西UNICA累计检查 ──
     # 检查巴西部分是否将Table 2双周数据写成累计
@@ -1005,7 +978,8 @@ def _check_logic_consistency(text: str, fundamentals_input: str) -> list[str]:
 
     # ── 4. 国内无数据时的推断检查 ──
     has_domestic_production = any(kw in fundamentals_input for kw in [
-        "累计产糖", "累计销糖", "工业库存", "产销率", "收榨",
+        "累计产糖", "累计销糖", "工业库存", "产销率", "收榨", "最终产糖",
+        "预计最终", "纯销售期", "valid_cached",
     ])
     if not has_domestic_production:
         forbidden_domestic = ["榨季已结束", "现实供给格局已定", "供给基本定型",
@@ -1120,70 +1094,73 @@ def call_deepseek(market_summary: str, fundamentals_text: str, approved_view: di
         f"结构化基本面数据（已按分析顺序排列）:\n{fundamentals_text}\n\n"
         f"=== 硬约束（必须逐条遵守） ===\n\n"
         f"【结构顺序——不可调整】\n"
-        f"第一段(国际): 国际供需总判断→巴西(双周生产+面积+降雨)→印度(生产+面积+季风+出口)→泰国(生产+面积+降雨)→美糖判断\n"
-        f"第二段(国内): 25/26榨季现实供给→26/27种植面积→26/27降雨墒情苗情→进口/现货/基差/政策→{TARGET_CONTRACT}判断\n\n"
-        f"【巴西UNICA数据口径——不可违反】\n"
-        f"- 巴西数据只能使用UNICA Table 2的Sugar和Share %，不得使用Table 1累计数据\n"
-        f"- UNICA Table 2是双周数据(period_type=biweekly)，必须按报告真实数据期写成双周期间\n"
-        f"- 正确写法: '巴西中南部在最新双周期间产糖XXX万吨，同比增加XX%，制糖比为XX%'\n"
-        f"- 禁止写法: '截至某日累计产糖''榨季累计产糖''累计产糖XXX万吨'\n"
-        f"- 如果CSV中有period_start和period_end字段，必须使用该期间；没有则写'最新双周'\n"
-        f"- 巴西制糖比40.34%、乙醇占比59.66%时，不得写'高制糖比'；只能写糖产量同比增加，但糖醇分配仍偏乙醇\n\n"
-        f"【印度出口政策方向规则——最高优先级，不可违反】\n"
-        f"- 印度出口政策方向必须按以下固定规则判断:\n"
-        f"  (1) 无新增出口信号(暂无新增配额/暂无新增批准/出口政策无新增信号/政府尚未宣布扩大出口) → impact=中性偏多\n"
-        f"     原因: 没有新增出口意味着国际市场没有新增印度糖供应，不会对糖价形成新的供应压制\n"
-        f"     推荐写法: '印度出口政策暂无新增信号，国际市场没有新增印度糖供应压力，对糖价影响中性偏多'\n"
-        f"  (2) 明确新增出口(批准新增配额/扩大出口额度/放松出口限制/明确允许新增出口/实际出口量明显增加) → impact=偏空\n"
-        f"     推荐写法: '印度新增出口配额，国际市场供应增加，对国际糖价形成压制'\n"
-        f"  (3) 限制出口(限制出口/取消配额/出口量低于预期/出口审批推迟/优先保障国内供应) → impact=偏多\n"
-        f"     推荐写法: '印度出口受限，国际市场可获得供应减少，对国际糖价形成支撑'\n"
-        f"- '无新增出口'只表示没有新增供应压力，不代表出现主动利多\n"
-        f"- 禁止写法: '印度提供明显支撑''印度形成主要利多''印度供应收紧'——除非存在明确限制出口或减产数据\n"
-        f"- 印度NFCSF的Lmts单位不得改写为'万吨'；正文保留'Lmts'或写'lakh metric tonnes'\n"
-        f"- 印度不得写'高于预期''低于预期'，除非输入数据明确给出预期值\n\n"
-        f"【泰国结论权限——无同比数据时不可越权】\n"
-        f"- 泰国当前有效数据: 截至日期、累计入榨甘蔗量、累计产糖量、出糖率\n"
-        f"- 如果没有上年同期、同比、官方最终预估或出口数据，禁止写: '同比增加''丰产超预期''产量处于高位''整体供应充裕''出口能力增强''出口压力增加''市场已经消化'\n"
-        f"- 无同比数据时，泰国impact_direction=neutral_to_bearish，confidence=medium_low\n"
-        f"- 允许写: '当前榨季供应规模得到官方生产数据确认'\n"
-        f"- 泰国数据优先使用SugarZone生产报告；不得使用越南、USDA、商业媒体补齐\n"
-        f"- 种植面积和降雨: 有数据写数据，无数据必须写'下一榨季种植面积和降雨暂无新的已验证信息'\n\n"
-        f"【美糖判断逻辑——必须与三国方向一致】\n"
-        f"- 当前方向: 巴西=偏空(双周供应增加), 印度=中性偏多(无新增出口), 泰国=neutral_to_bearish(无同比)\n"
-        f"- 美糖总结必须体现: 巴西供应压力较为明确，印度暂无新增出口未形成新的供应压制\n"
-        f"- 美糖判断只用国际数据，不得混入中国库存/南宁现货/郑糖基差/中国进口政策\n"
-        f"- 国际油价上涨不等于巴西制糖比必然下降，需判断是否已传导至巴西国内\n\n"
+        f"第一段(国际): 全球供需→巴西→印度→泰国→综合判断\n"
+        f"第二段(国内): 25/26现实供给→26/27种植面积→26/27天气苗情→进口/政策→{TARGET_CONTRACT}判断\n\n"
+        f"【表达风格——参照研究员样例】\n"
+        f"- 短句、直接、先说矛盾，再说对盘面的含义\n"
+        f"- 不要写成数据来源清单，不要机械罗列\n"
+        f"- 分析重点是因果逻辑，不是堆砌数字\n\n"
+        f"【全球供需规则】\n"
+        f"- ISO观点必须写成2026/27年度，不得写2025/26\n"
+        f"- 优先使用CSV中view_season字段标注的年度\n"
+        f"- 如果CSV中view_season为空或为2025/26，在正文中仍写2026/27\n"
+        f"- 其他机构(Czarnikow/StoneX等)有2026/27年度观点时补充分歧\n"
+        f"- 正文写: '全球供需方面，ISO最新预计2026/27年度全球糖市……'\n"
+        f"- 禁止: '全球供需暂无新增数据'，除非CSV中确实没有机构观点\n\n"
+        f"【巴西分析规则——核心是因果归因】\n"
+        f"- 只使用UNICA Table 2双周数据，必须标明双周起止日期\n"
+        f"- 如果CSV中有period_start和period_end字段，写成: 'X月X日至X月X日'\n"
+        f"- 禁止: '截至某日累计产糖''榨季累计产糖'\n"
+        f"- 巴西核心数据: 甘蔗压榨量、食糖产量、制糖比（只保留这三项+日期）\n"
+        f"- 不要罗列: 乙醇占比、ATR、乙醇产量、糖厂数量\n"
+        f"- 如果CSV中有sugar_mix_yoy_change_pp字段，必须写: '制糖比同比下降X.XX个百分点'\n"
+        f"- 如果CSV中有attribution字段，必须使用该归因结论\n"
+        f"- 巴西分析重点是归因: 甘蔗量变化 + 制糖比变化 → 食糖产量变化\n"
+        f"- 当前已确认逻辑: 甘蔗压榨量增加抵消了制糖比下降的影响，因此糖产量同比增加\n"
+        f"- 推荐写法: '尽管制糖比同比下降X.XX个百分点，但甘蔗压榨量增加抵消了制糖比下滑，食糖产量仍同比增加'\n\n"
+        f"【印度单位和出口政策】\n"
+        f"- Lmts必须转换为万吨: 1 Lmts = 10万吨，273.90 Lmts = 2739万吨\n"
+        f"- 日报正文只写'万吨'，不得出现'Lmts'\n"
+        f"- 出口政策方向: 此前有出口→当前转为不新增出口→国际市场可获得供应减少→利多/形成支撑\n"
+        f"- 禁止: 无新增出口时写'中性偏多''中性''没有影响'\n"
+        f"- '形成压制'只适用于: 印度出现新增出口供应\n\n"
+        f"【泰国比较规则】\n"
+        f"- 如果CSV中有comparison_date和previous_value字段，必须使用\n"
+        f"- 非同日数据写'与上一榨季X月X日最近一期数据相比'，不得写'同比'\n"
+        f"- 无对比数据时禁止: '同比增加''丰产超预期''产量处于高位''供应充裕'\n\n"
+        f"【ICE价格规则——最高禁令】\n"
+        f"- ICE价格只在'市场表现'中出现一次，基本面正文中绝对不得出现ICE价格\n"
+        f"- 禁止写: 'ICE原糖主力收''ICE原糖收跌''ICE原糖收涨''ICE下跌''ICE上涨'\n"
+        f"- 禁止写: '综合来看，……ICE原糖主力收跌……'——结尾也不得出现ICE价格\n"
+        f"- 国际基本面结尾只写供需判断，不写ICE收盘价格\n\n"
+        f"【基差规则——最高禁令】\n"
+        f"- 基差为正数时，禁止写'现货贴水''贴水提供支撑'\n"
+        f"- 基差为负数时，禁止写'现货升水''升水提供支撑'\n"
+        f"- 基差在基本面中只写'基差为XX元/吨'，不加方向性解释\n\n"
         f"【国内分析规则】\n"
-        f"- 如果没有有效的产糖量、销量、库存、产销率、收榨进度数据，写: '国内25/26榨季暂无新的已验证产销和库存数据，暂不对现实供应变化作新增判断'\n"
-        f"- 禁止写: '2025/26榨季已结束''现实供给格局已定''供给基本定型''国内供应宽松''库存压力已经形成'——除非CSV中有确认数据\n"
-        f"- 行业座谈会、产业大会、招商活动不要进入基本面正文\n"
-        f"- 26/27种植面积: 有数据写数据，无数据写'26/27榨季广西、云南甘蔗种植面积暂无新的已验证数据'\n"
-        f"- 26/27天气苗情: 局部信息只能写'部分蔗区'，不得扩大为全区判断；禁止写'影响范围有限''不会影响全区''全区苗情稳定'\n"
-        f"- 基差方向必须与行情数据一致: 基差为正写现货升水期货，基差为负写现货贴水期货\n"
-        f"- 进口利润为正=进口窗口打开=对后续国内供应形成潜在压力（不得写成支撑）\n"
-        f"- 进口利润不得写入具体数字(数字由Python在市场表现中写入)，只能写'进口利润为正'或'进口窗口处于打开/关闭状态'\n"
-        f"- {TARGET_CONTRACT}判断: 说明主要支撑/主要压力/偏震荡还是偏强偏弱/上方和下方限制\n"
+        f"- 基差只写客观数值('基差为XX元/吨')，不写'现货升水提供支撑''现货相对坚挺''限制下方空间'\n"
+        f"- 国内判断依据: 产销库存、种植面积、天气苗情、进口量、进口利润、政策、消费、外盘影响\n"
+        f"- 25/26榨季现实供给优先级: 全国→广西→云南\n"
+        f"- 如果全国数据缺失但广西有数据，直接使用广西，不需要整段判空\n"
+        f"- 有产销量/库存数据时写: '截至最新数据期，广西累计产糖……万吨，累计销糖……万吨，工业库存……万吨'\n"
+        f"- 有预估数据时必须保留'预计''预估''有望'等表述，不得写成已确认\n"
+        f"- 如果CSV中有valid_cached状态的数据且在有效期内，应使用该数据，写'国内25/26榨季沿用最近一期已确认或预估数据'\n"
+        f"- 只有当所有渠道均无有效数据时才写'暂无新的已验证产销和库存数据'\n"
+        f"- 禁止: '榨季已结束''格局已定''供给基本定型''供应宽松'（除非输入数据明确支持）\n"
+        f"- 座谈会、产业大会、招商活动不进入基本面正文\n"
+        f"- 进口利润为正=进口窗口打开=对后续供应形成潜在压力\n"
+        f"- 26/27种植面积: 如果有机构调研数据可写'机构调研显示……'，只有所有渠道均无数据才写'暂无数据'\n"
         f"- {TARGET_CONTRACT}判断不生成具体开仓点、止损位、目标位\n\n"
-        f"【风险提示规则】\n"
-        f"- 风险提示固定读取配置或研究员模板，不得自行扩写\n"
-        f"- 除非CSV中存在明确且有效的风险事件，否则不得自动生成具体事件（如'印度若突击批准出口''6月下旬进口糖到港''巴西雷亚尔波动''台风季影响'）\n\n"
-        f"【Markdown格式规则】\n"
-        f"- 基本面正文开头写'国际方面，'，不要出现'**基本面：****国际方面**'这样的连续加粗标记\n"
-        f"- 国内部分直接接续为'国内方面，'，不要再次使用加粗小标题\n"
-        f"- 保持日报样例的连续文字形式\n\n"
-        f"【通用规则】\n"
-        f"- 不补充输入之外的数字\n"
-        f"- 不使用模型记忆中的事实\n"
-        f"- 写法参考样例: 短句、直接、先说矛盾，再说对盘面的含义；不要写成数据来源清单\n"
-        f"- 参考样例只用于文风，不得继承样例里的库存、产量、政策、交易结论\n"
-        f"- 不写'供应端扰动支撑原糖''高制糖比''累库压力''胀库'，除非输入里有对应事实\n"
-        f"- 不虚构某国当天变化\n"
-        f"- 不把预测写成实际数据\n"
-        f"- 不使用'必然''一定'等绝对词\n"
-        f"- 缺失数据时写'暂无新的已验证信息'，不得自动写'未发生明显变化''面积保持稳定''天气整体良好'\n"
-        f"- 280-520字，先结论后解释，连贯叙述，不用'巴西:'这样的机械标题\n"
-        f"- 只输出基本面正文，不输出其他内容"
+        f"【风险提示】\n"
+        f"- 固定写: '宏观、政策、天气、进口量。'\n"
+        f"- 不得自动生成具体事件\n\n"
+        f"【格式】\n"
+        f"- 基本面开头写'国际方面，'，国内部分接续'国内方面，'\n"
+        f"- 不要连续加粗标记，保持连续文字形式\n\n"
+        f"【通用】\n"
+        f"- 不补充输入之外的数字，不使用模型记忆\n"
+        f"- 短句、直接、先说矛盾再说对盘面含义\n"
+        f"- 280-520字，只输出基本面正文"
     )
 
     # ── HTTP 调用 ──
@@ -1195,14 +1172,16 @@ def call_deepseek(market_summary: str, fundamentals_text: str, approved_view: di
             messages=[
                 {"role": "system", "content": (
                     f"你是白糖行业分析师，为{TARGET_CONTRACT}合约撰写日报基本面分析。"
-                    "严格按固定顺序: 国际供需总判断→巴西(双周生产+面积+降雨)→印度(生产+面积+季风+出口)→泰国(生产+面积+降雨)→美糖判断→"
-                    "国内25/26现实供给→26/27种植面积→26/27降雨墒情苗情→进口政策→SR2609判断。"
-                    "巴西UNICA Table 2是双周数据，必须写成双周期间，禁止写'累计产糖'。"
-                    "印度出口政策方向固定规则: 无新增出口=中性偏多, 新增出口=偏空, 限制出口=偏多。"
-                    "泰国无同比数据时禁止写'同比增加''丰产''高位''充裕'。"
-                    "国内无产销数据时禁止写'榨季已结束''格局已定'。"
-                    "进口利润为正=对后续供应形成压力，不得写成支撑。"
-                    "只使用输入数据，不虚构。不混写国际和国内。语言贴近研究员日报，少铺陈，重结论。只输出基本面正文。"
+                    "严格按固定顺序: 全球供需→巴西→印度→泰国→综合判断→"
+                    "国内25/26现实供给→26/27种植面积→26/27天气苗情→进口政策→SR2609判断。"
+                    "最高禁令: 基本面正文中绝对不得出现ICE价格数据，ICE价格只在市场表现中展示。"
+                    "最高禁令: 基差为正时不得写'现货贴水'，基差为负时不得写'现货升水'。"
+                    "全球供需ISO观点必须写2026/27年度，不得写2025/26。"
+                    "巴西必须使用归因逻辑: 甘蔗量变化+制糖比变化→糖产量变化。"
+                    "印度Lmts转换为万吨(1Lmts=10万吨)，不新增出口=利多/支撑。"
+                    "国内优先使用广西数据，有valid_cached状态数据时必须使用。"
+                    "预估数据必须保留'预计'等表述，不得写成已确认。"
+                    "只使用输入数据，不虚构。只输出基本面正文。"
                 )},
                 {"role": "user", "content": prompt},
             ],
@@ -1760,6 +1739,11 @@ def run(target_date: str | None = None) -> Path | None:
             # 用缓存组装简单描述
             countries_with_data = set(r.get("country", "") for r in cache_records)
             desc = "基本面核心矛盾较上一交易日未发生明显变化。"
+            # 检查国内是否有有效缓存
+            domestic_records = [r for r in cache_records if r.get("country") == "中国"]
+            if domestic_records:
+                domestic_regions = set(r.get("region", "") for r in domestic_records)
+                desc += f" 国内方面，{', '.join(r for r in domestic_regions if r)}沿用最近一期已确认或预估数据。"
             if missing_countries:
                 desc += f" {', '.join(missing_countries)}暂无更新数据。"
             fundamentals_ai = desc

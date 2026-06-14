@@ -38,8 +38,11 @@ freshness:
   policy_days: 90
   import_profit_days: 3
   # 国内数据时效
-  domestic_production_days: 45
-  domestic_sales_inventory_days: 45
+  domestic_production_days: 60
+  domestic_sales_days: 45
+  domestic_inventory_days: 45
+  domestic_season_progress_days: 45
+  domestic_final_estimate_days: 90
   domestic_area_days: 90
   domestic_weather_days: 7
 
@@ -117,14 +120,20 @@ msweet:
   source_name: "沐甜科技"
   international_url: "https://www.msweet.com.cn/eportal/ui?pageId=1013963&currentPage=5&moduleId=7031c73790e84afc8e68137c3ab7b061"
   domestic_url: "https://www.msweet.com.cn/mtkj/xwzx62/gn97/index.html"
-  # 国内产销栏目 — 优先抓取
+  # 国内产销栏目 — 优先抓取（按优先级排序）
   domestic_columns:
+    - name: "产销预估"
+      url: "https://www.msweet.com.cn/eportal/ui?pageId=1014225"
+      scan_pages: 5
+      priority: 1
     - name: "各省产销"
       url: "https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html"
       scan_pages: 5
+      priority: 2
     - name: "产区动态"
       url: "https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html"
       scan_pages: 3
+      priority: 3
   scan_pages: 8
   # 国内文章关键词筛选 — 第一优先
   domestic_production_keywords:
@@ -145,7 +154,7 @@ msweet:
     - "销糖"
     - "销售"
     - "库存"
-  # 国内文章关键词 — 第二优先
+  # 国内文章关键词 — 第二优先（26/27种植面积）
   domestic_area_keywords:
     - "26/27榨季"
     - "种植面积"
@@ -155,6 +164,22 @@ msweet:
     - "春耕"
     - "下种"
     - "补种"
+    - "扩种"
+    - "减种"
+    - "蔗区调研"
+    - "下种面积"
+  # 26/27种植面积额外搜索来源
+  domestic_area_search_sources:
+    - name: "沐甜调研报告"
+      url_pattern: "https://www.msweet.com.cn/mtkj/xwzx62/gn97/index.html"
+    - name: "广西糖业协会"
+      search_domain: "gxsta.com"
+    - name: "云南糖业协会"
+      search_domain: "ynsugar.com"
+    - name: "泛糖科技"
+      search_domain: "hisugar.com"
+    - name: "微信公众号"
+      search_domain: "mp.weixin.qq.com"
   domestic_weather_keywords:
     - "苗情"
     - "出苗"
@@ -178,6 +203,27 @@ msweet:
     - "领导调研"
     - "企业活动"
     - "品牌活动"
+  # 广西文章优先标题关键词
+  guangxi_article_keywords:
+    - "广西"
+    - "产糖"
+    - "销量"
+    - "产销"
+    - "库存"
+    - "收榨"
+    - "预计最终产糖"
+    - "单月产量"
+    - "累计产糖"
+    - "纯销售期"
+  # 云南文章优先标题关键词
+  yunnan_article_keywords:
+    - "云南"
+    - "产糖"
+    - "销量"
+    - "产销"
+    - "库存"
+    - "收榨"
+    - "预计"
   india_keywords:
     - "印度"
     - "ISMA"

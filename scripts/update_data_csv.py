@@ -24,6 +24,9 @@ FIELDS = [
     "official_level", "data_type", "season", "status", "fetched_at", "used_in_report",
     "period_start", "period_end", "period_type", "table_number",
     "coverage_scope", "impact_direction", "confidence",
+    "attribution", "sugar_mix_yoy_change_pp",
+    "institution", "view_season", "view_direction", "surplus_deficit_value",
+    "comparison_date", "comparison_type", "previous_value", "current_value",
 ]
 
 logger = logging.getLogger("update_data_csv")

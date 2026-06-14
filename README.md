@@ -111,6 +111,7 @@ PowerShell -ExecutionPolicy Bypass -File scripts\Install-Task.ps1 -Uninstall
 | 巴西基本面 | UNICA | Bi-weekly bulletin |
 | 印度基本面 | NFCSF/coopsugar | ALL INDIA Sugar Production |
 | 泰国基本面 | SugarZone + OCSB官方多入口 | 优先级: SugarZone → Open Data → PRD → 主站 → Facebook → 缓存 → 预测 |
+| 中国基本面 | 沐甜产销预估栏目 + 各省产销栏目 | 优先级: 产销预估栏目 → 各省产销 → 糖协 → 泛糖 → 缓存 |
 | 基本面 | 自动抓取 + 研究员填写 | `inputs/fundamentals/` 为可选补充 |
 | 交易策略 | 研究员确认 | `inputs/approved_view.md` |
 

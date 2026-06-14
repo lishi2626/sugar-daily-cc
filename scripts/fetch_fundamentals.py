@@ -525,16 +525,33 @@ def _extract_msweet_list_items(raw: str, list_url: str) -> list[dict]:
 
 
 def _extract_msweet_article_text(raw: str) -> str:
+    """从沐甜文章详情页提取正文。优先匹配文章正文区域。"""
+    # 尝试多种文章正文容器
     for pat in [
-        r'<div[^>]+class=["\'][^"\']*(?:article|content|detail|TRS_Editor)[^"\']*["\'][^>]*>(.*?)</div>',
-        r'<body[^>]*>(.*?)</body>',
+        r'<div[^>]+class=["\'][^"\']*(?:article|content|detail|TRS_Editor|nr|text)[^"\']*["\'][^>]*>(.*?)</div>',
+        r'<div[^>]+id=["\'][^"\']*(?:article|content|detail|nr|text)[^"\']*["\'][^>]*>(.*?)</div>',
     ]:
         m = re.search(pat, raw, re.I | re.S)
         if m:
             text = clean_html(m.group(1))
-            if len(text) > 80:
+            if len(text) > 100:
                 return text
-    return clean_html(raw)
+
+    # 兜底: 提取 "沐甜XX日讯" 之后的正文
+    full = clean_html(raw)
+    m = re.search(r"(沐甜\d+日讯\s*.+)", full)
+    if m and len(m.group(1)) > 80:
+        return m.group(1)
+
+    # 再兜底: 提取 "您所在的位置" 之后、"上一篇|下一篇" 之前的内容
+    m = re.search(r"您所在的位置\s*[:：]?\s*(.+?)(?:上一篇|下一篇|相关文章|责任编辑|$)", full, re.S)
+    if m and len(m.group(1)) > 100:
+        text = m.group(1)
+        # 去掉开头的面包屑导航
+        text = re.sub(r"^.*?>\s*", "", text[:200]) + text[200:]
+        return text
+
+    return full
 
 
 def fetch_msweet_international_news(target_date: str) -> list[dict]:
@@ -687,21 +704,46 @@ def _parse_unica_biweekly_period(text: str) -> dict:
 
 def _parse_unica_table2_values(text: str) -> list[tuple[str, str, str]]:
     """
-    只解析 Table 2: BI-WEEKLY values 的 Sugar 与 Share %。
-    PyPDF2 抽出的文本通常把 Table 1 与 Table 2 的行连续输出：
-    Sugar 行第2组、Share % 第2组即为 Table 2。
+    解析 Table 2: BI-WEEKLY values 的 Sugar 与 Share %。
+    同时提取上年同期数据用于计算同比百分点变化。
+
+    PDF格式: Sugar行每组有 PreviousYear | Current | Var%
+    验证: (1800-859)/859 = 109.5% ≈ 109.48% ✓
     """
     normalized = re.sub(r"\s+", " ", text)
     out = []
-    sugar_rows = re.findall(r"Sugar\s+¹?\s+([\d,]+)\s+([\d,]+)\s+([\d.]+%)", normalized, re.I)
-    if len(sugar_rows) > 1:
-        out.append(("UNICA Table2 Sugar 2026/2027", sugar_rows[1][1].replace(",", ""), "千吨"))
-        out.append(("UNICA Table2 Sugar Var", sugar_rows[1][2], "%"))
 
-    share_pairs = re.findall(r"sugar\s+([\d.]+%)\s+([\d.]+%).{0,80}?ethanol\s+([\d.]+%)\s+([\d.]+%)", normalized, re.I)
-    if len(share_pairs) > 1:
-        out.append(("UNICA Table2 Share sugar", share_pairs[1][1], "%"))
-        out.append(("UNICA Table2 Share ethanol", share_pairs[1][3], "%"))
+    # Sugar行: "Sugar ¹ 859 1,800 109.48% 558 1,237 121.75% 301 563 86.75%"
+    # 格式: PrevYear_SC Current_SC Var%_SC PrevYear_SP Current_SP Var%_SP ...
+    sugar_rows = re.findall(
+        r"Sugar\s+¹?\s+([\d,]+)\s+([\d,]+)\s+([\d.]+%)",
+        normalized, re.I
+    )
+
+    # 第二组是Table 2
+    if len(sugar_rows) >= 2:
+        row = sugar_rows[1]  # (859, 1800, 109.48%)
+        prev_year = row[0].replace(",", "")  # 859 = 上年同期
+        current = row[1].replace(",", "")    # 1800 = 本期双周
+        var_pct = row[2]                      # 109.48% = 同比变化
+        out.append(("UNICA Table2 Sugar", current, "千吨"))       # 1800
+        out.append(("UNICA Table2 Sugar PrevYear", prev_year, "千吨"))  # 859
+        out.append(("UNICA Table2 Sugar Var", var_pct, "%"))      # 109.48%
+
+    # Share sugar行:
+    # "sugar 45.23% 38.16% 50.51% 46.14% 39.03% 27.83%" (Table 1)
+    # "sugar 45.69% 40.34% 51.41% 47.71% 37.89% 30.12%" (Table 2)
+    # 格式: PrevYear_SC Current_SC Other_SC PrevYear_SP Current_SP Other_SP
+    share_all = re.findall(
+        r"sugar\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)",
+        normalized, re.I
+    )
+    if len(share_all) >= 2:
+        table2 = share_all[1]  # Table 2: (45.69%, 40.34%, 51.41%, 47.71%, 37.89%, 30.12%)
+        # PrevYear_SC=45.69%, Current_SC=40.34%
+        out.append(("UNICA Table2 Share sugar", table2[1], "%"))  # 40.34% = 本期制糖比
+        out.append(("UNICA Table2 Share sugar PrevYear", table2[0], "%"))  # 45.69% = 上年同期
+
     return out
 
 
@@ -709,6 +751,164 @@ def _load_unica_cached(download_url: str) -> tuple[str, bytes | None, str]:
     pdf = http_get_bytes(download_url, timeout=40)
     text = _extract_pdf_text(pdf) if pdf else ""
     return text, pdf, download_url
+
+
+# ============================================================
+# 全球供需机构观点 — 沐甜"国际—机构观点"栏目
+# ============================================================
+
+_INSTITUTION_PRIORITY = [
+    "ISO", "USDA", "Czarnikow", "StoneX", "Green Pool",
+    "Datagro", "Copersucar", "Kingsman", "S&P Global",
+]
+
+
+def fetch_global_supply_demand(target_date: str) -> list[dict]:
+    """
+    从沐甜科技"国际—机构观点"栏目抓取全球供需平衡判断。
+    优先识别ISO观点，补充其他机构最新观点。
+    """
+    url = "https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html"
+    if not is_source_whitelisted("中国", url) and not is_source_whitelisted("印度", url):
+        # msweet is in China whitelist
+        pass
+
+    results = []
+    logger.info("全球供需机构观点: %s", url)
+
+    raw = http_get_text(url, timeout=20)
+    if not raw:
+        logger.warning("沐甜机构观点页面不可访问")
+        return results
+
+    # Extract article list
+    articles = _extract_msweet_list_items(raw, url)
+    logger.info("沐甜机构观点: 找到 %d 篇文章", len(articles))
+
+    # Keywords for global supply/demand
+    supply_kw = ["过剩", "短缺", "供需", "平衡", " surplus", " deficit",
+                 "产量", "消费", "库存", "预估", "预测", "预计"]
+    institution_kw = _INSTITUTION_PRIORITY + [
+        "国际糖业组织", "美国农业部", "ISO", "USDA",
+    ]
+
+    found_institutions = {}
+
+    for item in articles[:20]:  # Check top 20 articles
+        title = item.get("title", "")
+        summary = item.get("summary", "")
+        haystack = f"{title} {summary}"
+        pub = parse_date_anywhere(item.get("published_at", "") or summary, target_date)
+
+        # Check if article is about global supply/demand
+        has_supply = any(kw in haystack for kw in supply_kw)
+        if not has_supply:
+            continue
+
+        # Identify institution
+        matched_institution = None
+        for inst in _INSTITUTION_PRIORITY:
+            if inst.lower() in haystack.lower() or inst in haystack:
+                matched_institution = inst
+                break
+        # Also check Chinese names
+        if not matched_institution:
+            inst_cn_map = {
+                "ISO": ["国际糖业组织", "ISO"],
+                "USDA": ["美国农业部", "USDA"],
+                "Czarnikow": ["Czarnikow"],
+                "StoneX": ["StoneX"],
+                "Green Pool": ["Green Pool"],
+                "Datagro": ["Datagro"],
+                "Copersucar": ["Copersucar"],
+            }
+            for inst, names in inst_cn_map.items():
+                if any(n in haystack for n in names):
+                    matched_institution = inst
+                    break
+
+        if not matched_institution:
+            continue
+
+        # Only keep the latest article per institution
+        if matched_institution in found_institutions:
+            existing_date = found_institutions[matched_institution].get("published_at", "")
+            if pub and existing_date and pub <= existing_date:
+                continue
+
+        # Extract surplus/deficit value
+        surplus_val = ""
+        # Pattern: 过剩XXX万吨 or 短缺XXX万吨
+        m = re.search(r"(过剩|短缺|供应过剩|供应短缺)\s*(?:约|预计|预估)?\s*([\d,.]+)\s*(?:万吨|百万吨|mt)", haystack, re.I)
+        if m:
+            direction = m.group(1)
+            val = m.group(2).replace(",", "")
+            surplus_val = f"{direction}{val}万吨"
+
+        # Extract season
+        season_match = re.search(r"(\d{4})[/\-](\d{2,4})\s*(?:年度|榨季|年)", haystack)
+        view_season = ""
+        if season_match:
+            y1 = int(season_match.group(1))
+            y2 = season_match.group(2)
+            if len(y2) == 2:
+                view_season = f"{y1}/{y2}"
+            else:
+                view_season = f"{y1}/{int(y2)-2000:02d}"
+
+        # Determine direction
+        direction = "neutral"
+        if any(kw in haystack for kw in ["过剩", " surplus", "供大于求", "偏松"]):
+            direction = "surplus"
+        elif any(kw in haystack for kw in ["短缺", " deficit", "供不应求", "偏紧"]):
+            direction = "deficit"
+        elif any(kw in haystack for kw in ["平衡", "紧平衡"]):
+            direction = "balanced"
+
+        found_institutions[matched_institution] = {
+            "institution": matched_institution,
+            "title": title[:120],
+            "published_at": pub,
+            "view_season": view_season,
+            "surplus_deficit": surplus_val,
+            "direction": direction,
+            "summary": summary[:300],
+            "url": item.get("url", ""),
+        }
+
+    # Build records
+    for inst, info in found_institutions.items():
+        is_iso = (inst == "ISO")
+        results.append({
+            "country": "宏观",
+            "region": "全球",
+            "indicator": f"全球供需-{inst}",
+            "value": info["surplus_deficit"],
+            "value_or_fact": f"{inst}: {info['title']}. {info['summary']}",
+            "unit": "文本",
+            "data_date": info["published_at"] or target_date,
+            "published_at": info["published_at"] or target_date,
+            "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+            "source_name": "沐甜科技",
+            "source_url": info["url"] or url,
+            "source_channel": "institution_views",
+            "data_type": DT_FORECAST if "预" in info.get("title", "") else DT_ACTUAL,
+            "target_contract": TARGET_CONTRACT,
+            "season": info["view_season"],
+            "status": ST_FRESH,
+            "official_level": "institution_forecast",
+            "institution": inst,
+            "view_season": info["view_season"],
+            "view_direction": info["direction"],
+            "surplus_deficit_value": info["surplus_deficit"],
+            "impact_direction": "bearish" if info["direction"] == "surplus" else
+                               "bullish" if info["direction"] == "deficit" else "neutral",
+            "notes": f"{'ISO主判断' if is_iso else '机构补充观点'} | {info['title'][:60]}",
+        })
+
+    logger.info("全球供需机构观点: %d 条记录 (ISO=%s)", len(results),
+               "有" if "ISO" in found_institutions else "无")
+    return results
 
 
 def fetch_unica_biweekly(target_date: str) -> list[dict]:
@@ -747,8 +947,53 @@ def fetch_unica_biweekly(target_date: str) -> list[dict]:
         period_notes += f" | period_end={period_info['period_end']}"
     period_notes += f" | table_number={period_info['table_number']}"
 
+    # 提取本期和上年同期制糖比，计算同比百分点变化
+    current_sugar_mix = None
+    prev_year_sugar_mix = None
+    current_sugar_val = None
+    prev_year_sugar_val = None
+
     for indicator, value, unit in parsed:
-        results.append({
+        if indicator == "UNICA Table2 Share sugar":
+            current_sugar_mix = value.replace("%", "")
+        elif indicator == "UNICA Table2 Share sugar PrevYear":
+            prev_year_sugar_mix = value.replace("%", "")
+        elif indicator == "UNICA Table2 Sugar":
+            current_sugar_val = value
+        elif indicator == "UNICA Table2 Sugar PrevYear":
+            prev_year_sugar_val = value
+
+    # 计算制糖比同比百分点变化
+    sugar_mix_yoy_pp = ""
+    if current_sugar_mix and prev_year_sugar_mix:
+        try:
+            diff = float(current_sugar_mix) - float(prev_year_sugar_mix)
+            sugar_mix_yoy_pp = f"{diff:+.2f}"
+        except ValueError:
+            pass
+
+    # 生成归因结论
+    attribution = ""
+    if current_sugar_val and prev_year_sugar_val and sugar_mix_yoy_pp:
+        try:
+            cur_sugar = float(current_sugar_val)
+            prev_sugar = float(prev_year_sugar_val)
+            mix_change = float(sugar_mix_yoy_pp)
+            sugar_change_pct = ((cur_sugar - prev_sugar) / prev_sugar * 100) if prev_sugar > 0 else 0
+
+            if sugar_change_pct > 0 and mix_change < 0:
+                attribution = f"甘蔗压榨量增加抵消了制糖比下降{sugar_mix_yoy_pp}个百分点的影响，食糖产量仍同比增加{sugar_change_pct:.2f}%"
+            elif sugar_change_pct > 0 and mix_change > 0:
+                attribution = f"甘蔗压榨量和制糖比均同比上升，食糖产量同比增加{sugar_change_pct:.2f}%"
+            elif sugar_change_pct < 0 and mix_change < 0:
+                attribution = f"甘蔗压榨量减少叠加制糖比下降，食糖产量同比减少{abs(sugar_change_pct):.2f}%"
+            elif sugar_change_pct < 0 and mix_change > 0:
+                attribution = f"制糖比上升未能完全抵消甘蔗压榨量减少的影响，食糖产量同比减少{abs(sugar_change_pct):.2f}%"
+        except ValueError:
+            pass
+
+    for indicator, value, unit in parsed:
+        rec = {
             "country": "巴西",
             "indicator": indicator,
             "value_or_fact": value,
@@ -767,7 +1012,14 @@ def fetch_unica_biweekly(target_date: str) -> list[dict]:
             "period_type": period_info["period_type"],
             "table_number": period_info["table_number"],
             "notes": period_notes,
-        })
+        }
+        # 在Sugar记录中附加归因和制糖比同比信息
+        if indicator == "UNICA Table2 Sugar":
+            if sugar_mix_yoy_pp:
+                rec["sugar_mix_yoy_change_pp"] = sugar_mix_yoy_pp
+            if attribution:
+                rec["attribution"] = attribution
+        results.append(rec)
 
     if not results:
         results.append({
@@ -1117,7 +1369,10 @@ def fetch_thailand_sugarzone_production(target_date: str) -> list[dict]:
     # Step 7: Build records
     # Note: No YoY data available → impact_direction=neutral_to_bearish, confidence=medium_low
     results = []
+    # Build current season records
+    current_data = {}
     for item in parsed:
+        current_data[item["indicator"]] = item["value"]
         rec = _make_thai_record(
             indicator=item["indicator"],
             value=item["value"],
@@ -1137,6 +1392,65 @@ def fetch_thailand_sugarzone_production(target_date: str) -> list[dict]:
             confidence="medium_low",
         )
         results.append(rec)
+
+    # ── 上一榨季对比: 2025-04-09 ──
+    comparison_date = "2025-04-09"
+    logger.info("SugarZone尝试抓取上一榨季对比报告: %s", comparison_date)
+    prev_report = None
+    for date_str, iso_date, pdf_url in reports:
+        if iso_date == comparison_date:
+            prev_report = (date_str, iso_date, pdf_url)
+            break
+
+    if prev_report:
+        _, prev_iso, prev_pdf_url = prev_report
+        logger.info("SugarZone找到对比报告: %s -> %s", prev_iso, prev_pdf_url)
+        prev_pdf = http_get_bytes(prev_pdf_url, timeout=40)
+        if prev_pdf:
+            prev_parsed = _parse_sugarzone_pdf(prev_pdf, "2024/25")
+            if prev_parsed:
+                prev_data = {}
+                for item in prev_parsed:
+                    prev_data[item["indicator"]] = item["value"]
+
+                # Add comparison records
+                for indicator in ["sugarcane_crushed_accumulated", "sugar_production_accumulated", "sugar_yield_per_cane"]:
+                    cur_val = current_data.get(indicator)
+                    prev_val = prev_data.get(indicator)
+                    if cur_val and prev_val:
+                        try:
+                            diff = float(cur_val) - float(prev_val)
+                            rec = _make_thai_record(
+                                indicator=f"{indicator}_comparison",
+                                value=f"{diff:+.2f}",
+                                unit="万吨" if "accumulated" in indicator else "kg/t",
+                                data_date=latest_iso,
+                                published_at=latest_iso,
+                                source_name="SugarZone",
+                                source_url=latest_pdf_url,
+                                channel="official_production_report",
+                                official_level="official_actual",
+                                season=target_season,
+                                status=ST_FRESH,
+                                data_type=DT_ACTUAL,
+                                text_value=f"当前{cur_val} vs 上一榨季{prev_val}",
+                                notes=f"对比: nearest_previous_season_report | 当前={cur_val}({latest_iso}) vs 上期={prev_val}({prev_iso})",
+                                impact_direction="neutral_to_bearish",
+                                confidence="medium_low",
+                            )
+                            # Add comparison metadata
+                            rec["comparison_type"] = "nearest_previous_season_report"
+                            rec["comparison_date"] = prev_iso
+                            rec["previous_value"] = prev_val
+                            rec["current_value"] = cur_val
+                            results.append(rec)
+                        except (ValueError, TypeError):
+                            pass
+                logger.info("SugarZone对比数据: 当前=%s, 上期=%s", latest_iso, prev_iso)
+            else:
+                logger.warning("SugarZone对比报告解析失败: %s", prev_iso)
+    else:
+        logger.info("SugarZone未找到 %s 对比报告，跳过", comparison_date)
 
     logger.info("SugarZone抓取完成: %d 条记录", len(results))
     return results
@@ -2339,12 +2653,240 @@ def _detect_region(text: str) -> str:
     return ""
 
 
+def _classify_article_region(title: str, summary: str) -> str:
+    """根据标题和摘要判断文章所属地区。只用地名做判断，不用通用关键词。"""
+    # 标题中的地名前缀是最可靠的信号
+    if "云南" in title:
+        return "云南"
+    if "广西" in title:
+        return "广西"
+    if "广东" in title:
+        return "广东"
+    if "海南" in title:
+        return "海南"
+    if "全国" in title:
+        return "全国"
+
+    # 标题无地名时，检查摘要开头（避免用页面上下文中的其他地区名）
+    # 只检查摘要前100字符
+    summary_head = summary[:100]
+    if "云南" in summary_head:
+        return "云南"
+    if "广西" in summary_head:
+        return "广西"
+    if "全国" in summary_head:
+        return "全国"
+    return ""
+
+
+def _fetch_article_detail(url: str, timeout: int = 15) -> str | None:
+    """获取文章详情页正文。"""
+    raw = http_get_text(url, timeout=timeout)
+    if not raw:
+        return None
+    text = _extract_msweet_article_text(raw)
+    return text if len(text) > 80 else None
+
+
+def _is_forecast_text(text: str) -> bool:
+    """判断文本是否包含预估/预计表述。"""
+    forecast_markers = ["预计", "预估", "有望", "大概率", "估计", "预期", "估算"]
+    return any(m in text for m in forecast_markers)
+
+
+def _extract_enhanced_production_numbers(text: str) -> dict:
+    """
+    增强版：从文章正文中提取产销量、库存、收榨等结构化数据。
+    返回 dict[indicator] = {"value": str, "data_type": str}
+    """
+    results = {}
+
+    # 预计最终产糖
+    m = re.search(r"(?:预计|预估)\s*(?:最终|全[榨年]季)\s*产糖[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        results["final_sugar_production_estimate"] = {"value": val, "data_type": DT_FORECAST}
+
+    # 累计产糖
+    m = re.search(r"累计产糖[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        dt = DT_FORECAST if _is_forecast_text(text[:text.find("累计产糖") + 30]) else DT_ACTUAL
+        results["sugar_production_accumulated"] = {"value": val, "data_type": dt}
+
+    # 产混合糖
+    m = re.search(r"产混合糖[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        results["mixed_sugar_production"] = {"value": val, "data_type": DT_ACTUAL}
+
+    # 单月产糖量
+    m = re.search(r"(?:\d{1,2}月)\s*(?:产糖|食糖产量)[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        results["production_monthly"] = {"value": val, "data_type": DT_ACTUAL}
+
+    # 累计销糖
+    m = re.search(r"累计销糖[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        results["sugar_sales_accumulated"] = {"value": val, "data_type": DT_ACTUAL}
+
+    # 单月销量
+    m = re.search(r"(?:\d{1,2}月)\s*(?:销量|食糖销售|销糖)[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        results["sales_monthly"] = {"value": val, "data_type": DT_ACTUAL}
+
+    # 预计销量
+    m = re.search(r"(?:预计|预估)\s*(?:\d{1,2}月)?\s*(?:销量|食糖销售|销糖)[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m and "sales_monthly" not in results:
+        val = m.group(1).replace(",", "")
+        results["sales_monthly"] = {"value": val, "data_type": DT_FORECAST}
+
+    # 工业库存
+    m = re.search(r"工业库存[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        results["industrial_inventory"] = {"value": val, "data_type": DT_ACTUAL}
+
+    # 产销率
+    m = re.search(r"产销率[^\d]*?([\d,.]+)\s*%", text)
+    if m:
+        results["sales_ratio"] = {"value": m.group(1), "data_type": DT_ACTUAL}
+
+    # 入榨甘蔗
+    m = re.search(r"入榨甘蔗[^\d]*?([\d,.]+)\s*(?:万吨|吨)", text)
+    if m:
+        val = m.group(1).replace(",", "")
+        results["sugarcane_crushed"] = {"value": val, "data_type": DT_ACTUAL}
+
+    # 产糖率
+    m = re.search(r"产糖率[^\d]*?([\d,.]+)\s*%", text)
+    if m:
+        results["sugar_yield"] = {"value": m.group(1), "data_type": DT_ACTUAL}
+
+    # 收榨糖厂数
+    if "收榨" in text:
+        m = re.search(r"(?:已有|累计已有|已有)\s*(\d+)\s*(?:家|间|座)\s*(?:糖厂|厂).*?收榨", text)
+        if m:
+            results["mills_closed"] = {"value": m.group(1), "data_type": DT_ACTUAL}
+        elif "全部收榨" in text or "收榨完毕" in text:
+            results["mills_closed"] = {"value": "全部", "data_type": DT_ACTUAL}
+        # "生产结束" 也算收榨
+        elif "生产结束" in text:
+            m2 = re.search(r"(\d+)\s*(?:家|间|座)", text)
+            if m2:
+                results["mills_closed"] = {"value": m2.group(1), "data_type": DT_ACTUAL}
+
+    # 同比对比文本
+    comparison = ""
+    m = re.search(r"同比[^\n。]{5,60}", text)
+    if m:
+        comparison = m.group(0).strip()
+
+    # 榨季状态
+    season_status = ""
+    if "生产结束" in text or "纯销售期" in text:
+        m = re.search(r"(\d{1,2}月\d{1,2}日).*?(?:生产结束|纯销售期)", text)
+        if m:
+            season_status = f"{m.group(1)}生产结束，进入纯销售期"
+        else:
+            season_status = "生产结束，进入纯销售期"
+
+    if comparison:
+        results["_comparison_text"] = {"value": comparison, "data_type": DT_ACTUAL}
+    if season_status:
+        results["_season_status"] = {"value": season_status, "data_type": DT_ACTUAL}
+
+    return results
+
+
+def _check_domestic_cache_freshness(target_date: str) -> dict[str, dict]:
+    """
+    检查CSV中国内数据的缓存新鲜度。
+    返回 {region: {indicator_group: {"data_date": str, "status": str, "age_days": int}}}
+    """
+    freshness_cfg = config.get("freshness", {})
+    max_ages = {
+        "production": freshness_cfg.get("domestic_production_days", 60),
+        "sales": freshness_cfg.get("domestic_sales_days", 45),
+        "inventory": freshness_cfg.get("domestic_inventory_days", 45),
+        "season_progress": freshness_cfg.get("domestic_season_progress_days", 45),
+        "final_estimate": freshness_cfg.get("domestic_final_estimate_days", 90),
+        "area": freshness_cfg.get("domestic_area_days", 90),
+    }
+
+    try:
+        from update_data_csv import read_all_rows
+        rows = read_all_rows()
+    except ImportError:
+        return {}
+
+    now = datetime.strptime(target_date, "%Y-%m-%d")
+    cache = {}
+
+    for r in rows:
+        if r.get("country") != "中国":
+            continue
+        if r.get("status") not in ("valid", "fresh", "valid_cached"):
+            continue
+
+        region = r.get("region", "")
+        indicator = r.get("indicator", "")
+        data_date = r.get("data_date", "")
+
+        try:
+            dd = datetime.strptime(data_date, "%Y-%m-%d")
+            age = (now - dd).days
+        except ValueError:
+            continue
+
+        # 分组
+        if any(kw in indicator for kw in ["production", "产糖", "产混合糖"]):
+            group = "production"
+        elif any(kw in indicator for kw in ["sales", "销糖", "销量"]):
+            group = "sales"
+        elif any(kw in indicator for kw in ["inventory", "库存"]):
+            group = "inventory"
+        elif any(kw in indicator for kw in ["mills_closed", "收榨", "season_status"]):
+            group = "season_progress"
+        elif "final_estimate" in indicator or "预计最终" in indicator:
+            group = "final_estimate"
+        elif "area" in indicator or "面积" in indicator:
+            group = "area"
+        else:
+            continue
+
+        max_age = max_ages.get(group, 45)
+        status = "valid_cached" if age <= max_age else "stale"
+
+        key = f"{region}_{group}"
+        if key not in cache or data_date > cache[key].get("data_date", ""):
+            cache[key] = {
+                "data_date": data_date,
+                "status": status,
+                "age_days": age,
+                "max_age": max_age,
+                "indicator": indicator,
+                "region": region,
+            }
+
+    return cache
+
+
 def fetch_china_msweet_production(target_date: str) -> list[dict]:
     """
-    Fetch China domestic production data from msweet.com.cn.
-    Priority: 各省产销 > 榨季追踪 > 产销 > general domestic.
-    Extracts actual production/sales/inventory numbers.
-    Excludes meeting/conference articles.
+    国内产销数据抓取主入口。
+    优先级:
+      1. 沐甜产销预估栏目（最新广西和云南文章，必须进入详情页）
+      2. 沐甜各省产销、榨季追踪栏目
+      3. 广西/云南糖业协会公开信息
+      4. 泛糖科技公开资讯
+      5. 公开微信公众号文章
+      6. CSV中最近一次有效记录（valid_cached）
+
+    不再使用"当天无新文章 = 无数据"的逻辑。
     """
     cfg = config.get("msweet", {})
     if not cfg.get("enabled", False):
@@ -2352,29 +2894,29 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
 
     source_name = cfg.get("source_name", "沐甜科技")
     results = []
+    seen_indicators = set()
 
-    # Keywords for production data articles
     prod_kw = cfg.get("domestic_production_keywords", [
         "累计产糖", "产混合糖", "累计销糖", "工业库存", "产销率",
         "入榨甘蔗", "收榨", "开榨", "食糖库存", "最终产糖",
         "截至月底", "截至月末", "产糖量", "产糖", "销糖", "销售", "库存",
     ])
 
-    # Collect all articles from priority columns
+    # ── 收集所有栏目文章 ──
     all_articles = []
-
-    # Priority columns
     columns = cfg.get("domestic_columns", [])
+
     for col in columns:
         col_url = col.get("url", "")
         col_name = col.get("name", "")
         scan_pages = int(col.get("scan_pages", 3))
+        priority = col.get("priority", 99)
 
         if not col_url or not is_source_whitelisted("中国", col_url):
             logger.info("沐甜栏目跳过（不在白名单）: %s -> %s", col_name, col_url)
             continue
 
-        logger.info("沐甜抓取栏目: %s (%s)", col_name, col_url)
+        logger.info("沐甜抓取栏目: %s (优先级%d, %s)", col_name, priority, col_url)
 
         for page_no in range(1, scan_pages + 1):
             list_url = _msweet_page_url(col_url, page_no)
@@ -2384,22 +2926,24 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
 
             for item in _extract_msweet_list_items(raw, list_url):
                 item["_column"] = col_name
+                item["_priority"] = priority
                 all_articles.append(item)
 
         logger.info("沐甜栏目 '%s': 找到 %d 篇文章", col_name, len(all_articles))
 
-    # Also scan general domestic page as fallback
+    # Fallback: 国内糖市
     general_url = cfg.get("domestic_url", "")
     if general_url and is_source_whitelisted("中国", general_url):
         raw = http_get_text(general_url, timeout=20)
         if raw:
             for item in _extract_msweet_list_items(raw, general_url):
                 item["_column"] = "国内糖市"
+                item["_priority"] = 99
                 all_articles.append(item)
 
     logger.info("沐甜国内文章总数: %d", len(all_articles))
 
-    # Filter and categorize articles
+    # ── 分类和排序 ──
     production_articles = []
     area_articles = []
     weather_articles = []
@@ -2409,12 +2953,11 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
         summary = item.get("summary", "")
         haystack = f"{title} {summary}"
 
-        # Skip meeting/conference articles for production data
+        # 排除会议/活动文章（所有分类都检查）
         if _is_meeting_article(title, summary):
             logger.debug("排除会议/活动文章: %s", title[:60])
             continue
 
-        # Categorize by keywords
         has_production_kw = any(kw in haystack for kw in prod_kw)
         has_area_kw = any(kw in haystack for kw in cfg.get("domestic_area_keywords", []))
         has_weather_kw = any(kw in haystack for kw in cfg.get("domestic_weather_keywords", []))
@@ -2426,67 +2969,116 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
         elif has_weather_kw:
             weather_articles.append(item)
 
-    logger.info("分类结果: 生产=%d, 面积=%d, 天气=%d",
-               len(production_articles), len(area_articles), len(weather_articles))
+    # 按优先级和发布日期排序
+    def _sort_key(item):
+        pub = str(item.get("published_at", ""))[:10]
+        try:
+            pub_dt = datetime.strptime(pub, "%Y-%m-%d")
+            if pub_dt.year < 2000:
+                pub_dt = datetime(2000, 1, 1)
+        except (ValueError, TypeError):
+            pub_dt = datetime(2000, 1, 1)
+        return (item.get("_priority", 99), -pub_dt.timestamp())
 
-    # Process production articles - extract actual numbers
-    seen_indicators = set()
-    for item in production_articles[:10]:  # Process top 10
+    production_articles.sort(key=_sort_key)
+
+    # 按地区分组，取每个地区最新
+    gx_articles = [a for a in production_articles if _classify_article_region(a.get("title", ""), a.get("summary", "")) == "广西"]
+    yn_articles = [a for a in production_articles if _classify_article_region(a.get("title", ""), a.get("summary", "")) == "云南"]
+    other_articles = [a for a in production_articles if _classify_article_region(a.get("title", ""), a.get("summary", "")) not in ("广西", "云南")]
+
+    logger.info("生产文章分类: 广西=%d, 云南=%d, 其他=%d", len(gx_articles), len(yn_articles), len(other_articles))
+
+    # ── 处理广西文章（进入详情页）──
+    for item in gx_articles[:3]:
         title = item.get("title", "")
         summary = item.get("summary", "")
         url = item.get("url", "")
         pub = parse_date_anywhere(item.get("published_at", "") or summary, target_date)
-        text = f"{title}。{summary}"
 
-        # Extract numbers
-        numbers = _extract_production_numbers(text)
-        region = _detect_region(text)
+        # 进入详情页
+        detail_text = _fetch_article_detail(url)
+        text = detail_text if detail_text else summary
+        summary_only = detail_text is None
 
-        if numbers:
-            for indicator, value in numbers.items():
-                key = f"{region}_{indicator}"
-                if key in seen_indicators:
-                    continue
-                seen_indicators.add(key)
+        numbers = _extract_enhanced_production_numbers(text)
 
-                # Determine unit
-                unit = "万吨"
-                if indicator == "sales_ratio" or indicator == "sugar_yield":
-                    unit = "%"
-                elif indicator in ("mills_closed", "mills_operating"):
-                    unit = "家"
+        for indicator, info in numbers.items():
+            if indicator.startswith("_"):
+                continue
+            key = f"广西_{indicator}"
+            if key in seen_indicators:
+                continue
+            seen_indicators.add(key)
 
+            value = info["value"]
+            data_type = info["data_type"]
+            unit = "万吨"
+            if indicator in ("sales_ratio", "sugar_yield"):
+                unit = "%"
+            elif indicator in ("mills_closed", "mills_operating"):
+                unit = "家"
+
+            results.append({
+                "country": "中国",
+                "region": "广西",
+                "indicator": indicator,
+                "value": value,
+                "value_or_fact": value,
+                "unit": unit,
+                "data_date": pub,
+                "published_at": pub,
+                "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+                "source_name": source_name,
+                "source_url": url,
+                "source_channel": "domestic_production_forecast",
+                "data_type": data_type,
+                "target_contract": TARGET_CONTRACT,
+                "season": "2025/2026",
+                "status": ST_FRESH,
+                "notes": f"沐甜{item.get('_column', '')}栏目 | {'摘要' if summary_only else '详情'} | {title[:60]}",
+            })
+
+        # 保存赛季状态
+        if "_season_status" in numbers:
+            ss = numbers["_season_status"]
+            ss_key = "广西_season_status"
+            if ss_key not in seen_indicators:
+                seen_indicators.add(ss_key)
                 results.append({
                     "country": "中国",
-                    "region": region or "广西",
-                    "indicator": indicator,
-                    "value": value,
-                    "value_or_fact": value,
-                    "unit": unit,
+                    "region": "广西",
+                    "indicator": "season_status",
+                    "value": "",
+                    "text_value": ss["value"],
+                    "value_or_fact": ss["value"],
+                    "unit": "文本",
                     "data_date": pub,
                     "published_at": pub,
                     "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
                     "source_name": source_name,
                     "source_url": url,
-                    "source_channel": "domestic_production",
-                    "data_type": DT_ACTUAL,
+                    "source_channel": "domestic_production_forecast",
+                    "data_type": ss["data_type"],
                     "target_contract": TARGET_CONTRACT,
                     "season": "2025/2026",
                     "status": ST_FRESH,
-                    "notes": f"沐甜{item.get('_column', '')}栏目自动提取 | {title[:60]}",
+                    "notes": f"沐甜{item.get('_column', '')}栏目 | 榨季状态",
                 })
 
-        # Also save as text record if it has production keywords but no extracted numbers
-        if not numbers and any(kw in text for kw in ["累计产糖", "产糖量", "产糖", "销糖"]):
-            text_key = f"{region}_text"
-            if text_key not in seen_indicators:
-                seen_indicators.add(text_key)
+        # 保存对比文本
+        if "_comparison_text" in numbers:
+            ct = numbers["_comparison_text"]
+            ct_key = "广西_comparison"
+            if ct_key not in seen_indicators:
+                seen_indicators.add(ct_key)
                 results.append({
                     "country": "中国",
-                    "region": region or "广西",
-                    "indicator": f"沐甜国内{region or '广西'}生产资讯",
+                    "region": "广西",
+                    "indicator": "comparison_text",
                     "value": "",
-                    "value_or_fact": text[:300],
+                    "text_value": ct["value"],
+                    "value_or_fact": ct["value"],
                     "unit": "文本",
                     "data_date": pub,
                     "published_at": pub,
@@ -2497,21 +3089,203 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
                     "target_contract": TARGET_CONTRACT,
                     "season": "2025/2026",
                     "status": ST_FRESH,
-                    "notes": f"沐甜{item.get('_column', '')}栏目 | 文章含生产数据但未提取到具体数值",
+                    "notes": f"沐甜{item.get('_column', '')}栏目 | 同比对比",
                 })
 
-    # Process area articles (26/27 season)
-    for item in area_articles[:3]:
+        # 如果没有提取到数字但有生产关键词，保存文本记录
+        if not any(k for k in numbers if not k.startswith("_")):
+            text_key = "广西_text"
+            if text_key not in seen_indicators:
+                seen_indicators.add(text_key)
+                results.append({
+                    "country": "中国",
+                    "region": "广西",
+                    "indicator": "沐甜广西生产资讯",
+                    "value": "",
+                    "value_or_fact": f"{title}。{text[:200]}",
+                    "unit": "文本",
+                    "data_date": pub,
+                    "published_at": pub,
+                    "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "source_name": source_name,
+                    "source_url": url,
+                    "data_type": DT_ACTUAL,
+                    "target_contract": TARGET_CONTRACT,
+                    "season": "2025/2026",
+                    "status": ST_FRESH,
+                    "notes": f"沐甜{item.get('_column', '')}栏目 | 含生产关键词但未提取到数值 | {title[:60]}",
+                })
+
+    # ── 处理云南文章（进入详情页）──
+    for item in yn_articles[:3]:
+        title = item.get("title", "")
+        summary = item.get("summary", "")
+        url = item.get("url", "")
+        pub = parse_date_anywhere(item.get("published_at", "") or summary, target_date)
+
+        detail_text = _fetch_article_detail(url)
+        text = detail_text if detail_text else summary
+        summary_only = detail_text is None
+
+        numbers = _extract_enhanced_production_numbers(text)
+
+        for indicator, info in numbers.items():
+            if indicator.startswith("_"):
+                continue
+            key = f"云南_{indicator}"
+            if key in seen_indicators:
+                continue
+            seen_indicators.add(key)
+
+            value = info["value"]
+            data_type = info["data_type"]
+            unit = "万吨"
+            if indicator in ("sales_ratio", "sugar_yield"):
+                unit = "%"
+            elif indicator in ("mills_closed", "mills_operating"):
+                unit = "家"
+
+            results.append({
+                "country": "中国",
+                "region": "云南",
+                "indicator": indicator,
+                "value": value,
+                "value_or_fact": value,
+                "unit": unit,
+                "data_date": pub,
+                "published_at": pub,
+                "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+                "source_name": source_name,
+                "source_url": url,
+                "source_channel": "domestic_production",
+                "data_type": data_type,
+                "target_contract": TARGET_CONTRACT,
+                "season": "2025/2026",
+                "status": ST_FRESH,
+                "notes": f"沐甜{item.get('_column', '')}栏目 | {'摘要' if summary_only else '详情'} | {title[:60]}",
+            })
+
+        # 保存对比文本
+        if "_comparison_text" in numbers:
+            ct = numbers["_comparison_text"]
+            ct_key = "云南_comparison"
+            if ct_key not in seen_indicators:
+                seen_indicators.add(ct_key)
+                results.append({
+                    "country": "中国",
+                    "region": "云南",
+                    "indicator": "comparison_text",
+                    "value": "",
+                    "text_value": ct["value"],
+                    "value_or_fact": ct["value"],
+                    "unit": "文本",
+                    "data_date": pub,
+                    "published_at": pub,
+                    "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "source_name": source_name,
+                    "source_url": url,
+                    "data_type": DT_ACTUAL,
+                    "target_contract": TARGET_CONTRACT,
+                    "season": "2025/2026",
+                    "status": ST_FRESH,
+                    "notes": f"沐甜{item.get('_column', '')}栏目 | 同比对比",
+                })
+
+        if not any(k for k in numbers if not k.startswith("_")):
+            text_key = "云南_text"
+            if text_key not in seen_indicators:
+                seen_indicators.add(text_key)
+                results.append({
+                    "country": "中国",
+                    "region": "云南",
+                    "indicator": "沐甜云南生产资讯",
+                    "value": "",
+                    "value_or_fact": f"{title}。{text[:200]}",
+                    "unit": "文本",
+                    "data_date": pub,
+                    "published_at": pub,
+                    "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "source_name": source_name,
+                    "source_url": url,
+                    "data_type": DT_ACTUAL,
+                    "target_contract": TARGET_CONTRACT,
+                    "season": "2025/2026",
+                    "status": ST_FRESH,
+                    "notes": f"沐甜{item.get('_column', '')}栏目 | 含生产关键词但未提取到数值",
+                })
+
+    # ── 处理其他地区文章 ──
+    for item in other_articles[:5]:
         title = item.get("title", "")
         summary = item.get("summary", "")
         url = item.get("url", "")
         pub = parse_date_anywhere(item.get("published_at", "") or summary, target_date)
         text = f"{title}。{summary}"
+
+        numbers = _extract_enhanced_production_numbers(text)
         region = _detect_region(text)
 
+        for indicator, info in numbers.items():
+            if indicator.startswith("_"):
+                continue
+            key = f"{region}_{indicator}"
+            if key in seen_indicators:
+                continue
+            seen_indicators.add(key)
+
+            value = info["value"]
+            data_type = info["data_type"]
+            unit = "万吨"
+            if indicator in ("sales_ratio", "sugar_yield"):
+                unit = "%"
+            elif indicator in ("mills_closed", "mills_operating"):
+                unit = "家"
+
+            results.append({
+                "country": "中国",
+                "region": region or "全国",
+                "indicator": indicator,
+                "value": value,
+                "value_or_fact": value,
+                "unit": unit,
+                "data_date": pub,
+                "published_at": pub,
+                "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+                "source_name": source_name,
+                "source_url": url,
+                "source_channel": "domestic_production",
+                "data_type": data_type,
+                "target_contract": TARGET_CONTRACT,
+                "season": "2025/2026",
+                "status": ST_FRESH,
+                "notes": f"沐甜{item.get('_column', '')}栏目 | {title[:60]}",
+            })
+
+    # ── 处理26/27种植面积文章 ──
+    for item in area_articles[:5]:
+        title = item.get("title", "")
+        summary = item.get("summary", "")
+        url = item.get("url", "")
+        pub = parse_date_anywhere(item.get("published_at", "") or summary, target_date)
+
+        detail_text = _fetch_article_detail(url)
+        text = detail_text if detail_text else f"{title}。{summary}"
+
+        region = _classify_article_region(title, summary) or _detect_region(text)
         area_key = f"{region}_area"
         if area_key not in seen_indicators:
             seen_indicators.add(area_key)
+
+            # 判断数据类型
+            if any(kw in text for kw in ["调研", "走访", "估计", "估算"]):
+                data_type = "survey_estimate"
+            elif any(kw in text for kw in ["目标", "计划", "力争"]):
+                data_type = "target"
+            elif any(kw in text for kw in ["实际", "完成", "确认"]):
+                data_type = DT_ACTUAL
+            else:
+                data_type = DT_FORECAST
+
             results.append({
                 "country": "中国",
                 "region": region or "广西",
@@ -2524,14 +3298,15 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
                 "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
                 "source_name": source_name,
                 "source_url": url,
-                "data_type": DT_FORECAST,
+                "source_channel": "domestic_area",
+                "data_type": data_type,
                 "target_contract": TARGET_CONTRACT,
                 "season": "2026/2027",
                 "status": ST_FRESH,
-                "notes": f"沐甜{item.get('_column', '')}栏目 | 26/27种植面积",
+                "notes": f"沐甜{item.get('_column', '')}栏目 | 26/27种植面积 | {title[:60]}",
             })
 
-    # Process weather articles
+    # ── 处理天气文章 ──
     for item in weather_articles[:3]:
         title = item.get("title", "")
         summary = item.get("summary", "")
@@ -2555,6 +3330,7 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
                 "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
                 "source_name": source_name,
                 "source_url": url,
+                "source_channel": "domestic_weather",
                 "data_type": DT_WEATHER,
                 "target_contract": TARGET_CONTRACT,
                 "season": "2026/2027",
@@ -2562,8 +3338,68 @@ def fetch_china_msweet_production(target_date: str) -> list[dict]:
                 "notes": f"沐甜{item.get('_column', '')}栏目 | 天气/苗情",
             })
 
-    logger.info("沐甜国内抓取完成: %d 条记录 (排除会议文章后)", len(results))
+    # ── 缓存兜底：如果某地区无新鲜数据，使用最近有效缓存 ──
+    cache_freshness = _check_domestic_cache_freshness(target_date)
+    logger.info("国内缓存新鲜度检查: %d 个分组", len(cache_freshness))
+
+    for key, info in cache_freshness.items():
+        if info["status"] == "stale":
+            continue  # 过期缓存不用
+
+        region = info["region"]
+        group = key.replace(f"{region}_", "")
+
+        # 检查是否已有该地区的该类数据
+        existing_key = f"{region}_{group}"
+        if existing_key in seen_indicators:
+            continue
+
+        # 只有在没有新鲜数据时才使用缓存
+        has_fresh = any(
+            r.get("region") == region and
+            any(kw in r.get("indicator", "") for kw in _group_keywords(group))
+            for r in results
+            if r.get("status") == ST_FRESH
+        )
+        if has_fresh:
+            continue
+
+        seen_indicators.add(existing_key)
+        results.append({
+            "country": "中国",
+            "region": region,
+            "indicator": info["indicator"],
+            "value": "",
+            "value_or_fact": f"沿用最近一期数据（{info['data_date']}，有效期{info['max_age']}天，已用{info['age_days']}天）",
+            "unit": "文本",
+            "data_date": info["data_date"],
+            "published_at": info["data_date"],
+            "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
+            "source_name": "CSV缓存",
+            "source_url": "",
+            "source_channel": "cached",
+            "data_type": DT_ACTUAL,
+            "target_contract": TARGET_CONTRACT,
+            "season": "2025/2026",
+            "status": ST_CACHED,
+            "notes": f"沐甜无当日更新，使用CSV中未过期缓存 | 数据日期: {info['data_date']} | 已用{info['age_days']}/{info['max_age']}天",
+        })
+
+    logger.info("沐甜国内抓取完成: %d 条记录", len(results))
     return results
+
+
+def _group_keywords(group: str) -> list[str]:
+    """返回指标分组对应的关键词。"""
+    mapping = {
+        "production": ["production", "产糖", "产混合糖", "最终产糖"],
+        "sales": ["sales", "销糖", "销量"],
+        "inventory": ["inventory", "库存"],
+        "season_progress": ["mills_closed", "收榨", "season_status", "纯销售期"],
+        "final_estimate": ["final_estimate", "预计最终"],
+        "area": ["area", "面积"],
+    }
+    return mapping.get(group, [])
 
 
 # ============================================================
@@ -2758,6 +3594,12 @@ def run(target_date: str | None = None) -> dict:
 
     summary = {"fetched": 0, "merged": 0, "errors": [], "by_country": {}}
     all_new = []
+
+    # 0. 全球供需机构观点 — 沐甜国际机构观点栏目
+    logger.info("--- 全球供需机构观点 ---")
+    gsd = fetch_global_supply_demand(target_date)
+    all_new.extend(gsd)
+    summary["fetched"] += len(gsd)
 
     # 1. UNICA — 巴西双周报告
     logger.info("--- UNICA 巴西双周报告 ---")
