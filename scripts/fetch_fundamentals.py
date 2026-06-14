@@ -757,20 +757,165 @@ def _load_unica_cached(download_url: str) -> tuple[str, bytes | None, str]:
 # 全球供需机构观点 — 沐甜"国际—机构观点"栏目
 # ============================================================
 
-_INSTITUTION_PRIORITY = [
-    "ISO", "USDA", "Czarnikow", "StoneX", "Green Pool",
-    "Datagro", "Copersucar", "Kingsman", "S&P Global",
-]
+_INSTITUTION_NAMES = {
+    "ISO": ["国际糖业组织", "ISO"],
+    "USDA": ["美国农业部", "USDA"],
+    "Czarnikow": ["Czarnikow", "嘉利高"],
+    "StoneX": ["StoneX"],
+    "Green Pool": ["Green Pool"],
+    "Datagro": ["Datagro"],
+    "Copersucar": ["Copersucar"],
+    "Kingsman": ["Kingsman"],
+    "S&P Global": ["S&P Global"],
+    "花旗": ["花旗", "Citi"],
+    "Itaú BBA": ["Itaú BBA", "Itau BBA"],
+}
+
+# 目标榨季年度 — 只使用此年度的供需观点
+_TARGET_VIEW_SEASON = "2026/27"
+
+
+def _normalize_season(text: str) -> str:
+    """将 2026/27、2026-27、2026/2027、26/27 统一为 2026/27。"""
+    m = re.search(r"(\d{4})[/\-](\d{2,4})\s*(?:年度|榨季|年|$)", text)
+    if not m:
+        # 尝试 26/27 形式
+        m2 = re.search(r"(\d{2})[/\-](\d{2})\s*(?:年度|榨季|年|$)", text)
+        if m2:
+            y1 = int(m2.group(1))
+            y2 = int(m2.group(2))
+            if y1 < 100:
+                y1 += 2000
+            if y2 < 100:
+                y2 += 2000
+            return f"{y1}/{str(y2)[-2:]}"
+        return ""
+    y1 = int(m.group(1))
+    y2 = m.group(2)
+    if len(y2) == 2:
+        return f"{y1}/{y2}"
+    else:
+        return f"{y1}/{int(y2)-2000:02d}"
+
+
+def _extract_institution(text: str) -> str:
+    """从文本中识别机构名称。"""
+    for inst, names in _INSTITUTION_NAMES.items():
+        for name in names:
+            if name in text:
+                return inst
+    return ""
+
+
+def _extract_surplus_deficit(text: str, target_season: str) -> list[dict]:
+    """
+    从文章正文中提取所有供需预估（可能包含多个榨季）。
+    只提取目标年度的观点。
+    返回 [{view_season, direction, value, unit}]
+    """
+    results = []
+
+    # 先找目标年度的句子范围
+    # 文章可能在一句话中提到多个年度，例如"从上一年度的过剩229万吨转为短缺55万吨"
+    # 需要区分：目标年度的预估 vs 上一年度的回顾
+
+    # 分句处理：按句号、分号、逗号分句
+    sentences = re.split(r'[。；，]', text)
+
+    for sentence in sentences:
+        # 检查句子是否提到目标年度
+        sentence_season = _normalize_season(sentence)
+
+        # 如果句子没有明确年度，检查前后句
+        if not sentence_season:
+            # 检查前一句
+            idx = text.find(sentence)
+            if idx > 0:
+                prev_ctx = text[max(0, idx - 150):idx]
+                sentence_season = _normalize_season(prev_ctx)
+
+        # 只处理目标年度的句子
+        if sentence_season != target_season:
+            continue
+
+        # 在句子中查找过剩/短缺数值
+        # 模式1: "过剩/短缺 XXX 万吨"
+        for m in re.finditer(
+            r"(过剩|短缺|供应过剩|供应短缺)\s*(?:约|预计|预估)?\s*([\d,.]+)\s*(?:万吨|百万吨|mt)",
+            sentence, re.I
+        ):
+            direction_text = m.group(1)
+            val = m.group(2).replace(",", "")
+            direction = "surplus" if "过剩" in direction_text else "deficit"
+
+            # 排除"从过剩转为短缺"中的旧年度数据
+            context_before_match = sentence[:m.start()]
+            if "从" in context_before_match and "转为" in sentence[m.end():]:
+                continue
+
+            results.append({
+                "view_season": target_season,
+                "direction": direction,
+                "value": val,
+                "unit": "万吨",
+            })
+
+        # 模式2: "XXX 万吨的过剩/短缺"（数字在前）
+        for m in re.finditer(
+            r"([\d,.]+)\s*(?:万吨|百万吨|mt)\s*(?:的)?\s*(?:温和|小幅|大幅)?\s*(过剩|短缺|供应过剩|供应短缺)",
+            sentence, re.I
+        ):
+            val = m.group(1).replace(",", "")
+            direction_text = m.group(2)
+            direction = "surplus" if "过剩" in direction_text else "deficit"
+
+            # 排除"从过剩转为短缺"中的旧年度数据
+            context_before_match = sentence[:m.start()]
+            if "从" in context_before_match and "转为" in sentence[m.end():]:
+                continue
+
+            results.append({
+                "view_season": target_season,
+                "direction": direction,
+                "value": val,
+                "unit": "万吨",
+            })
+
+        # 模式3: "转为 XXX 万吨的短缺"（ISO格式）
+        for m in re.finditer(
+            r"转为\s*([\d,.]+)\s*(?:万吨|百万吨)\s*(?:的)?\s*(过剩|短缺)",
+            sentence, re.I
+        ):
+            val = m.group(1).replace(",", "")
+            direction_text = m.group(2)
+            direction = "surplus" if "过剩" in direction_text else "deficit"
+            results.append({
+                "view_season": target_season,
+                "direction": direction,
+                "value": val,
+                "unit": "万吨",
+            })
+
+        # 查找"平衡"表述
+        if re.search(r"(供需|整体)\s*(?:基本|处于)?\s*平衡", sentence):
+            results.append({
+                "view_season": target_season,
+                "direction": "balanced",
+                "value": "",
+                "unit": "",
+            })
+
+    return results
 
 
 def fetch_global_supply_demand(target_date: str) -> list[dict]:
     """
     从沐甜科技"国际—机构观点"栏目抓取全球供需平衡判断。
-    优先识别ISO观点，补充其他机构最新观点。
+    只使用 2026/27 年度的机构观点。
+    按发布日期选择最新一期，不按机构固定优先级。
     """
     url = "https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html"
-    if not is_source_whitelisted("中国", url) and not is_source_whitelisted("印度", url):
-        # msweet is in China whitelist
+    if not is_source_whitelisted("中国", url):
         pass
 
     results = []
@@ -778,137 +923,193 @@ def fetch_global_supply_demand(target_date: str) -> list[dict]:
 
     raw = http_get_text(url, timeout=20)
     if not raw:
-        logger.warning("沐甜机构观点页面不可访问")
-        return results
+        logger.warning("沐甜机构观点页面不可访问，使用CSV缓存")
+        return _fallback_global_supply_demand_from_csv(target_date)
 
-    # Extract article list
     articles = _extract_msweet_list_items(raw, url)
     logger.info("沐甜机构观点: 找到 %d 篇文章", len(articles))
 
-    # Keywords for global supply/demand
     supply_kw = ["过剩", "短缺", "供需", "平衡", " surplus", " deficit",
-                 "产量", "消费", "库存", "预估", "预测", "预计"]
-    institution_kw = _INSTITUTION_PRIORITY + [
-        "国际糖业组织", "美国农业部", "ISO", "USDA",
-    ]
+                 "预估", "预测", "预计"]
 
-    found_institutions = {}
+    # 收集所有属于目标年度的机构观点
+    target_views = []  # [{institution, published_at, view_season, direction, value, unit, title, url, summary}]
 
-    for item in articles[:20]:  # Check top 20 articles
+    for item in articles[:20]:
         title = item.get("title", "")
         summary = item.get("summary", "")
-        haystack = f"{title} {summary}"
+        list_haystack = f"{title} {summary}"
         pub = parse_date_anywhere(item.get("published_at", "") or summary, target_date)
 
-        # Check if article is about global supply/demand
-        has_supply = any(kw in haystack for kw in supply_kw)
+        has_supply = any(kw in list_haystack for kw in supply_kw)
         if not has_supply:
             continue
 
-        # Identify institution
-        matched_institution = None
-        for inst in _INSTITUTION_PRIORITY:
-            if inst.lower() in haystack.lower() or inst in haystack:
-                matched_institution = inst
-                break
-        # Also check Chinese names
-        if not matched_institution:
-            inst_cn_map = {
-                "ISO": ["国际糖业组织", "ISO"],
-                "USDA": ["美国农业部", "USDA"],
-                "Czarnikow": ["Czarnikow"],
-                "StoneX": ["StoneX"],
-                "Green Pool": ["Green Pool"],
-                "Datagro": ["Datagro"],
-                "Copersucar": ["Copersucar"],
-            }
-            for inst, names in inst_cn_map.items():
-                if any(n in haystack for n in names):
-                    matched_institution = inst
-                    break
+        # 进入详情页获取完整正文
+        article_url = item.get("url", "")
+        detail_text = _fetch_article_detail(article_url, timeout=15)
+        full_text = detail_text if detail_text else list_haystack
 
-        if not matched_institution:
+        # 识别机构
+        institution = _extract_institution(full_text)
+        if not institution:
             continue
 
-        # Only keep the latest article per institution
-        if matched_institution in found_institutions:
-            existing_date = found_institutions[matched_institution].get("published_at", "")
-            if pub and existing_date and pub <= existing_date:
+        # 提取所有供需预估（可能包含多个榨季）
+        estimations = _extract_surplus_deficit(full_text, _TARGET_VIEW_SEASON)
+
+        # 去重：同机构同方向只保留一条
+        seen_directions = set()
+        deduped = []
+        for est in estimations:
+            key = f"{est['direction']}_{est['value']}"
+            if key not in seen_directions:
+                seen_directions.add(key)
+                deduped.append(est)
+        estimations = deduped
+
+        # 从文章标题/摘要也尝试提取榨季
+        title_season = _normalize_season(title) or _normalize_season(summary)
+
+        for est in estimations:
+            vs = est["view_season"]
+            # 如果预估没有明确榨季，用标题榨季兜底
+            if not vs:
+                vs = title_season
+
+            # 只保留目标年度
+            if vs != _TARGET_VIEW_SEASON:
                 continue
 
-        # Extract surplus/deficit value
-        surplus_val = ""
-        # Pattern: 过剩XXX万吨 or 短缺XXX万吨
-        m = re.search(r"(过剩|短缺|供应过剩|供应短缺)\s*(?:约|预计|预估)?\s*([\d,.]+)\s*(?:万吨|百万吨|mt)", haystack, re.I)
-        if m:
-            direction = m.group(1)
-            val = m.group(2).replace(",", "")
-            surplus_val = f"{direction}{val}万吨"
+            target_views.append({
+                "institution": institution,
+                "published_at": pub,
+                "view_season": vs,
+                "direction": est["direction"],
+                "value": est["value"],
+                "unit": est["unit"],
+                "title": title[:120],
+                "url": article_url,
+                "summary": summary[:300],
+            })
 
-        # Extract season
-        season_match = re.search(r"(\d{4})[/\-](\d{2,4})\s*(?:年度|榨季|年)", haystack)
-        view_season = ""
-        if season_match:
-            y1 = int(season_match.group(1))
-            y2 = season_match.group(2)
-            if len(y2) == 2:
-                view_season = f"{y1}/{y2}"
-            else:
-                view_season = f"{y1}/{int(y2)-2000:02d}"
+        # 如果详情页没有提取到，但标题/摘要中有明确的目标年度供需信息
+        if not estimations and title_season == _TARGET_VIEW_SEASON:
+            # 从标题/摘要提取
+            sd_m = re.search(
+                r"(过剩|短缺)\s*(?:约|预计|预估)?\s*([\d,.]+)\s*(?:万吨|百万吨)",
+                list_haystack, re.I
+            )
+            if sd_m:
+                direction = "surplus" if "过剩" in sd_m.group(1) else "deficit"
+                target_views.append({
+                    "institution": institution,
+                    "published_at": pub,
+                    "view_season": _TARGET_VIEW_SEASON,
+                    "direction": direction,
+                    "value": sd_m.group(2).replace(",", ""),
+                    "unit": "万吨",
+                    "title": title[:120],
+                    "url": article_url,
+                    "summary": summary[:300],
+                })
+            elif any(kw in list_haystack for kw in ["平衡", "紧平衡"]):
+                target_views.append({
+                    "institution": institution,
+                    "published_at": pub,
+                    "view_season": _TARGET_VIEW_SEASON,
+                    "direction": "balanced",
+                    "value": "",
+                    "unit": "",
+                    "title": title[:120],
+                    "url": article_url,
+                    "summary": summary[:300],
+                })
 
-        # Determine direction
-        direction = "neutral"
-        if any(kw in haystack for kw in ["过剩", " surplus", "供大于求", "偏松"]):
-            direction = "surplus"
-        elif any(kw in haystack for kw in ["短缺", " deficit", "供不应求", "偏紧"]):
-            direction = "deficit"
-        elif any(kw in haystack for kw in ["平衡", "紧平衡"]):
-            direction = "balanced"
+    logger.info("2026/27年度机构观点: %d 条", len(target_views))
+    for v in target_views:
+        logger.info("  %s | %s | %s%s%s | %s",
+                    v["institution"], v["published_at"],
+                    v["direction"], v["value"], v["unit"],
+                    v["title"][:50])
 
-        found_institutions[matched_institution] = {
-            "institution": matched_institution,
-            "title": title[:120],
-            "published_at": pub,
-            "view_season": view_season,
-            "surplus_deficit": surplus_val,
-            "direction": direction,
-            "summary": summary[:300],
-            "url": item.get("url", ""),
-        }
+    # 按发布日期降序排序
+    target_views.sort(key=lambda v: v.get("published_at", ""), reverse=True)
 
-    # Build records
-    for inst, info in found_institutions.items():
-        is_iso = (inst == "ISO")
+    # 构建CSV记录 — 保存所有找到的2026/27年度观点
+    for v in target_views:
+        indicator_label = f"全球供需-{v['institution']}"
+        impact_dir = ("bearish" if v["direction"] == "surplus" else
+                      "bullish" if v["direction"] == "deficit" else "neutral")
         results.append({
             "country": "宏观",
             "region": "全球",
-            "indicator": f"全球供需-{inst}",
-            "value": info["surplus_deficit"],
-            "value_or_fact": f"{inst}: {info['title']}. {info['summary']}",
-            "unit": "文本",
-            "data_date": info["published_at"] or target_date,
-            "published_at": info["published_at"] or target_date,
+            "indicator": indicator_label,
+            "value": f"{v['value']}{v['unit']}" if v["value"] else "",
+            "value_or_fact": f"{v['institution']}: {v['title']}. {v['summary']}",
+            "unit": v["unit"] or "文本",
+            "data_date": v["published_at"] or target_date,
+            "published_at": v["published_at"] or target_date,
             "fetched_at": beijing_now().strftime("%Y-%m-%d %H:%M:%S"),
             "source_name": "沐甜科技",
-            "source_url": info["url"] or url,
+            "source_url": v["url"] or url,
             "source_channel": "institution_views",
-            "data_type": DT_FORECAST if "预" in info.get("title", "") else DT_ACTUAL,
+            "data_type": DT_FORECAST,
             "target_contract": TARGET_CONTRACT,
-            "season": info["view_season"],
+            "season": v["view_season"],
             "status": ST_FRESH,
             "official_level": "institution_forecast",
-            "institution": inst,
-            "view_season": info["view_season"],
-            "view_direction": info["direction"],
-            "surplus_deficit_value": info["surplus_deficit"],
-            "impact_direction": "bearish" if info["direction"] == "surplus" else
-                               "bullish" if info["direction"] == "deficit" else "neutral",
-            "notes": f"{'ISO主判断' if is_iso else '机构补充观点'} | {info['title'][:60]}",
+            "institution": v["institution"],
+            "view_season": v["view_season"],
+            "view_direction": v["direction"],
+            "surplus_deficit_value": v["value"],
+            "impact_direction": impact_dir,
+            "notes": f"{'主观点' if v == target_views[0] else '补充观点'} | {v['title'][:60]}",
         })
 
-    logger.info("全球供需机构观点: %d 条记录 (ISO=%s)", len(results),
-               "有" if "ISO" in found_institutions else "无")
+    # 如果没有找到目标年度观点，尝试CSV缓存
+    if not results:
+        logger.info("未找到 %s 年度机构观点，使用CSV缓存", _TARGET_VIEW_SEASON)
+        return _fallback_global_supply_demand_from_csv(target_date)
+
+    logger.info("全球供需机构观点: %d 条记录 (目标年度=%s)", len(results), _TARGET_VIEW_SEASON)
     return results
+
+
+def _fallback_global_supply_demand_from_csv(target_date: str) -> list[dict]:
+    """从CSV中查找最近一次有效的目标年度机构观点。"""
+    try:
+        from update_data_csv import read_all_rows
+        rows = read_all_rows()
+    except ImportError:
+        return []
+
+    candidates = []
+    for r in rows:
+        if r.get("country") != "宏观":
+            continue
+        if "全球供需" not in r.get("indicator", ""):
+            continue
+        vs = r.get("view_season", "") or r.get("season", "")
+        if vs != _TARGET_VIEW_SEASON:
+            continue
+        st = r.get("status", "")
+        if st not in ("valid", "fresh", "valid_cached"):
+            continue
+        candidates.append(r)
+
+    if not candidates:
+        return []
+
+    # 按发布日期排序取最新
+    candidates.sort(key=lambda r: r.get("published_at", ""), reverse=True)
+    latest = candidates[0]
+
+    result = dict(latest)
+    result["status"] = ST_CACHED
+    result["source_channel"] = "cached"
+    result["notes"] = f"CSV缓存 | 目标年度={_TARGET_VIEW_SEASON} | 原日期={latest.get('published_at','')}"
+    return [result]
 
 
 def fetch_unica_biweekly(target_date: str) -> list[dict]:
