@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>白糖日报</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --paper:#ffffff;
+      --text:#22252b;
+      --muted:#7a808a;
+      --line:#e7e9ee;
+      --brand:#173f73;
+      --brand-soft:#edf3f9;
+      --shadow:0 8px 28px rgba(18,34,58,.06);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    }
+    button,input{font:inherit}
+    .app{
+      width:min(100%,480px);
+      min-height:100vh;
+      margin:0 auto;
+      background:var(--paper);
+      padding-bottom:78px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--line);
+    }
+    .brand-wrap{display:flex;align-items:center;gap:10px}
+    .logo{
+      width:36px;height:36px;border-radius:11px;
+      display:grid;place-items:center;
+      color:#fff;font-weight:700;
+      background:linear-gradient(135deg,#173f73,#2d6fb7);
+    }
+    .brand-title{font-size:17px;font-weight:700}
+    .brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
+    .copy-btn{
+      border:none;
+      background:var(--brand);
+      color:#fff;
+      border-radius:10px;
+      padding:9px 12px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .copy-btn:active{transform:scale(.98)}
+    .page{display:none}
+    .page.active{display:block}
+    .article{
+      padding:26px 20px 40px;
+    }
+    .report-date{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.04em;
+      margin-bottom:8px;
+    }
+    h1{
+      margin:0;
+      font-size:25px;
+      line-height:1.35;
+      letter-spacing:-.02em;
+    }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 14px;
+      margin-top:12px;
+      padding-bottom:22px;
+      border-bottom:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .report-body{
+      margin-top:24px;
+      font-size:15px;
+      line-height:2;
+      text-align:justify;
+    }
+    .report-body p{
+      margin:0 0 18px;
+    }
+    .report-body strong{
+      color:var(--brand);
+      font-weight:700;
+    }
+    .source-note{
+      margin-top:30px;
+      padding-top:18px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.8;
+    }
+    .history-header{
+      padding:20px 16px 12px;
+      background:var(--paper);
+      position:sticky;
+      top:65px;
+      z-index:10;
+    }
+    .history-header h2{margin:0 0 12px;font-size:20px}
+    .search{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px 13px;
+      outline:none;
+      background:#fff;
+    }
+    .history-list{padding:0 16px 30px}
+    .history-item{
+      padding:16px 2px;
+      border-bottom:1px solid var(--line);
+      cursor:pointer;
+    }
+    .history-item:first-child{border-top:1px solid var(--line)}
+    .history-item .date{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .history-item .title{font-size:15px;font-weight:600;line-height:1.5;margin-bottom:5px}
+    .history-item .preview{font-size:13px;color:var(--muted);line-height:1.6}
+    .about{
+      padding:28px 20px 40px;
+    }
+    .about h2{font-size:22px;margin:0 0 18px}
+    .about p{font-size:15px;line-height:1.9;color:#41464f;margin:0 0 16px;text-align:justify}
+    .bottom-nav{
+      position:fixed;
+      left:50%;
+      bottom:0;
+      transform:translateX(-50%);
+      width:min(100%,480px);
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      background:rgba(255,255,255,.97);
+      backdrop-filter:blur(12px);
+      border-top:1px solid var(--line);
+      padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+      z-index:30;
+    }
+    .nav-item{
+      border:none;
+      background:none;
+      color:var(--muted);
+      padding:7px 4px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:3px;
+      cursor:pointer;
+      font-size:11px;
+    }
+    .nav-item span:first-child{font-size:20px}
+    .nav-item.active{color:var(--brand);font-weight:600}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:90px;
+      transform:translateX(-50%) translateY(10px);
+      background:#1f2937;
+      color:#fff;
+      padding:9px 14px;
+      border-radius:999px;
+      font-size:12px;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s;
+      z-index:50;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+    .error-msg{text-align:center;padding:60px 20px;color:#c0392b;font-size:14px}
+    @media (min-width:700px){
+      body{padding:24px 0}
+      .app{
+        min-height:calc(100vh - 48px);
+        border-radius:24px;
+        overflow:hidden;
+        box-shadow:0 20px 60px rgba(23,63,115,.12);
+      }
+      .bottom-nav{bottom:24px;border-radius:0 0 24px 24px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="logo">糖</div>
+        <div>
+          <div class="brand-title">白糖日报</div>
+          <div class="brand-sub">每个工作日 06:00 更新</div>
+        </div>
+      </div>
+      <button class="copy-btn" onclick="copyReport()">一键复制</button>
+    </header>
+
+    <main>
+      <section id="today" class="page active">
+        <article class="article">
+          <div id="reportDate" class="report-date">正在加载日报……</div>
+          <h1 id="reportTitle">白糖日报</h1>
+          <div id="reportMeta" class="meta"></div>
+          <div id="reportText" class="report-body">
+            <div class="loading">正在加载日报……</div>
+          </div>
+          <div class="source-note">
+            数据来源：新浪财经、UNICA、NFCSF、SugarZone、沐甜科技、泛糖科技。自动生成内容仍需研究员复核。
+          </div>
+        </article>
+      </section>
+
+      <section id="history" class="page">
+        <div class="history-header">
+          <h2>历史日报</h2>
+          <input id="searchInput" class="search" type="search" placeholder="搜索日期或关键词" oninput="filterHistory()" />
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+
+      <section id="about" class="page">
+        <div class="about">
+          <h2>说明</h2>
+          <p>本页面用于查看每日白糖日报。</p>
+          <p>日报于每个工作日早上06:00前生成，内容包括市场表现、基本面、交易策略和风险提示。</p>
+          <p>市场及基本面数据来自公开数据源，自动生成内容仍需研究员复核。</p>
+          <p>底部可在"今日、历史、说明"之间切换。历史记录可按日期或关键词搜索，点击后可直接查看对应日报。</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchPage('today',this)">
+        <span>⌂</span><span>今日</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('history',this)">
+        <span>▤</span><span>历史</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('about',this)">
+        <span>ⓘ</span><span>说明</span>
+      </button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast">已复制日报内容</div>
+
+  <script>
+    // ── 状态 ──
+    let reportsIndex = [];
+    let currentReport = null;
+    let viewingReport = null; // 正在查看的日报（可能是历史）
+
+    // ── 加载索引 ──
+    async function loadIndex() {
+      try {
+        const resp = await fetch('public/data/reports.json');
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        reportsIndex = data.reports || [];
+        if (reportsIndex.length > 0) {
+          loadReport(reportsIndex[0].file);
+        } else {
+          showEmpty();
+        }
+      } catch (e) {
+        console.error('加载索引失败:', e);
+        showError('日报数据加载失败，请稍后刷新。');
+      }
+    }
+
+    // ── 加载单日日报 ──
+    async function loadReport(file) {
+      try {
+        const resp = await fetch(file);
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        currentReport = await resp.json();
+        viewingReport = currentReport;
+        renderToday(currentReport);
+      } catch (e) {
+        console.error('加载日报失败:', e);
+        showError('日报数据加载失败，请稍后刷新。');
+      }
+    }
+
+    // ── 渲染今日页面 ──
+    function renderToday(report) {
+      if (!report) {
+        showEmpty();
+        return;
+      }
+
+      // 日期
+      const dateEl = document.getElementById('reportDate');
+      dateEl.textContent = formatChineseDate(report.date);
+
+      // 标题
+      document.getElementById('reportTitle').textContent = report.title || '白糖日报';
+
+      // 元数据
+      const metaEl = document.getElementById('reportMeta');
+      const metaParts = [];
+      if (report.market_data_date) metaParts.push('行情日期：' + report.market_data_date);
+      if (report.target_contract) metaParts.push('目标合约：' + report.target_contract);
+      if (report.generated_at) {
+        const time = report.generated_at.split(' ')[1] || report.generated_at;
+        metaParts.push('生成时间：' + time);
+      }
+      metaEl.innerHTML = metaParts.map(m => '<span>' + m + '</span>').join('');
+
+      // 正文
+      const bodyEl = document.getElementById('reportText');
+      const sections = [
+        { label: '市场表现', value: report.market_performance },
+        { label: '基本面', value: report.fundamentals },
+        { label: '交易策略', value: report.strategy },
+        { label: '风险提示', value: report.risk },
+      ];
+
+      let html = '';
+      for (const s of sections) {
+        if (s.value && s.value.trim()) {
+          html += '<p><strong>' + s.label + '：</strong>' + escapeHtml(s.value) + '</p>';
+        } else {
+          html += '<p><strong>' + s.label + '：</strong>该部分内容待补充。</p>';
+        }
+      }
+      bodyEl.innerHTML = html;
+    }
+
+    function showEmpty() {
+      document.getElementById('reportDate').textContent = '';
+      document.getElementById('reportTitle').textContent = '白糖日报';
+      document.getElementById('reportMeta').innerHTML = '';
+      document.getElementById('reportText').innerHTML = '<div class="loading">暂未生成日报。</div>';
+    }
+
+    function showError(msg) {
+      document.getElementById('reportDate').textContent = '';
+      document.getElementById('reportTitle').textContent = '白糖日报';
+      document.getElementById('reportMeta').innerHTML = '';
+      document.getElementById('reportText').innerHTML = '<div class="error-msg">' + msg + '</div>';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function formatChineseDate(dateStr) {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        return parts[0] + '年' + parseInt(parts[1]) + '月' + parseInt(parts[2]) + '日';
+      }
+      return dateStr;
+    }
+
+    // ── 页面切换 ──
+    function switchPage(id, btn) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      btn.classList.add('active');
+      if (id === 'history') renderHistory(reportsIndex);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── 历史列表 ──
+    function renderHistory(items) {
+      const box = document.getElementById('historyList');
+      if (!items || items.length === 0) {
+        box.innerHTML = '<div class="loading">暂无历史日报。</div>';
+        return;
+      }
+      box.innerHTML = '';
+      items.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.onclick = () => openHistoryReport(r.file);
+        item.innerHTML =
+          '<div class="date">' + r.date + '</div>' +
+          '<div class="title">' + escapeHtml(r.title || '白糖日报') + '</div>' +
+          '<div class="preview">' + escapeHtml(r.preview || '') + '</div>';
+        box.appendChild(item);
+      });
+    }
+
+    function filterHistory() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!q) {
+        renderHistory(reportsIndex);
+        return;
+      }
+      const filtered = reportsIndex.filter(r =>
+        (r.date + ' ' + (r.title || '') + ' ' + (r.preview || '')).toLowerCase().includes(q)
+      );
+      renderHistory(filtered);
+    }
+
+    async function openHistoryReport(file) {
+      await loadReport(file);
+      // 切换到今日页
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('today').classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelector('.nav-item').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── 一键复制 ──
+    async function copyReport() {
+      const report = viewingReport || currentReport;
+      if (!report) return;
+
+      const parts = [];
+      if (report.market_performance) parts.push('市场表现：' + report.market_performance);
+      if (report.fundamentals) parts.push('基本面：' + report.fundamentals);
+      if (report.strategy) parts.push('交易策略：' + report.strategy);
+      if (report.risk) parts.push('风险提示：' + report.risk);
+      const text = parts.join('\n\n');
+
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1600);
+    }
+
+    // ── 初始化 ──
+    loadIndex();
+  </script>
+</body>
+</html>

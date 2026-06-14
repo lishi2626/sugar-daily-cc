@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>白糖日报</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --paper:#ffffff;
+      --text:#22252b;
+      --muted:#7a808a;
+      --line:#e7e9ee;
+      --brand:#173f73;
+      --brand-soft:#edf3f9;
+      --shadow:0 8px 28px rgba(18,34,58,.06);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    }
+    button,input{font:inherit}
+    .app{
+      width:min(100%,480px);
+      min-height:100vh;
+      margin:0 auto;
+      background:var(--paper);
+      padding-bottom:78px;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--line);
+    }
+    .brand-wrap{display:flex;align-items:center;gap:10px}
+    .logo{
+      width:36px;height:36px;border-radius:11px;
+      display:grid;place-items:center;
+      color:#fff;font-weight:700;
+      background:linear-gradient(135deg,#173f73,#2d6fb7);
+    }
+    .brand-title{font-size:17px;font-weight:700}
+    .brand-sub{font-size:11px;color:var(--muted);margin-top:2px}
+    .copy-btn{
+      border:none;
+      background:var(--brand);
+      color:#fff;
+      border-radius:10px;
+      padding:9px 12px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    .copy-btn:active{transform:scale(.98)}
+    .page{display:none}
+    .page.active{display:block}
+    .article{
+      padding:26px 20px 40px;
+    }
+    .report-date{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.04em;
+      margin-bottom:8px;
+    }
+    h1{
+      margin:0;
+      font-size:25px;
+      line-height:1.35;
+      letter-spacing:-.02em;
+    }
+    .meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px 14px;
+      margin-top:12px;
+      padding-bottom:22px;
+      border-bottom:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .report-body{
+      margin-top:24px;
+      font-size:15px;
+      line-height:2;
+      text-align:justify;
+    }
+    .report-body p{
+      margin:0 0 18px;
+    }
+    .report-body strong{
+      color:var(--brand);
+      font-weight:700;
+    }
+    .source-note{
+      margin-top:30px;
+      padding-top:18px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.8;
+    }
+    .history-header{
+      padding:20px 16px 12px;
+      background:var(--paper);
+      position:sticky;
+      top:65px;
+      z-index:10;
+    }
+    .history-header h2{margin:0 0 12px;font-size:20px}
+    .search{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:11px 13px;
+      outline:none;
+      background:#fff;
+    }
+    .history-list{padding:0 16px 30px}
+    .history-item{
+      padding:16px 2px;
+      border-bottom:1px solid var(--line);
+      cursor:pointer;
+    }
+    .history-item:first-child{border-top:1px solid var(--line)}
+    .history-item .date{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .history-item .title{font-size:15px;font-weight:600;line-height:1.5;margin-bottom:5px}
+    .history-item .preview{font-size:13px;color:var(--muted);line-height:1.6}
+    .about{
+      padding:28px 20px 40px;
+    }
+    .about h2{font-size:22px;margin:0 0 18px}
+    .about p{font-size:15px;line-height:1.9;color:#41464f;margin:0 0 16px;text-align:justify}
+    .bottom-nav{
+      position:fixed;
+      left:50%;
+      bottom:0;
+      transform:translateX(-50%);
+      width:min(100%,480px);
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      background:rgba(255,255,255,.97);
+      backdrop-filter:blur(12px);
+      border-top:1px solid var(--line);
+      padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+      z-index:30;
+    }
+    .nav-item{
+      border:none;
+      background:none;
+      color:var(--muted);
+      padding:7px 4px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:3px;
+      cursor:pointer;
+      font-size:11px;
+    }
+    .nav-item span:first-child{font-size:20px}
+    .nav-item.active{color:var(--brand);font-weight:600}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:90px;
+      transform:translateX(-50%) translateY(10px);
+      background:#1f2937;
+      color:#fff;
+      padding:9px 14px;
+      border-radius:999px;
+      font-size:12px;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s;
+      z-index:50;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    @media (min-width:700px){
+      body{padding:24px 0}
+      .app{
+        min-height:calc(100vh - 48px);
+        border-radius:24px;
+        overflow:hidden;
+        box-shadow:0 20px 60px rgba(23,63,115,.12);
+      }
+      .bottom-nav{bottom:24px;border-radius:0 0 24px 24px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="logo">糖</div>
+        <div>
+          <div class="brand-title">白糖日报</div>
+          <div class="brand-sub">每日 06:00 更新</div>
+        </div>
+      </div>
+      <button class="copy-btn" onclick="copyReport()">一键复制</button>
+    </header>
+
+    <main>
+      <section id="today" class="page active">
+        <article class="article">
+          <div class="report-date">2026年06月13日</div>
+          <h1>白糖日报</h1>
+          <div class="meta">
+            <span>行情日期：2026-06-12</span>
+            <span>目标合约：SR2609</span>
+            <span>生成时间：05:58</span>
+          </div>
+
+          <div id="reportText" class="report-body">
+            <p><strong>市场表现：</strong>郑糖09合约收5307元/吨，涨幅0.36%。南宁现货-郑糖09合约基差70元/吨，配额外巴西糖加工完税估算利润为200元/吨。</p>
+
+            <p><strong>基本面：</strong>由于国际原油价格持续飙升，制糖比有大幅下调的预期，国际糖价重回至14美分/磅以上。4月，巴西开榨，巴西糖厂是否能大幅下调制糖比，取决于国际油价是否能顺利传导至巴西国内。目前，巴西为抑制通胀，在国际油价大幅上涨后并未上调国内汽油价格，因此糖醇价差回落至1美分/磅，若巴西持续维持低油价，制糖比未必会大幅下调；若国际油价持续维持高位至3个月以上，巴西面临上调油价的压力，糖醇比将逐步兑现大幅降低，关注巴西的开榨情况。国内广西糖产量不断上调，截至3月底已产糖730万吨，25/26榨季广西糖产量预计达到770万吨，国内产量达到1280万吨，进口量和糖浆预混粉表现同比大幅增长，意味着国内基本面非常宽松。今年进口量的多少将不会成为向下的阻碍。</p>
+
+            <p><strong>交易策略：</strong>逢高空09合约。</p>
+
+            <p><strong>风险提示：</strong>宏观、政策、天气、进口量。</p>
+          </div>
+
+          <div class="source-note">
+            数据来源：新浪财经、UNICA、NFCSF、OCSB、沐甜科技、泛糖科技。页面内容仅作为日报展示Demo。
+          </div>
+        </article>
+      </section>
+
+      <section id="history" class="page">
+        <div class="history-header">
+          <h2>历史日报</h2>
+          <input id="searchInput" class="search" type="search" placeholder="搜索日期或关键词" oninput="filterHistory()" />
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </section>
+
+      <section id="about" class="page">
+        <div class="about">
+          <h2>说明</h2>
+          <p>本页面用于快速查看每日白糖日报。日报按照“市场表现、基本面、交易策略、风险提示”四部分连续展示，不使用看板式结构，便于手机阅读和一键复制。</p>
+          <p>底部可在“今日、历史、说明”之间切换。历史记录可按日期或关键词搜索，点击后可直接查看对应日报。</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchPage('today',this)">
+        <span>⌂</span><span>今日</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('history',this)">
+        <span>▤</span><span>历史</span>
+      </button>
+      <button class="nav-item" onclick="switchPage('about',this)">
+        <span>ⓘ</span><span>说明</span>
+      </button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast">已复制日报内容</div>
+
+  <script>
+    const reports = [
+      {
+        date:'2026-06-13',
+        title:'郑糖09合约收5307元/吨，涨幅0.36%',
+        preview:'国际油价扰动、巴西糖醇比与国内宽松供给共同影响郑糖走势。',
+        content:`市场表现：郑糖09合约收5307元/吨，涨幅0.36%。南宁现货-郑糖09合约基差70元/吨，配额外巴西糖加工完税估算利润为200元/吨。
+
+基本面：由于国际原油价格持续飙升，制糖比有大幅下调的预期，国际糖价重回至14美分/磅以上。4月，巴西开榨，巴西糖厂是否能大幅下调制糖比，取决于国际油价是否能顺利传导至巴西国内。目前，巴西为抑制通胀，在国际油价大幅上涨后并未上调国内汽油价格，因此糖醇价差回落至1美分/磅，若巴西持续维持低油价，制糖比未必会大幅下调；若国际油价持续维持高位至3个月以上，巴西面临上调油价的压力，糖醇比将逐步兑现大幅降低，关注巴西的开榨情况。国内广西糖产量不断上调，截至3月底已产糖730万吨，25/26榨季广西糖产量预计达到770万吨，国内产量达到1280万吨，进口量和糖浆预混粉表现同比大幅增长，意味着国内基本面非常宽松。今年进口量的多少将不会成为向下的阻碍。
+
+交易策略：逢高空09合约。
+
+风险提示：宏观、政策、天气、进口量。`
+      },
+      {
+        date:'2026-06-12',
+        title:'郑糖09合约收5372元/吨，涨幅0.79%',
+        preview:'印度出口政策明朗，泰国丰产预期与巴西新榨季供应压力增强。',
+        content:`市场表现：郑糖09合约收5372元/吨，涨幅0.79%。南宁现货-郑糖09合约基差70元/吨，配额外巴西糖加工完税估算利润为200元/吨。
+
+基本面：本周印度政府明确表态本年度无意限制糖出口，印度食品部长于本周二的声明打消了市场对印度可能将更多甘蔗转用于乙醇生产的担忧。泰国25/26榨季尾声丰产超预期，接近1200万吨产量。巴西26/27榨季已经开启，关注巴西的糖醇比，若减幅在5%内国际糖市仍有巨大的供应压力。国内方面基本面非常宽松，本季广西糖增产已来到780万吨的历史新高，国内已经出现胀库，配额发放只会形成未来利空，当下现货价格相较于整个榨季仍然不是压力最大的时候。多头的期待来源于绝对价格的低位和异常天气，而26/27种植季广西降雨表现十分优秀，因此后市的供应压力将通过更低的价格来兑现。
+
+交易策略：逢高空09合约。
+
+风险提示：宏观、政策、天气、进口量。`
+      },
+      {
+        date:'2026-06-11',
+        title:'郑糖05合约收5368元/吨，跌幅0.79%',
+        preview:'原油上涨强化乙醇预期，国际糖价回到14美分上方。',
+        content:`市场表现：郑糖05合约收5368元/吨，跌幅0.79%。南宁现货-郑糖05合约基差26元/吨，配额外巴西糖加工完税估算利润为100元/吨。
+
+基本面：由于国际原油价格飙升，刺激乙醇价格走高，市场担心即将到来的新季巴西可能将甘蔗用于生产乙醇，制糖比有大幅下调的预期，叠加印度增产表现不及预期，国际糖价重回至14美分/磅以上。国内压榨方面，25/26榨季广西糖产量预估已经不断上调至720-730万吨。2月份广西单月产量预计达到近几年最高水平，广西进入累库阶段。然而近期宏观资金对白糖进行多头仓位配置，油价扰动叠加政策托底，郑糖短期内难以下跌，反弹的高度依赖于中东局势的降温和油价的走向，以及新季开榨巴西的糖醇比情况。
+
+交易策略：观望为主。
+
+风险提示：宏观、政策、天气、进口量。`
+      },
+      {
+        date:'2026-06-10',
+        title:'郑糖05合约收5311元/吨，跌幅0.17%',
+        preview:'宏观情绪带动商品反弹，但国内压榨和累库压力仍在。',
+        content:`市场表现：郑糖05合约收5311元/吨，跌幅0.17%。南宁现货-郑糖05合约基差26元/吨，配额外巴西糖加工完税估算利润为610元/吨。
+
+基本面：宏观情绪带动商品上涨，白糖强势反弹，但从国内压榨方面白糖难有反弹的支撑。25/26榨季广西糖产量预估已经不断上调至720-730万吨。2月份广西单月产量预计达到近几年最高水平，广西进入累库阶段。近期宏观资金对白糖进行多头仓位配置，叠加前期配额收紧政策扰动，近期国内表现为震荡强势。
+
+交易策略：空配为主。
+
+风险提示：宏观、政策、天气、进口量。`
+      }
+    ];
+
+    function switchPage(id,btn){
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      btn.classList.add('active');
+      if(id==='history') renderHistory(reports);
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function renderHistory(items){
+      const box=document.getElementById('historyList');
+      box.innerHTML='';
+      items.forEach(r=>{
+        const item=document.createElement('div');
+        item.className='history-item';
+        item.onclick=()=>openHistoryReport(r);
+        item.innerHTML=`
+          <div class="date">${r.date}</div>
+          <div class="title">${r.title}</div>
+          <div class="preview">${r.preview}</div>
+        `;
+        box.appendChild(item);
+      });
+    }
+
+    function filterHistory(){
+      const q=document.getElementById('searchInput').value.trim().toLowerCase();
+      const items=reports.filter(r=>
+        (r.date+' '+r.title+' '+r.preview+' '+r.content).toLowerCase().includes(q)
+      );
+      renderHistory(items);
+    }
+
+    function openHistoryReport(r){
+      const html=r.content.split('\n\n').map(block=>{
+        const idx=block.indexOf('：');
+        if(idx>-1){
+          const label=block.slice(0,idx+1);
+          const rest=block.slice(idx+1);
+          return `<p><strong>${label}</strong>${rest}</p>`;
+        }
+        return `<p>${block}</p>`;
+      }).join('');
+      document.querySelector('#today .report-date').textContent=r.date.replaceAll('-','年').replace(/年(\d{2})年/, '年$1月').replace(/月(\d{2})$/, '月$1日');
+      document.getElementById('reportText').innerHTML=html;
+      document.querySelector('.nav-item').click();
+    }
+
+    async function copyReport(){
+      const text=document.getElementById('reportText').innerText.trim();
+      try{
+        await navigator.clipboard.writeText(text);
+      }catch(e){
+        const textarea=document.createElement('textarea');
+        textarea.value=text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+      const toast=document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(()=>toast.classList.remove('show'),1600);
+    }
+
+    renderHistory(reports);
+  </script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+# ============================================================
+# 白糖日报生成系统 - 配置文件
+# ============================================================
+
+timezone: Asia/Shanghai
+
+# ── 目标合约 ────────────────────────────────────────────
+target_contract:
+  code: SR2609
+  year: 2026
+  month: 09
+  allow_continuous_contract: false
+
+# ── 行情展示合约 ────────────────────────────────────────
+display_contract:
+  zhengzhou:
+    symbol: SR0
+    type: continuous_main
+    display_name: "郑糖主力合约"
+    source_url: "https://finance.sina.com.cn/futures/quotes/SR0.shtml"
+    source_name: "新浪财经"
+    note: "SR0不得改名为SR2609。正文写'郑糖主力合约'。"
+  ice:
+    symbol: RS
+    type: continuous_main
+    display_name: "ICE原糖主力合约"
+    source_url: "https://finance.sina.com.cn/futures/quotes/RS.shtml"
+    source_name: "新浪财经"
+    note: "不得自行补SB2607等具体代码，除非接口明确返回。"
+
+# ── 数据时效（天） ──────────────────────────────────────
+freshness:
+  market_days: 3
+  weather_days: 2
+  unica_biweekly_days: 20
+  production_data_days: 45
+  planting_area_days: 60
+  policy_days: 90
+  import_profit_days: 3
+  # 国内数据时效
+  domestic_production_days: 45
+  domestic_sales_inventory_days: 45
+  domestic_area_days: 90
+  domestic_weather_days: 7
+
+# ── 来源白名单 ──────────────────────────────────────────
+source_whitelist:
+  巴西:
+    - unicadata.com.br
+    - unica.com.br
+    - open-meteo.com
+  印度:
+    - hisugar.com
+    - msweet.com.cn
+    - coopsugar.org
+    - open-meteo.com
+  泰国:
+    - sugarzone.in.th
+    - ocsb.go.th
+    - opendata.ocsb.go.th
+    - catalog.ocsb.go.th
+    - prd.go.th
+    - facebook.com/ocsbofficial
+    - open-meteo.com
+  中国:
+    - hisugar.com
+    - msweet.com.cn
+    - open-meteo.com
+
+# ── 泛糖科技 ────────────────────────────────────────────
+hisugar:
+  base_url: "https://www.hisugar.com"
+  import_profit:
+    enabled: true
+    source_name: "泛糖科技"
+    max_age_days: 3
+  news:
+    enabled: true
+    international_url: "https://www.hisugar.com/home/newList?parentId=4&childId=49&level=2"
+    india_keywords:
+      - "印度"
+      - "ISMA"
+      - "糖产量"
+      - "季风"
+      - "马邦"
+      - "北方邦"
+      - "乙醇分流"
+      - "出口配额"
+      - "库存"
+      - "甘蔗压榨"
+    thailand_keywords:
+      - "泰国"
+      - "甘蔗"
+      - "食糖产量"
+      - "压榨"
+      - "降雨"
+      - "出口"
+      - "种植面积"
+      - "木薯"
+    china_keywords:
+      - "产糖量"
+      - "种植面积"
+      - "工业库存"
+      - "销售进度"
+      - "糖浆"
+      - "预混粉"
+      - "进口利润"
+      - "到港"
+      - "基差"
+      - "收购价"
+      - "苗情"
+      - "墒情"
+
+# ── 沐甜科技 ────────────────────────────────────────────
+msweet:
+  enabled: true
+  source_name: "沐甜科技"
+  international_url: "https://www.msweet.com.cn/eportal/ui?pageId=1013963&currentPage=5&moduleId=7031c73790e84afc8e68137c3ab7b061"
+  domestic_url: "https://www.msweet.com.cn/mtkj/xwzx62/gn97/index.html"
+  # 国内产销栏目 — 优先抓取
+  domestic_columns:
+    - name: "各省产销"
+      url: "https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html"
+      scan_pages: 5
+    - name: "产区动态"
+      url: "https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html"
+      scan_pages: 3
+  scan_pages: 8
+  # 国内文章关键词筛选 — 第一优先
+  domestic_production_keywords:
+    - "累计产糖"
+    - "产混合糖"
+    - "累计销糖"
+    - "工业库存"
+    - "产销率"
+    - "入榨甘蔗"
+    - "收榨"
+    - "开榨"
+    - "食糖库存"
+    - "最终产糖"
+    - "截至月底"
+    - "截至月末"
+    - "产糖量"
+    - "产糖"
+    - "销糖"
+    - "销售"
+    - "库存"
+  # 国内文章关键词 — 第二优先
+  domestic_area_keywords:
+    - "26/27榨季"
+    - "种植面积"
+    - "甘蔗面积"
+    - "新植蔗"
+    - "宿根蔗"
+    - "春耕"
+    - "下种"
+    - "补种"
+  domestic_weather_keywords:
+    - "苗情"
+    - "出苗"
+    - "分蘖"
+    - "土壤墒情"
+    - "高温"
+    - "强降雨"
+    - "干旱"
+    - "洪涝"
+    - "台风"
+  # 排除关键词 — 不得作为现实供给数据
+  domestic_exclude_keywords:
+    - "座谈会"
+    - "论坛"
+    - "研讨会"
+    - "产业升级"
+    - "签约"
+    - "招商"
+    - "会议"
+    - "大会"
+    - "领导调研"
+    - "企业活动"
+    - "品牌活动"
+  india_keywords:
+    - "印度"
+    - "ISMA"
+    - "季风"
+    - "北方邦"
+    - "马哈拉施特拉邦"
+    - "出口"
+    - "甘蔗"
+    - "食糖"
+  thailand_keywords:
+    - "泰国"
+    - "糖业"
+    - "食糖"
+    - "甘蔗"
+    - "出口"
+    - "供应"
+
+# ── 泰国数据源优先级 ──────────────────────────────────
+# 1. SugarZone → 2. OCSB Open Data → 3. PRD → 4. OCSB主站 → 5. Facebook → 6. CSV缓存 → 7. 官方预测
+thailand_sources:
+  sugarzone:
+    name: "SugarZone"
+    url: "https://sugarzone.in.th/production-report-by-region/"
+    source_type: "official_production_report"
+  ocsb_open_data:
+    name: "OCSB Open Data"
+    url: "https://opendata.ocsb.go.th/"
+    source_type: "official_structured"
+  thai_prd:
+    name: "Thai Government PRD"
+    url: "https://www.prd.go.th/"
+    source_type: "thai_government_release"
+  ocsb_main:
+    name: "OCSB"
+    url: "https://www.ocsb.go.th/"
+    source_type: "official_release"
+  ocsb_facebook:
+    name: "OCSB Official Facebook"
+    url: "https://www.facebook.com/ocsbofficial/"
+    source_type: "official_social"
+  ocsb_regional:
+    name: "OCSB Regional Center"
+    source_type: "official_regional"
+
+# ── 泰国 SugarZone ────────────────────────────────────
+sugarzone:
+  enabled: true
+  source_name: "SugarZone"
+  production_report_url: "https://sugarzone.in.th/production-report-by-region/"
+  target_season_thai: "2568/2569"
+  target_season: "2025/26"
+  # Thai month names mapping
+  thai_months:
+    "มกราคม": 1
+    "กุมภาพันธ์": 2
+    "มีนาคม": 3
+    "เมษายน": 4
+    "พฤษภาคม": 5
+    "มิถุนายน": 6
+    "กรกฎาคม": 7
+    "สิงหาคม": 8
+    "กันยายน": 9
+    "ตุลาคม": 10
+    "พฤศจิกายน": 11
+    "ธันวาคม": 12
+  # PDF parsing
+  total_row_marker: "รวมทั้งสิ้น"
+
+# ── 泰国 OCSB ──────────────────────────────────────────
+ocsb:
+  enabled: true
+  source_name: "OCSB"
+  main_site_url: "https://www.ocsb.go.th/"
+  production_url: "https://www.ocsb.go.th/report_can_sugar_production_2565-66/"
+  open_data_base_url: "https://opendata.ocsb.go.th/"
+  ckan_api_url: "https://opendata.ocsb.go.th/api/3/action/package_search"
+  catalog_base_url: "https://catalog.ocsb.go.th/"
+  target_season_thai: "2568/69"
+  target_season: "2025/26"
+  target_date_hint: "05/05/69"
+  target_field: "รวมน้ำตาลทรายปริ"
+  # PRD 搜索关键词
+  prd_search_keywords:
+    - "อ้อย"
+    - "น้ำตาล"
+    - "OCSB"
+    - "อุตสาหกรรม"
+    - "甘蔗"
+    - "糖"
+  # 官方Facebook页面
+  facebook_page_url: "https://www.facebook.com/ocsbofficial/"
+  facebook_mobile_url: "https://mbasic.facebook.com/ocsbofficial/"
+
+# ── 印度 NFCSF ─────────────────────────────────────────
+coopsugar:
+  enabled: true
+  source_name: "NFCSF"
+  statistics_url: "https://coopsugar.org/statistics/"
+  target_field: "ALL INDIA Sugar Production In Lmts"
+
+# ── UNICA ───────────────────────────────────────────────
+unica:
+  enabled: true
+  url: "https://unicadata.com.br/listagem.php?idMn=63&idioma=2"
+  note: "只读取PDF Table 2 的 Sugar 与 Share %。不保存PDF，只更新CSV。"
+
+# ── 市场数据源 ──────────────────────────────────────────
+market_data:
+  sources:
+    sina_finance:
+      enabled: true
+      name: "新浪财经"
+      sr0_url: "https://hq.sinajs.cn/list=nf_SR0"
+      sr2609_url: "http://hq.sinajs.cn/list=SR2609"
+      rs_url: "https://hq.sinajs.cn/list=hf_RS"
+      timeout: 15
+      retries: 2
+    fallback_csv:
+      enabled: true
+      path: "inputs/market_fallback.csv"
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  timeout: 20
+  max_retries: 2
+
+# ── 基本面（研究员可选补充） ────────────────────────────
+fundamentals:
+  input_dir: "inputs/fundamentals"
+  filename_pattern: "{date}.md"
+  required: false
+  target_contract: SR2609
+
+# ── 交易观点 ────────────────────────────────────────────
+approved_view_file: "inputs/approved_view.md"
+approved_view:
+  required_contract: SR2609
+  reject_contracts:
+    - SR09
+    - SR2509
+    - SR509
+    - SR0
+
+# ── 模型 ────────────────────────────────────────────────
+model:
+  provider: "deepseek"
+
+# ── 日报格式 ────────────────────────────────────────────
+report:
+  fundamentals_min_chars: 280
+  fundamentals_max_chars: 520
+  total_min_chars: 350
+  total_max_chars: 900
+  reference_sample_file: "参考样例.md"
+
+# ── 输出 ────────────────────────────────────────────────
+output:
+  output_dir: "outputs"
+  subdir_pattern: "{date}"
+  filename_pattern: "白糖日报_{date_compact}.md"
+  backup_on_exist: false
+
+# ── 异常阈值 ────────────────────────────────────────────
+anomaly_thresholds:
+  crush_change_pct: 20
+  price_change_pct: 5
+  production_change_pct: 10
+
+# ── 定时任务 ────────────────────────────────────────────
+schedule:
+  task_name: "SugarDailyReport"
+  trigger_time: "05:40"
+  target_completion: "06:00"
+  execution_sequence:
+    - "05:40 获取新浪SR0和RS行情"
+    - "05:42 获取泛糖现货、基差及进口利润"
+    - "05:45 检查UNICA新双周报告"
+    - "05:48 抓取印度泰国最新资讯"
+    - "05:52 更新国内基本面数据"
+    - "05:55 调用DeepSeek生成基本面"
+    - "05:58 完成日报"

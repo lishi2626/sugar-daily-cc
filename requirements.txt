@@ -1,0 +1,5 @@
+# 白糖日报生成系统 - Python 依赖
+python-dotenv>=1.0.0
+openai>=1.0.0
+pyyaml>=6.0
+openpyxl>=3.1.0
