@@ -15,5 +15,16 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
+  ],
+  "headers": [
+    {
+      "source": "/public/data/(.*).json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    }
   ]
 }
