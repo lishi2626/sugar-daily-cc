@@ -3,8 +3,8 @@ from __future__ import annotations
 """
 解析 outputs/ 中的白糖日报 Markdown，生成前端 JSON。
 用法:
-  python scripts/update_web_reports.py
-  python scripts/update_web_reports.py --date 2026-06-14
+  py scripts/update_web_reports.py
+  py scripts/update_web_reports.py --date 2026-06-14
 """
 
 import argparse

@@ -1,0 +1,1246 @@
+2026-06-15 05:41:42,005 [INFO] ============================================================
+2026-06-15 05:41:42,005 [INFO] 白糖日报生成开始
+2026-06-15 05:41:42,005 [INFO]   发布日期: 2026-06-15 | 目标合约: SR2609
+2026-06-15 05:41:42,005 [INFO] ============================================================
+2026-06-15 05:41:42,005 [INFO] [01/16] 读取目标合约: SR2609
+2026-06-15 05:41:42,005 [INFO] [02/16] 获取公开行情...
+2026-06-15 05:41:42,018 [INFO] CSV数据校验通过: SR2609, 交易日=2026-06-12
+2026-06-15 05:41:42,089 [INFO] SR0展示行情: close=5321.00 chg=0.42% date=2026-06-12
+2026-06-15 05:41:42,141 [INFO] RS展示行情: close=14.24 chg=-0.71%
+2026-06-15 05:41:42,141 [INFO] 郑糖展示行情使用SR0: 5321.00
+2026-06-15 05:41:42,141 [INFO] ICE展示行情使用RS: 14.24
+2026-06-15 05:41:45,009 [INFO] 泛糖: 发现 5 篇候选文章, 最新 title_date=2026-06-11
+2026-06-15 05:41:45,010 [INFO] 泛糖候选[0]: id=2026061208370767084441 title_date=2026-06-11
+2026-06-15 05:41:45,010 [INFO] 泛糖候选[1]: id=2026061108464892834611 title_date=2026-06-10
+2026-06-15 05:41:45,010 [INFO] 泛糖候选[2]: id=2026061008335808352359 title_date=2026-06-09
+2026-06-15 05:41:45,010 [INFO] 泛糖候选[3]: id=2026060908490046153863 title_date=2026-06-08
+2026-06-15 05:41:45,010 [INFO] 泛糖候选[4]: id=2026060808423587362274 title_date=2026-06-05
+2026-06-15 05:41:45,485 [INFO] 泛糖选中: id=2026061208370767084441 title_date=2026-06-11 body_date=2026-06-11 published_at=2026-06-12 11:14
+2026-06-15 05:41:45,493 [INFO] 泛糖结果: title_date=2026-06-11 ICE=14.37 汇率=6.7720 配额外利润=506 状态=verified
+2026-06-15 05:41:45,494 [INFO] 巴西进口利润来自泛糖科技: 506 元/吨 (数据日期 2026-06-11)
+2026-06-15 05:41:45,494 [INFO] 市场数据获取成功 | 来源: 新浪财经 | 交易日: 2026-06-12
+2026-06-15 05:41:45,494 [INFO] [03/16] 校验合约代码...
+2026-06-15 05:41:45,494 [INFO] [03/16] 行情展示合约=SR0；交易观点目标仍为 SR2609
+2026-06-15 05:41:45,494 [INFO] [05/16] 校验行情日期...
+2026-06-15 05:41:45,495 [INFO] [05/16] 行情日期: 2026-06-12 (有效)
+2026-06-15 05:41:45,495 [INFO] [06/16] 计算涨跌幅、基差...
+2026-06-15 05:41:45,495 [INFO] [06/16] 收盘=5321.00 前收=5299.00 涨跌=0.42% 基差=56.00
+2026-06-15 05:41:45,495 [INFO] [07/16] 研究员基本面（可选）...
+2026-06-15 05:41:45,496 [INFO] 研究员基本面文件不存在（可选）: /Users/mymac/codingtest/sugar-daily/inputs/fundamentals/2026-06-15.md
+2026-06-15 05:41:45,496 [INFO] [08/16] 自动抓取基本面...
+2026-06-15 05:41:45,538 [INFO] ==================================================
+2026-06-15 05:41:45,538 [INFO] 基本面自动抓取 - 2026-06-15 | 目标合约: SR2609
+2026-06-15 05:41:45,538 [INFO] ==================================================
+2026-06-15 05:41:45,538 [INFO] --- 全球供需机构观点 ---
+2026-06-15 05:41:45,538 [INFO] 全球供需机构观点: https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html
+2026-06-15 05:41:45,729 [INFO] 沐甜机构观点: 找到 10 篇文章
+2026-06-15 05:41:48,184 [INFO] 2026/27年度机构观点: 3 条
+2026-06-15 05:41:48,184 [INFO]   Czarnikow | 2026-05-20 | surplus140万吨 | Czarnikow：2026/27年度糖市将出现小幅过剩
+2026-06-15 05:41:48,185 [INFO]   ISO | 2026-05-19 | deficit26.2万吨 | ISO将2025/26年度全球糖市过剩预估上调至224.4万吨
+2026-06-15 05:41:48,185 [INFO]   StoneX | 2026-05-13 | deficit55万吨 | StoneX：全球糖市将从过剩转向短缺，因产量缩减
+2026-06-15 05:41:48,185 [INFO] 全球供需机构观点: 3 条记录 (目标年度=2026/27)
+2026-06-15 05:41:48,185 [INFO] --- UNICA 巴西双周报告 ---
+2026-06-15 05:42:12,651 [INFO] UNICA PDF文本解析失败: No module named 'PyPDF2'
+2026-06-15 05:42:12,664 [INFO] UNICA双周报告: 1 条, source=https://unicadata.com.br/download_media.php?idM=32820684
+2026-06-15 05:42:12,664 [INFO] --- 印度 NFCSF/coopsugar ---
+2026-06-15 05:42:18,706 [INFO] PDF解析失败: No module named 'PyPDF2'
+2026-06-15 05:42:18,707 [INFO] --- 泰国 OCSB ---
+2026-06-15 05:42:18,707 [INFO] ==================================================
+2026-06-15 05:42:18,707 [INFO] 泰国数据抓取: 目标榨季=2025/26 | 日期=2026-06-15
+2026-06-15 05:42:18,708 [INFO] ==================================================
+2026-06-15 05:42:18,708 [INFO] --- [优先级1] SugarZone生产报告 ---
+2026-06-15 05:42:18,708 [INFO] ==================================================
+2026-06-15 05:42:18,708 [INFO] SugarZone泰国生产报告: https://sugarzone.in.th/production-report-by-region/
+2026-06-15 05:42:18,708 [INFO] ==================================================
+2026-06-15 05:42:23,588 [INFO] SugarZone找到 10 份报告
+2026-06-15 05:42:23,588 [INFO] SugarZone最新报告: 日期=2026-05-05 (泰文: 5 พฤษภาคม 2569), PDF=https://sugarzone.in.th/wp-content/uploads/2026/05/05May69.pdf
+2026-06-15 05:42:23,588 [INFO] SugarZone报告所属榨季: 2025/26 (报告日期: 2026-05-05)
+2026-06-15 05:42:26,931 [INFO] SugarZone PDF下载成功: 276961 bytes
+2026-06-15 05:42:26,937 [WARNING] SugarZone PDF解析失败: No module named 'PyPDF2'
+2026-06-15 05:42:26,938 [WARNING] SugarZone PDF解析未提取到数据
+2026-06-15 05:42:26,940 [INFO] --- [优先级2] OCSB Open Data ---
+2026-06-15 05:57:39,498 [INFO] OCSB Open Data入口状态码: 200
+2026-06-15 05:57:41,662 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณน้ำตาลทราย
+2026-06-15 05:57:41,663 [INFO] CKAN搜索: query=ปริมาณน้ำตาลทราย status=200 results=1
+2026-06-15 05:57:44,126 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/1ab1c731-5d59-43f0-ae4e-e4e444ffbea8/resource/31a06ac4-c858-47a3-9760-b5934074c676/download/s_production.csv
+2026-06-15 05:57:44,133 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-15 05:57:44,133 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-15 05:57:44,133 [INFO] Open Data聚合: indicator=sugar_production value=- latest_season=2023/24 status=not_published
+2026-06-15 05:57:46,380 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณอ้อย
+2026-06-15 05:57:46,380 [INFO] CKAN搜索: query=ปริมาณอ้อย status=200 results=2
+2026-06-15 05:57:48,793 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/8f34c88b-db32-431f-b314-8b5808b6d63d/resource/495e4f6c-aac6-4113-afd8-9c8797223dbe/download/c_production.csv
+2026-06-15 05:57:48,805 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-15 05:57:48,805 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-15 05:57:48,805 [INFO] Open Data聚合: indicator=sugarcane_volume value=- latest_season=2023/24 status=not_published
+2026-06-15 05:57:51,043 [INFO] OCSB Open Data状态码: 200 | query=สถิติพื้นที่ปลูกอ้อย
+2026-06-15 05:57:51,043 [INFO] CKAN搜索: query=สถิติพื้นที่ปลูกอ้อย status=200 results=1
+2026-06-15 05:57:53,506 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b9719ed3-17b0-49af-a216-1e207e8efb7b/resource/ca4f4879-e9e2-4970-a037-833e9954d827/download/canearea.csv
+2026-06-15 05:57:53,511 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-15 05:57:53,511 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-15 05:57:53,511 [INFO] Open Data聚合: indicator=sugarcane_area value=- latest_season=2022/23 status=not_published
+2026-06-15 05:57:55,449 [INFO] OCSB Open Data状态码: 200 | query=สถิติผลผลิตอ้อยต่อพื้นที่
+2026-06-15 05:57:55,449 [INFO] CKAN搜索: query=สถิติผลผลิตอ้อยต่อพื้นที่ status=200 results=1
+2026-06-15 05:57:57,780 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/f6286643-632b-4be7-9656-0bd4e229e723/resource/ea16cd9d-e0e6-4850-bbbf-da915a85be9a/download/caneyield.csv
+2026-06-15 05:57:57,784 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-15 05:57:57,785 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-15 05:57:57,785 [INFO] Open Data聚合: indicator=sugarcane_yield value=- latest_season=2022/23 status=not_published
+2026-06-15 05:58:00,565 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-15 05:58:00,566 [INFO] CKAN搜索: query=ข้อมูลการพยากรณ์ status=200 results=1
+2026-06-15 05:58:02,740 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-15 05:58:02,750 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-15 05:58:02,750 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-15 05:58:02,750 [INFO] Open Data聚合: indicator=production_forecast value=- latest_season=2022/23 status=not_published
+2026-06-15 05:58:05,792 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณการส่งออกน้ำตาลทราย
+2026-06-15 05:58:05,793 [INFO] CKAN搜索: query=ปริมาณการส่งออกน้ำตาลทราย status=200 results=1
+2026-06-15 05:58:11,438 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv
+2026-06-15 05:58:11,720 [INFO] 识别到的佛历年份: 2565/2566, 2566/2567, ก่อนปีการผลิต 2565/2566, ก่อนปีการผลิต 2566/2567
+2026-06-15 05:58:11,720 [INFO] 转换后的公历榨季: 2022/23, 2023/24
+2026-06-15 05:58:11,720 [INFO] Open Data聚合: indicator=sugar_exports value=- latest_season=2023/24 status=not_published
+2026-06-15 05:58:11,720 [INFO] Open Data完成: has_fresh=False has_national_total=False
+2026-06-15 05:58:11,720 [INFO] --- [优先级3] 泰国政府PRD ---
+2026-06-15 05:58:11,720 [INFO] PRD搜索: url=https://www.prd.go.th/ keywords=['อ้อย', 'น้ำตาล', 'OCSB']
+2026-06-15 05:58:22,420 [INFO] 请求失败 https://www.prd.go.th/: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-15 06:13:40,200 [INFO] 请求失败 https://www.prd.go.th/en/: <urlopen error _ssl.c:1112: The handshake operation timed out>
+2026-06-15 06:13:40,207 [INFO] PRD主站不可访问
+2026-06-15 06:13:40,208 [INFO] --- [优先级4] OCSB主站 ---
+2026-06-15 06:13:53,418 [INFO] OCSB HEAD请求失败 attempt=1 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-15 06:14:07,820 [INFO] OCSB HEAD请求失败 attempt=2 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-15 06:14:07,824 [INFO] OCSB主站状态码: None
+2026-06-15 06:14:07,826 [INFO] --- [优先级5] OCSB官方Facebook ---
+2026-06-15 06:14:07,826 [INFO] OCSB Facebook: url=https://mbasic.facebook.com/ocsbofficial/
+2026-06-15 06:14:11,310 [INFO] OCSB Facebook抓取完成: 1 条记录
+2026-06-15 06:14:11,310 [INFO] --- [优先级6] OCSB区域中心 ---
+2026-06-15 06:14:11,310 [INFO] OCSB区域中心: 当前无可用结构化入口，跳过。
+2026-06-15 06:14:11,311 [INFO] --- [优先级7] CSV缓存 ---
+2026-06-15 06:14:11,318 [INFO] --- [优先级8] 官方预测 ---
+2026-06-15 06:14:13,956 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-15 06:14:16,270 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-15 06:14:16,280 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-15 06:14:16,280 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-15 06:14:16,280 [INFO] 泰国官方预测: 1 条记录
+2026-06-15 06:14:16,280 [INFO] 泰国数据汇总: fresh=0 cached=0 not_published=8 source_503=0 total=8
+2026-06-15 06:14:16,280 [INFO] 泰国最终产量: 未发布
+2026-06-15 06:14:16,280 [INFO] 泰国阶段性数据: 无
+2026-06-15 06:14:16,336 [INFO] --- 中国/广西 沐甜国内 ---
+2026-06-15 06:14:16,336 [INFO] 沐甜抓取栏目: 产销预估 (优先级1, https://www.msweet.com.cn/eportal/ui?pageId=1014225)
+2026-06-15 06:14:18,795 [INFO] 沐甜栏目 '产销预估': 找到 50 篇文章
+2026-06-15 06:14:18,795 [INFO] 沐甜抓取栏目: 各省产销 (优先级2, https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html)
+2026-06-15 06:14:19,579 [INFO] 沐甜栏目 '各省产销': 找到 100 篇文章
+2026-06-15 06:14:19,579 [INFO] 沐甜抓取栏目: 产区动态 (优先级3, https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html)
+2026-06-15 06:14:20,041 [INFO] 沐甜栏目 '产区动态': 找到 130 篇文章
+2026-06-15 06:14:20,192 [INFO] 沐甜国内文章总数: 140
+2026-06-15 06:14:20,194 [INFO] 生产文章分类: 广西=20, 云南=25, 其他=0
+2026-06-15 06:14:22,369 [INFO] 国内缓存新鲜度检查: 3 个分组
+2026-06-15 06:14:22,369 [INFO] 沐甜国内抓取完成: 6 条记录
+2026-06-15 06:14:22,373 [INFO] CSV更新: inserted=7 updated=0 conflicts=0
+2026-06-15 06:14:22,373 [INFO] 巴西: total=9 fresh=7 cached=2 stale=0
+2026-06-15 06:14:22,373 [INFO] 印度: total=1 fresh=1 cached=0 stale=0
+2026-06-15 06:14:22,373 [INFO] 泰国: total=13 fresh=3 cached=10 stale=0
+2026-06-15 06:14:22,373 [INFO] 中国: total=13 fresh=13 cached=0 stale=0
+2026-06-15 06:14:22,373 [INFO] 宏观: total=7 fresh=7 cached=0 stale=0
+2026-06-15 06:14:22,374 [INFO] [09/16] 写入市场数据到CSV...
+2026-06-15 06:14:22,375 [INFO] CSV更新: inserted=0 updated=0 conflicts=0
+2026-06-15 06:14:22,375 [INFO] [10/16] 从CSV读取有效记录...
+2026-06-15 06:14:22,375 [INFO] [10/16] 有效记录: 48 条
+2026-06-15 06:14:22,376 [INFO] [10/16] 筛选 SR2609 相关信息...
+2026-06-15 06:14:22,376 [INFO] [10/16] 模型输入: 8591 字符
+2026-06-15 06:14:22,376 [INFO] [11/16] 读取交易观点...
+2026-06-15 06:14:22,378 [INFO] 交易观点: 合约=SR2609, 确认日期=2026-06-12
+2026-06-15 06:14:22,378 [INFO] [12/16] 合约一致性检查...
+2026-06-15 06:14:22,378 [INFO] [12/16] 一致性检查通过
+2026-06-15 06:14:22,378 [WARNING] [12.5/16] 策略校验: 观点缺少参考价格
+2026-06-15 06:14:22,378 [INFO] [13/16] 调用 DeepSeek 生成基本面...
+2026-06-15 06:14:22,379 [INFO] DeepSeek 调用: model=deepseek-chat, base_url=https://api.deepseek.com/v1
+2026-06-15 06:14:23,078 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-15 06:22:18,836 [INFO] Retrying request to /chat/completions in 0.384742 seconds
+2026-06-15 06:22:19,521 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-15 06:22:24,323 [INFO] DeepSeek 调用成功: 525 字符
+2026-06-15 06:22:24,324 [INFO] [14/16] 校验模型正文...
+2026-06-15 06:22:24,324 [INFO] [14/16] 基本面正文: 525 字符
+2026-06-15 06:22:24,324 [INFO] [15/16] 最终一致性检查...
+2026-06-15 06:22:24,324 [INFO] [15/16] 最终一致性检查通过
+2026-06-15 06:22:24,324 [INFO] [16/16] 拼接日报并写入...
+2026-06-15 06:22:24,326 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-15/白糖日报_20260615.md
+2026-06-15 06:22:24,326 [INFO] ============================================================
+2026-06-15 06:22:24,326 [INFO] 日报生成完成
+2026-06-15 06:22:24,326 [INFO]   日报: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-15/白糖日报_20260615.md
+2026-06-15 06:22:24,326 [INFO]   状态: success | 合约: SR2609 | 行情日期: 2026-06-12
+2026-06-15 06:22:24,326 [INFO] ============================================================
+2026-06-15 06:22:24,330 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/public/data/reports/2026-06-15.json
+2026-06-15 06:22:24,331 [INFO] 索引已更新: /Users/mymac/codingtest/sugar-daily/public/data/reports.json (3 篇日报)
+2026-06-15 06:22:24,331 [INFO] 前端JSON已更新
+[main e407913] Update sugar daily report 2026-06-15
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 public/data/reports/2026-06-15.json
+2026-06-15 06:22:26,874 [INFO] 已推送到 GitHub: Update sugar daily report 2026-06-15
+2026-06-15 06:22:26,875 [INFO] [OK] 日报已生成: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-15/白糖日报_20260615.md
+2026-06-16 05:41:10,834 [INFO] ============================================================
+2026-06-16 05:41:10,834 [INFO] 白糖日报生成开始
+2026-06-16 05:41:10,834 [INFO]   发布日期: 2026-06-16 | 目标合约: SR2609
+2026-06-16 05:41:10,834 [INFO] ============================================================
+2026-06-16 05:41:10,834 [INFO] [01/16] 读取目标合约: SR2609
+2026-06-16 05:41:10,834 [INFO] [02/16] 获取公开行情...
+2026-06-16 05:41:10,918 [WARNING] 请求失败 (尝试 1): https://hq.sinajs.cn/list=nf_SR0 — <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-16 05:41:14,489 [INFO] SR0展示行情: close=5331.00 chg=0.24% date=2026-06-15
+2026-06-16 05:41:14,576 [INFO] RS展示行情: close=14.15 chg=-0.54%
+2026-06-16 05:41:14,583 [INFO] 郑糖展示行情使用SR0: 5331.00
+2026-06-16 05:41:14,584 [INFO] ICE展示行情使用RS: 14.15
+2026-06-16 05:41:17,843 [INFO] 泛糖: 发现 5 篇候选文章, 最新 title_date=2026-06-12
+2026-06-16 05:41:17,845 [INFO] 泛糖候选[0]: id=2026061508390971521945 title_date=2026-06-12
+2026-06-16 05:41:17,845 [INFO] 泛糖候选[1]: id=2026061208370767084441 title_date=2026-06-11
+2026-06-16 05:41:17,846 [INFO] 泛糖候选[2]: id=2026061108464892834611 title_date=2026-06-10
+2026-06-16 05:41:17,846 [INFO] 泛糖候选[3]: id=2026061008335808352359 title_date=2026-06-09
+2026-06-16 05:41:17,846 [INFO] 泛糖候选[4]: id=2026060908490046153863 title_date=2026-06-08
+2026-06-16 05:41:18,361 [INFO] 泛糖选中: id=2026061508390971521945 title_date=2026-06-12 body_date=2026-06-12 published_at=2026-06-15 11:22
+2026-06-16 05:41:18,364 [INFO] 泛糖结果: title_date=2026-06-12 ICE=14.24 汇率=6.7641 配额外利润=608 状态=verified
+2026-06-16 05:41:18,365 [INFO] 巴西进口利润来自泛糖科技: 608 元/吨 (数据日期 2026-06-12)
+2026-06-16 05:41:18,365 [INFO] 市场数据获取成功 | 来源: 新浪财经 | 交易日: 2026-06-15
+2026-06-16 05:41:18,365 [INFO] [03/16] 校验合约代码...
+2026-06-16 05:41:18,365 [INFO] [03/16] 行情展示合约=SR0；交易观点目标仍为 SR2609
+2026-06-16 05:41:18,365 [INFO] [05/16] 校验行情日期...
+2026-06-16 05:41:18,366 [INFO] [05/16] 行情日期: 2026-06-15 (有效)
+2026-06-16 05:41:18,366 [INFO] [06/16] 计算涨跌幅、基差...
+2026-06-16 05:41:18,366 [INFO] [06/16] 收盘=5331.00 前收=5318.00 涨跌=0.24% 基差=N/A
+2026-06-16 05:41:18,366 [INFO] [07/16] 研究员基本面（可选）...
+2026-06-16 05:41:18,367 [INFO] 研究员基本面文件不存在（可选）: /Users/mymac/codingtest/sugar-daily/inputs/fundamentals/2026-06-16.md
+2026-06-16 05:41:18,368 [INFO] [08/16] 自动抓取基本面...
+2026-06-16 05:41:18,419 [INFO] ==================================================
+2026-06-16 05:41:18,419 [INFO] 基本面自动抓取 - 2026-06-16 | 目标合约: SR2609
+2026-06-16 05:41:18,419 [INFO] ==================================================
+2026-06-16 05:41:18,419 [INFO] --- 全球供需机构观点 ---
+2026-06-16 05:41:18,419 [INFO] 全球供需机构观点: https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html
+2026-06-16 05:41:18,590 [INFO] 沐甜机构观点: 找到 10 篇文章
+2026-06-16 05:41:22,074 [INFO] 2026/27年度机构观点: 3 条
+2026-06-16 05:41:22,074 [INFO]   Czarnikow | 2026-05-20 | surplus140万吨 | Czarnikow：2026/27年度糖市将出现小幅过剩
+2026-06-16 05:41:22,074 [INFO]   ISO | 2026-05-19 | deficit26.2万吨 | ISO将2025/26年度全球糖市过剩预估上调至224.4万吨
+2026-06-16 05:41:22,074 [INFO]   StoneX | 2026-05-13 | deficit55万吨 | StoneX：全球糖市将从过剩转向短缺，因产量缩减
+2026-06-16 05:41:22,075 [INFO] 全球供需机构观点: 3 条记录 (目标年度=2026/27)
+2026-06-16 05:41:22,075 [INFO] --- UNICA 巴西双周报告 ---
+2026-06-16 05:41:31,097 [INFO] UNICA PDF文本解析失败: No module named 'PyPDF2'
+2026-06-16 05:41:31,102 [INFO] UNICA双周报告: 1 条, source=https://unicadata.com.br/download_media.php?idM=32820684
+2026-06-16 05:41:31,103 [INFO] --- 印度 NFCSF/coopsugar ---
+2026-06-16 05:41:40,437 [INFO] PDF解析失败: No module named 'PyPDF2'
+2026-06-16 05:41:40,439 [INFO] --- 泰国 OCSB ---
+2026-06-16 05:41:40,440 [INFO] ==================================================
+2026-06-16 05:41:40,440 [INFO] 泰国数据抓取: 目标榨季=2025/26 | 日期=2026-06-16
+2026-06-16 05:41:40,440 [INFO] ==================================================
+2026-06-16 05:41:40,440 [INFO] --- [优先级1] SugarZone生产报告 ---
+2026-06-16 05:41:40,440 [INFO] ==================================================
+2026-06-16 05:41:40,440 [INFO] SugarZone泰国生产报告: https://sugarzone.in.th/production-report-by-region/
+2026-06-16 05:41:40,440 [INFO] ==================================================
+2026-06-16 05:41:48,370 [INFO] SugarZone找到 10 份报告
+2026-06-16 05:41:48,373 [INFO] SugarZone最新报告: 日期=2026-05-05 (泰文: 5 พฤษภาคม 2569), PDF=https://sugarzone.in.th/wp-content/uploads/2026/05/05May69.pdf
+2026-06-16 05:41:48,373 [INFO] SugarZone报告所属榨季: 2025/26 (报告日期: 2026-05-05)
+2026-06-16 05:41:50,011 [INFO] SugarZone PDF下载成功: 276961 bytes
+2026-06-16 05:41:50,017 [WARNING] SugarZone PDF解析失败: No module named 'PyPDF2'
+2026-06-16 05:41:50,018 [WARNING] SugarZone PDF解析未提取到数据
+2026-06-16 05:41:50,018 [INFO] --- [优先级2] OCSB Open Data ---
+2026-06-16 05:41:50,964 [INFO] OCSB Open Data入口状态码: 200
+2026-06-16 05:41:55,983 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%B2%E0%B8%A5%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:42:02,490 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%B2%E0%B8%A5%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%A2&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-16 05:42:02,492 [INFO] OCSB Open Data状态码: None | query=ปริมาณน้ำตาลทราย
+2026-06-16 05:42:02,492 [INFO] CKAN搜索: query=ปริมาณน้ำตาลทราย status=None results=0
+2026-06-16 05:42:02,501 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-16 05:42:03,600 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-16 05:42:03,601 [INFO] OCSB Open Data状态码: None | query=ปริมาณอ้อย
+2026-06-16 05:42:03,601 [INFO] CKAN搜索: query=ปริมาณอ้อย status=None results=0
+2026-06-16 05:42:03,606 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9B%E0%B8%A5%E0%B8%B9%E0%B8%81%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-16 05:42:04,896 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9B%E0%B8%A5%E0%B8%B9%E0%B8%81%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-16 05:42:04,897 [INFO] OCSB Open Data状态码: None | query=สถิติพื้นที่ปลูกอ้อย
+2026-06-16 05:42:04,897 [INFO] CKAN搜索: query=สถิติพื้นที่ปลูกอ้อย status=None results=0
+2026-06-16 05:42:04,954 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9C%E0%B8%A5%E0%B8%9C%E0%B8%A5%E0%B8%B4%E0%B8%95%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2%E0%B8%95%E0%B9%88%E0%B8%AD%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-16 05:42:07,249 [INFO] OCSB Open Data状态码: 200 | query=สถิติผลผลิตอ้อยต่อพื้นที่
+2026-06-16 05:42:07,259 [INFO] CKAN搜索: query=สถิติผลผลิตอ้อยต่อพื้นที่ status=200 results=1
+2026-06-16 05:42:13,763 [INFO] OCSB请求失败 attempt=1 url=https://catalog.ocsb.go.th/dataset/f6286643-632b-4be7-9656-0bd4e229e723/resource/ea16cd9d-e0e6-4850-bbbf-da915a85be9a/download/caneyield.csv err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:42:17,678 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/f6286643-632b-4be7-9656-0bd4e229e723/resource/ea16cd9d-e0e6-4850-bbbf-da915a85be9a/download/caneyield.csv
+2026-06-16 05:42:17,686 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-16 05:42:17,686 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-16 05:42:17,687 [INFO] Open Data聚合: indicator=sugarcane_yield value=- latest_season=2022/23 status=not_published
+2026-06-16 05:42:18,595 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-16 05:42:18,596 [INFO] CKAN搜索: query=ข้อมูลการพยากรณ์ status=200 results=1
+2026-06-16 05:42:23,615 [INFO] OCSB请求失败 attempt=1 url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:42:25,629 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-16 05:42:25,636 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-16 05:42:25,636 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-16 05:42:25,636 [INFO] Open Data聚合: indicator=production_forecast value=- latest_season=2022/23 status=not_published
+2026-06-16 05:42:30,652 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%AA%E0%B9%88%E0%B8%87%E0%B8%AD%E0%B8%AD%E0%B8%81%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%B2%E0%B8%A5%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:42:32,757 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณการส่งออกน้ำตาลทราย
+2026-06-16 05:42:32,758 [INFO] CKAN搜索: query=ปริมาณการส่งออกน้ำตาลทราย status=200 results=1
+2026-06-16 05:42:39,869 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv
+2026-06-16 05:42:40,152 [INFO] 识别到的佛历年份: 2565/2566, 2566/2567, ก่อนปีการผลิต 2565/2566, ก่อนปีการผลิต 2566/2567
+2026-06-16 05:42:40,152 [INFO] 转换后的公历榨季: 2022/23, 2023/24
+2026-06-16 05:42:40,152 [INFO] Open Data聚合: indicator=sugar_exports value=- latest_season=2023/24 status=not_published
+2026-06-16 05:42:40,153 [INFO] Open Data完成: has_fresh=False has_national_total=False
+2026-06-16 05:42:40,153 [INFO] --- [优先级3] 泰国政府PRD ---
+2026-06-16 05:42:40,153 [INFO] PRD搜索: url=https://www.prd.go.th/ keywords=['อ้อย', 'น้ำตาล', 'OCSB']
+2026-06-16 05:43:14,348 [INFO] 请求失败 https://www.prd.go.th/?s=%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:43:18,381 [INFO] PRD找到 0 条相关链接
+2026-06-16 05:43:18,382 [INFO] PRD抓取完成: 0 条记录
+2026-06-16 05:43:18,382 [INFO] --- [优先级4] OCSB主站 ---
+2026-06-16 05:43:23,402 [INFO] OCSB HEAD请求失败 attempt=1 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:43:29,509 [INFO] OCSB HEAD请求失败 attempt=2 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:43:29,511 [INFO] OCSB主站状态码: None
+2026-06-16 05:43:29,511 [INFO] --- [优先级5] OCSB官方Facebook ---
+2026-06-16 05:43:29,512 [INFO] OCSB Facebook: url=https://mbasic.facebook.com/ocsbofficial/
+2026-06-16 05:43:36,863 [INFO] 请求失败 https://mbasic.facebook.com/ocsbofficial/: <urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-16 05:43:36,866 [INFO] OCSB Facebook页面不可访问（可能受限）
+2026-06-16 05:43:36,868 [INFO] --- [优先级6] OCSB区域中心 ---
+2026-06-16 05:43:36,868 [INFO] OCSB区域中心: 当前无可用结构化入口，跳过。
+2026-06-16 05:43:36,868 [INFO] --- [优先级7] CSV缓存 ---
+2026-06-16 05:43:36,878 [INFO] --- [优先级8] 官方预测 ---
+2026-06-16 05:43:39,081 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-16 05:43:40,496 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-16 05:43:40,499 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-16 05:43:40,499 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-16 05:43:40,499 [INFO] 泰国官方预测: 1 条记录
+2026-06-16 05:43:40,500 [INFO] 泰国数据汇总: fresh=0 cached=0 not_published=4 source_503=0 total=8
+2026-06-16 05:43:40,500 [INFO] 泰国最终产量: 未发布
+2026-06-16 05:43:40,500 [INFO] 泰国阶段性数据: 无
+2026-06-16 05:43:40,551 [INFO] --- 中国/广西 沐甜国内 ---
+2026-06-16 05:43:40,551 [INFO] 沐甜抓取栏目: 产销预估 (优先级1, https://www.msweet.com.cn/eportal/ui?pageId=1014225)
+2026-06-16 05:44:00,752 [INFO] 沐甜栏目 '产销预估': 找到 50 篇文章
+2026-06-16 05:44:00,755 [INFO] 沐甜抓取栏目: 各省产销 (优先级2, https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html)
+2026-06-16 05:44:01,664 [INFO] 沐甜栏目 '各省产销': 找到 100 篇文章
+2026-06-16 05:44:01,665 [INFO] 沐甜抓取栏目: 产区动态 (优先级3, https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html)
+2026-06-16 05:44:02,140 [INFO] 沐甜栏目 '产区动态': 找到 130 篇文章
+2026-06-16 05:44:02,298 [INFO] 沐甜国内文章总数: 140
+2026-06-16 05:44:02,301 [INFO] 生产文章分类: 广西=20, 云南=25, 其他=0
+2026-06-16 05:44:04,664 [INFO] 国内缓存新鲜度检查: 3 个分组
+2026-06-16 05:44:04,664 [INFO] 沐甜国内抓取完成: 6 条记录
+2026-06-16 05:44:04,667 [INFO] CSV更新: inserted=10 updated=0 conflicts=0
+2026-06-16 05:44:04,668 [INFO] 巴西: total=10 fresh=7 cached=3 stale=0
+2026-06-16 05:44:04,668 [INFO] 印度: total=1 fresh=1 cached=0 stale=0
+2026-06-16 05:44:04,668 [INFO] 泰国: total=18 fresh=3 cached=14 stale=0
+2026-06-16 05:44:04,668 [INFO] 中国: total=17 fresh=17 cached=0 stale=0
+2026-06-16 05:44:04,668 [INFO] 宏观: total=7 fresh=7 cached=0 stale=0
+2026-06-16 05:44:04,668 [INFO] [09/16] 写入市场数据到CSV...
+2026-06-16 05:44:04,672 [INFO] CSV更新: inserted=3 updated=0 conflicts=0
+2026-06-16 05:44:04,672 [INFO] [10/16] 从CSV读取有效记录...
+2026-06-16 05:44:04,673 [INFO] [10/16] 有效记录: 60 条
+2026-06-16 05:44:04,673 [INFO] [10/16] 筛选 SR2609 相关信息...
+2026-06-16 05:44:04,674 [INFO] [10/16] 模型输入: 10402 字符
+2026-06-16 05:44:04,674 [INFO] [11/16] 读取交易观点...
+2026-06-16 05:44:04,678 [INFO] 交易观点: 合约=SR2609, 确认日期=2026-06-12
+2026-06-16 05:44:04,678 [INFO] [12/16] 合约一致性检查...
+2026-06-16 05:44:04,678 [INFO] [12/16] 一致性检查通过
+2026-06-16 05:44:04,678 [WARNING] [12.5/16] 策略校验: 观点缺少参考价格
+2026-06-16 05:44:04,678 [INFO] [13/16] 调用 DeepSeek 生成基本面...
+2026-06-16 05:44:04,679 [INFO] DeepSeek 调用: model=deepseek-chat, base_url=https://api.deepseek.com/v1
+2026-06-16 05:44:05,353 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-16 05:44:10,014 [INFO] DeepSeek 调用成功: 551 字符
+2026-06-16 05:44:10,014 [INFO] [14/16] 校验模型正文...
+2026-06-16 05:44:10,014 [INFO] [14/16] 基本面正文: 551 字符
+2026-06-16 05:44:10,014 [INFO] [15/16] 最终一致性检查...
+2026-06-16 05:44:10,015 [INFO] [15/16] 最终一致性检查通过
+2026-06-16 05:44:10,015 [INFO] [16/16] 拼接日报并写入...
+2026-06-16 05:44:10,015 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-16/白糖日报_20260616.md
+2026-06-16 05:44:10,016 [INFO] ============================================================
+2026-06-16 05:44:10,016 [INFO] 日报生成完成
+2026-06-16 05:44:10,016 [INFO]   日报: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-16/白糖日报_20260616.md
+2026-06-16 05:44:10,016 [INFO]   状态: success | 合约: SR2609 | 行情日期: 2026-06-15
+2026-06-16 05:44:10,016 [INFO] ============================================================
+2026-06-16 05:44:10,019 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/public/data/reports/2026-06-16.json
+2026-06-16 05:44:10,020 [INFO] 索引已更新: /Users/mymac/codingtest/sugar-daily/public/data/reports.json (4 篇日报)
+2026-06-16 05:44:10,020 [INFO] 前端JSON已更新
+[main 15669fb] Update sugar daily report 2026-06-16
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 public/data/reports/2026-06-16.json
+2026-06-16 05:44:14,521 [INFO] 已推送到 GitHub: Update sugar daily report 2026-06-16
+2026-06-16 05:44:14,523 [INFO] [OK] 日报已生成: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-16/白糖日报_20260616.md
+2026-06-17 05:41:04,044 [INFO] ============================================================
+2026-06-17 05:41:04,045 [INFO] 白糖日报生成开始
+2026-06-17 05:41:04,045 [INFO]   发布日期: 2026-06-17 | 目标合约: SR2609
+2026-06-17 05:41:04,045 [INFO] ============================================================
+2026-06-17 05:41:04,045 [INFO] [01/16] 读取目标合约: SR2609
+2026-06-17 05:41:04,045 [INFO] [02/16] 获取公开行情...
+2026-06-17 05:41:04,070 [WARNING] 请求失败 (尝试 1): https://hq.sinajs.cn/list=nf_SR0 — <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:41:08,474 [INFO] SR0展示行情: close=5351.00 chg=0.56% date=2026-06-16
+2026-06-17 05:41:08,875 [INFO] RS展示行情: close=14.30 chg=0.75%
+2026-06-17 05:41:08,879 [INFO] 郑糖展示行情使用SR0: 5351.00
+2026-06-17 05:41:08,883 [INFO] ICE展示行情使用RS: 14.30
+2026-06-17 05:41:12,075 [INFO] 泛糖: 发现 5 篇候选文章, 最新 title_date=2026-06-15
+2026-06-17 05:41:12,079 [INFO] 泛糖候选[0]: id=2026061608435310683251 title_date=2026-06-15
+2026-06-17 05:41:12,079 [INFO] 泛糖候选[1]: id=2026061508390971521945 title_date=2026-06-12
+2026-06-17 05:41:12,079 [INFO] 泛糖候选[2]: id=2026061208370767084441 title_date=2026-06-11
+2026-06-17 05:41:12,079 [INFO] 泛糖候选[3]: id=2026061108464892834611 title_date=2026-06-10
+2026-06-17 05:41:12,079 [INFO] 泛糖候选[4]: id=2026061008335808352359 title_date=2026-06-09
+2026-06-17 05:41:12,574 [INFO] 泛糖选中: id=2026061608435310683251 title_date=2026-06-15 body_date=2026-06-15 published_at=2026-06-16 08:58
+2026-06-17 05:41:12,580 [INFO] 泛糖结果: title_date=2026-06-15 ICE=14.16 汇率=6.7568 配额外利润=635 状态=verified
+2026-06-17 05:41:12,580 [INFO] 巴西进口利润来自泛糖科技: 635 元/吨 (数据日期 2026-06-15)
+2026-06-17 05:41:12,580 [INFO] 市场数据获取成功 | 来源: 新浪财经 | 交易日: 2026-06-16
+2026-06-17 05:41:12,580 [INFO] [03/16] 校验合约代码...
+2026-06-17 05:41:12,580 [INFO] [03/16] 行情展示合约=SR0；交易观点目标仍为 SR2609
+2026-06-17 05:41:12,580 [INFO] [05/16] 校验行情日期...
+2026-06-17 05:41:12,580 [INFO] [05/16] 行情日期: 2026-06-16 (有效)
+2026-06-17 05:41:12,580 [INFO] [06/16] 计算涨跌幅、基差...
+2026-06-17 05:41:12,580 [INFO] [06/16] 收盘=5351.00 前收=5321.00 涨跌=0.56% 基差=N/A
+2026-06-17 05:41:12,581 [INFO] [07/16] 研究员基本面（可选）...
+2026-06-17 05:41:12,581 [INFO] 研究员基本面文件不存在（可选）: /Users/mymac/codingtest/sugar-daily/inputs/fundamentals/2026-06-17.md
+2026-06-17 05:41:12,581 [INFO] [08/16] 自动抓取基本面...
+2026-06-17 05:41:12,628 [INFO] ==================================================
+2026-06-17 05:41:12,628 [INFO] 基本面自动抓取 - 2026-06-17 | 目标合约: SR2609
+2026-06-17 05:41:12,628 [INFO] ==================================================
+2026-06-17 05:41:12,628 [INFO] --- 全球供需机构观点 ---
+2026-06-17 05:41:12,628 [INFO] 全球供需机构观点: https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html
+2026-06-17 05:41:12,787 [INFO] 沐甜机构观点: 找到 10 篇文章
+2026-06-17 05:41:23,057 [INFO] 2026/27年度机构观点: 3 条
+2026-06-17 05:41:23,059 [INFO]   Czarnikow | 2026-05-20 | surplus140万吨 | Czarnikow：2026/27年度糖市将出现小幅过剩
+2026-06-17 05:41:23,059 [INFO]   ISO | 2026-05-19 | deficit26.2万吨 | ISO将2025/26年度全球糖市过剩预估上调至224.4万吨
+2026-06-17 05:41:23,059 [INFO]   StoneX | 2026-05-13 | deficit55万吨 | StoneX：全球糖市将从过剩转向短缺，因产量缩减
+2026-06-17 05:41:23,059 [INFO] 全球供需机构观点: 3 条记录 (目标年度=2026/27)
+2026-06-17 05:41:23,059 [INFO] --- UNICA 巴西双周报告 ---
+2026-06-17 05:41:30,855 [INFO] UNICA PDF文本解析失败: No module named 'PyPDF2'
+2026-06-17 05:41:30,865 [INFO] UNICA双周报告: 1 条, source=https://unicadata.com.br/download_media.php?idM=32820684
+2026-06-17 05:41:30,865 [INFO] --- 印度 NFCSF/coopsugar ---
+2026-06-17 05:41:37,762 [INFO] PDF解析失败: No module named 'PyPDF2'
+2026-06-17 05:41:37,764 [INFO] --- 泰国 OCSB ---
+2026-06-17 05:41:37,765 [INFO] ==================================================
+2026-06-17 05:41:37,765 [INFO] 泰国数据抓取: 目标榨季=2025/26 | 日期=2026-06-17
+2026-06-17 05:41:37,765 [INFO] ==================================================
+2026-06-17 05:41:37,765 [INFO] --- [优先级1] SugarZone生产报告 ---
+2026-06-17 05:41:37,765 [INFO] ==================================================
+2026-06-17 05:41:37,765 [INFO] SugarZone泰国生产报告: https://sugarzone.in.th/production-report-by-region/
+2026-06-17 05:41:37,765 [INFO] ==================================================
+2026-06-17 05:41:41,632 [INFO] SugarZone找到 10 份报告
+2026-06-17 05:41:41,632 [INFO] SugarZone最新报告: 日期=2026-05-05 (泰文: 5 พฤษภาคม 2569), PDF=https://sugarzone.in.th/wp-content/uploads/2026/05/05May69.pdf
+2026-06-17 05:41:41,632 [INFO] SugarZone报告所属榨季: 2025/26 (报告日期: 2026-05-05)
+2026-06-17 05:41:42,935 [INFO] SugarZone PDF下载成功: 276961 bytes
+2026-06-17 05:41:42,935 [WARNING] SugarZone PDF解析失败: No module named 'PyPDF2'
+2026-06-17 05:41:42,935 [WARNING] SugarZone PDF解析未提取到数据
+2026-06-17 05:41:42,936 [INFO] --- [优先级2] OCSB Open Data ---
+2026-06-17 05:41:43,816 [INFO] OCSB Open Data入口状态码: 200
+2026-06-17 05:41:44,619 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณน้ำตาลทราย
+2026-06-17 05:41:44,620 [INFO] CKAN搜索: query=ปริมาณน้ำตาลทราย status=200 results=1
+2026-06-17 05:41:45,499 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/1ab1c731-5d59-43f0-ae4e-e4e444ffbea8/resource/31a06ac4-c858-47a3-9760-b5934074c676/download/s_production.csv
+2026-06-17 05:41:45,506 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-17 05:41:45,506 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-17 05:41:45,506 [INFO] Open Data聚合: indicator=sugar_production value=- latest_season=2023/24 status=not_published
+2026-06-17 05:41:46,240 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณอ้อย
+2026-06-17 05:41:46,241 [INFO] CKAN搜索: query=ปริมาณอ้อย status=200 results=2
+2026-06-17 05:41:47,091 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/8f34c88b-db32-431f-b314-8b5808b6d63d/resource/495e4f6c-aac6-4113-afd8-9c8797223dbe/download/c_production.csv
+2026-06-17 05:41:47,093 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-17 05:41:47,093 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-17 05:41:47,093 [INFO] Open Data聚合: indicator=sugarcane_volume value=- latest_season=2023/24 status=not_published
+2026-06-17 05:42:22,169 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9B%E0%B8%A5%E0%B8%B9%E0%B8%81%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=Remote end closed connection without response
+2026-06-17 05:42:24,120 [INFO] OCSB Open Data状态码: 200 | query=สถิติพื้นที่ปลูกอ้อย
+2026-06-17 05:42:24,121 [INFO] CKAN搜索: query=สถิติพื้นที่ปลูกอ้อย status=200 results=1
+2026-06-17 05:42:25,065 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b9719ed3-17b0-49af-a216-1e207e8efb7b/resource/ca4f4879-e9e2-4970-a037-833e9954d827/download/canearea.csv
+2026-06-17 05:42:25,071 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-17 05:42:25,072 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-17 05:42:25,072 [INFO] Open Data聚合: indicator=sugarcane_area value=- latest_season=2022/23 status=not_published
+2026-06-17 05:42:25,847 [INFO] OCSB Open Data状态码: 200 | query=สถิติผลผลิตอ้อยต่อพื้นที่
+2026-06-17 05:42:25,847 [INFO] CKAN搜索: query=สถิติผลผลิตอ้อยต่อพื้นที่ status=200 results=1
+2026-06-17 05:42:26,725 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/f6286643-632b-4be7-9656-0bd4e229e723/resource/ea16cd9d-e0e6-4850-bbbf-da915a85be9a/download/caneyield.csv
+2026-06-17 05:42:26,732 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-17 05:42:26,732 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-17 05:42:26,732 [INFO] Open Data聚合: indicator=sugarcane_yield value=- latest_season=2022/23 status=not_published
+2026-06-17 05:42:27,516 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-17 05:42:27,516 [INFO] CKAN搜索: query=ข้อมูลการพยากรณ์ status=200 results=1
+2026-06-17 05:42:28,397 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-17 05:42:28,402 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-17 05:42:28,402 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-17 05:42:28,402 [INFO] Open Data聚合: indicator=production_forecast value=- latest_season=2022/23 status=not_published
+2026-06-17 05:42:29,234 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณการส่งออกน้ำตาลทราย
+2026-06-17 05:42:29,234 [INFO] CKAN搜索: query=ปริมาณการส่งออกน้ำตาลทราย status=200 results=1
+2026-06-17 05:42:31,368 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv
+2026-06-17 05:42:31,676 [INFO] 识别到的佛历年份: 2565/2566, 2566/2567, ก่อนปีการผลิต 2565/2566, ก่อนปีการผลิต 2566/2567
+2026-06-17 05:42:31,676 [INFO] 转换后的公历榨季: 2022/23, 2023/24
+2026-06-17 05:42:31,677 [INFO] Open Data聚合: indicator=sugar_exports value=- latest_season=2023/24 status=not_published
+2026-06-17 05:42:31,677 [INFO] Open Data完成: has_fresh=False has_national_total=False
+2026-06-17 05:42:31,677 [INFO] --- [优先级3] 泰国政府PRD ---
+2026-06-17 05:42:31,677 [INFO] PRD搜索: url=https://www.prd.go.th/ keywords=['อ้อย', 'น้ำตาล', 'OCSB']
+2026-06-17 05:42:42,396 [INFO] PRD找到 0 条相关链接
+2026-06-17 05:42:42,398 [INFO] PRD抓取完成: 0 条记录
+2026-06-17 05:42:42,398 [INFO] --- [优先级4] OCSB主站 ---
+2026-06-17 05:42:55,129 [INFO] OCSB HEAD请求失败 attempt=1 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-17 05:43:26,854 [INFO] OCSB HEAD请求失败 attempt=2 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:26,862 [INFO] OCSB主站状态码: None
+2026-06-17 05:43:26,867 [INFO] --- [优先级5] OCSB官方Facebook ---
+2026-06-17 05:43:26,869 [INFO] OCSB Facebook: url=https://mbasic.facebook.com/ocsbofficial/
+2026-06-17 05:43:26,902 [INFO] 请求失败 https://mbasic.facebook.com/ocsbofficial/: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:26,904 [INFO] OCSB Facebook页面不可访问（可能受限）
+2026-06-17 05:43:26,926 [INFO] --- [优先级6] OCSB区域中心 ---
+2026-06-17 05:43:26,927 [INFO] OCSB区域中心: 当前无可用结构化入口，跳过。
+2026-06-17 05:43:26,927 [INFO] --- [优先级7] CSV缓存 ---
+2026-06-17 05:43:26,958 [INFO] --- [优先级8] 官方预测 ---
+2026-06-17 05:43:26,986 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,138 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,139 [INFO] OCSB Open Data状态码: None | query=ข้อมูลการพยากรณ์
+2026-06-17 05:43:28,139 [INFO] 泰国官方预测: 0 条记录
+2026-06-17 05:43:28,139 [INFO] 泰国数据汇总: fresh=0 cached=0 not_published=6 source_503=0 total=7
+2026-06-17 05:43:28,139 [INFO] 泰国最终产量: 未发布
+2026-06-17 05:43:28,139 [INFO] 泰国阶段性数据: 无
+2026-06-17 05:43:28,174 [INFO] --- 中国/广西 沐甜国内 ---
+2026-06-17 05:43:28,174 [INFO] 沐甜抓取栏目: 产销预估 (优先级1, https://www.msweet.com.cn/eportal/ui?pageId=1014225)
+2026-06-17 05:43:28,177 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=1: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,179 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=2: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,182 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=3: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,187 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=4: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,190 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=5: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,190 [INFO] 沐甜栏目 '产销预估': 找到 0 篇文章
+2026-06-17 05:43:28,190 [INFO] 沐甜抓取栏目: 各省产销 (优先级2, https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html)
+2026-06-17 05:43:28,193 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=1: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,195 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=2: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,198 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=3: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,200 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=4: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,203 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=5: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,203 [INFO] 沐甜栏目 '各省产销': 找到 0 篇文章
+2026-06-17 05:43:28,203 [INFO] 沐甜抓取栏目: 产区动态 (优先级3, https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html)
+2026-06-17 05:43:28,208 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html?currentPage=1: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,210 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html?currentPage=2: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,213 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html?currentPage=3: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,213 [INFO] 沐甜栏目 '产区动态': 找到 0 篇文章
+2026-06-17 05:43:28,215 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/index.html: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-17 05:43:28,216 [INFO] 沐甜国内文章总数: 0
+2026-06-17 05:43:28,216 [INFO] 生产文章分类: 广西=0, 云南=0, 其他=0
+2026-06-17 05:43:28,216 [INFO] 国内缓存新鲜度检查: 3 个分组
+2026-06-17 05:43:28,216 [INFO] 沐甜国内抓取完成: 3 条记录
+2026-06-17 05:43:28,218 [INFO] CSV更新: inserted=2 updated=3 conflicts=3
+2026-06-17 05:43:28,219 [INFO] 巴西: total=11 fresh=7 cached=4 stale=0
+2026-06-17 05:43:28,219 [INFO] 印度: total=1 fresh=1 cached=0 stale=0
+2026-06-17 05:43:28,219 [INFO] 泰国: total=19 fresh=3 cached=14 stale=0
+2026-06-17 05:43:28,219 [INFO] 中国: total=17 fresh=14 cached=0 stale=0
+2026-06-17 05:43:28,219 [INFO] 宏观: total=7 fresh=7 cached=0 stale=0
+2026-06-17 05:43:28,219 [INFO] [09/16] 写入市场数据到CSV...
+2026-06-17 05:43:28,220 [INFO] CSV更新: inserted=0 updated=2 conflicts=0
+2026-06-17 05:43:28,220 [INFO] [10/16] 从CSV读取有效记录...
+2026-06-17 05:43:28,220 [INFO] [10/16] 有效记录: 61 条
+2026-06-17 05:43:28,220 [INFO] [10/16] 筛选 SR2609 相关信息...
+2026-06-17 05:43:28,220 [INFO] [10/16] 模型输入: 10428 字符
+2026-06-17 05:43:28,220 [INFO] [11/16] 读取交易观点...
+2026-06-17 05:43:28,221 [INFO] 交易观点: 合约=SR2609, 确认日期=2026-06-12
+2026-06-17 05:43:28,221 [INFO] [12/16] 合约一致性检查...
+2026-06-17 05:43:28,222 [INFO] [12/16] 一致性检查通过
+2026-06-17 05:43:28,222 [WARNING] [12.5/16] 策略校验: 观点缺少参考价格
+2026-06-17 05:43:28,222 [INFO] [13/16] 调用 DeepSeek 生成基本面...
+2026-06-17 05:43:28,222 [INFO] DeepSeek 调用: model=deepseek-chat, base_url=https://api.deepseek.com/v1
+2026-06-17 05:43:28,522 [INFO] Retrying request to /chat/completions in 0.489031 seconds
+2026-06-17 05:43:29,025 [INFO] Retrying request to /chat/completions in 0.932911 seconds
+2026-06-17 05:43:30,511 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-17 05:43:35,181 [INFO] DeepSeek 调用成功: 475 字符
+2026-06-17 05:43:35,182 [INFO] [14/16] 校验模型正文...
+2026-06-17 05:43:35,182 [INFO] [14/16] 基本面正文: 512 字符
+2026-06-17 05:43:35,183 [INFO] [15/16] 最终一致性检查...
+2026-06-17 05:43:35,183 [INFO] [15/16] 最终一致性检查通过
+2026-06-17 05:43:35,183 [INFO] [16/16] 拼接日报并写入...
+2026-06-17 05:43:35,184 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-17/白糖日报_20260617.md
+2026-06-17 05:43:35,184 [INFO] ============================================================
+2026-06-17 05:43:35,184 [INFO] 日报生成完成
+2026-06-17 05:43:35,184 [INFO]   日报: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-17/白糖日报_20260617.md
+2026-06-17 05:43:35,185 [INFO]   状态: success | 合约: SR2609 | 行情日期: 2026-06-16
+2026-06-17 05:43:35,185 [INFO] ============================================================
+2026-06-17 05:43:35,188 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/public/data/reports/2026-06-17.json
+2026-06-17 05:43:35,190 [INFO] 索引已更新: /Users/mymac/codingtest/sugar-daily/public/data/reports.json (5 篇日报)
+2026-06-17 05:43:35,190 [INFO] 前端JSON已更新
+[main 05ab2ff] Update sugar daily report 2026-06-17
+ 3 files changed, 32 insertions(+), 10 deletions(-)
+ create mode 100644 public/data/reports/2026-06-17.json
+2026-06-17 05:43:37,719 [INFO] 已推送到 GitHub: Update sugar daily report 2026-06-17
+2026-06-17 05:43:37,721 [INFO] [OK] 日报已生成: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-17/白糖日报_20260617.md
+2026-06-18 05:44:49,612 [INFO] ============================================================
+2026-06-18 05:44:49,612 [INFO] 白糖日报生成开始
+2026-06-18 05:44:49,612 [INFO]   发布日期: 2026-06-18 | 目标合约: SR2609
+2026-06-18 05:44:49,613 [INFO] ============================================================
+2026-06-18 05:44:49,613 [INFO] [01/16] 读取目标合约: SR2609
+2026-06-18 05:44:49,613 [INFO] [02/16] 获取公开行情...
+2026-06-18 05:44:49,641 [WARNING] 请求失败 (尝试 1): https://hq.sinajs.cn/list=nf_SR0 — <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-18 05:44:53,714 [INFO] SR0展示行情: close=5334.00 chg=-0.09% date=2026-06-17
+2026-06-18 05:44:54,045 [INFO] RS展示行情: close=14.38 chg=0.49%
+2026-06-18 05:44:54,047 [INFO] 郑糖展示行情使用SR0: 5334.00
+2026-06-18 05:44:54,052 [INFO] ICE展示行情使用RS: 14.38
+2026-06-18 05:44:58,838 [INFO] 泛糖: 发现 5 篇候选文章, 最新 title_date=2026-06-16
+2026-06-18 05:44:58,839 [INFO] 泛糖候选[0]: id=2026061708571408061200 title_date=2026-06-16
+2026-06-18 05:44:58,839 [INFO] 泛糖候选[1]: id=2026061608435310683251 title_date=2026-06-15
+2026-06-18 05:44:58,839 [INFO] 泛糖候选[2]: id=2026061508390971521945 title_date=2026-06-12
+2026-06-18 05:44:58,839 [INFO] 泛糖候选[3]: id=2026061208370767084441 title_date=2026-06-11
+2026-06-18 05:44:58,839 [INFO] 泛糖候选[4]: id=2026061108464892834611 title_date=2026-06-10
+2026-06-18 05:44:59,693 [INFO] 泛糖选中: id=2026061708571408061200 title_date=2026-06-16 body_date=2026-06-16 published_at=2026-06-17 09:22
+2026-06-18 05:44:59,699 [INFO] 泛糖结果: title_date=2026-06-16 ICE=14.29 汇率=6.7575 配额外利润=599 状态=verified
+2026-06-18 05:44:59,700 [INFO] 巴西进口利润来自泛糖科技: 599 元/吨 (数据日期 2026-06-16)
+2026-06-18 05:44:59,700 [INFO] 市场数据获取成功 | 来源: 新浪财经 | 交易日: 2026-06-17
+2026-06-18 05:44:59,700 [INFO] [03/16] 校验合约代码...
+2026-06-18 05:44:59,700 [INFO] [03/16] 行情展示合约=SR0；交易观点目标仍为 SR2609
+2026-06-18 05:44:59,700 [INFO] [05/16] 校验行情日期...
+2026-06-18 05:44:59,700 [INFO] [05/16] 行情日期: 2026-06-17 (有效)
+2026-06-18 05:44:59,700 [INFO] [06/16] 计算涨跌幅、基差...
+2026-06-18 05:44:59,700 [INFO] [06/16] 收盘=5334.00 前收=5339.00 涨跌=-0.09% 基差=N/A
+2026-06-18 05:44:59,700 [INFO] [07/16] 研究员基本面（可选）...
+2026-06-18 05:44:59,701 [INFO] 研究员基本面文件不存在（可选）: /Users/mymac/codingtest/sugar-daily/inputs/fundamentals/2026-06-18.md
+2026-06-18 05:44:59,701 [INFO] [08/16] 自动抓取基本面...
+2026-06-18 05:44:59,768 [INFO] ==================================================
+2026-06-18 05:44:59,769 [INFO] 基本面自动抓取 - 2026-06-18 | 目标合约: SR2609
+2026-06-18 05:44:59,770 [INFO] ==================================================
+2026-06-18 05:44:59,770 [INFO] --- 全球供需机构观点 ---
+2026-06-18 05:44:59,770 [INFO] 全球供需机构观点: https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html
+2026-06-18 05:44:59,931 [INFO] 沐甜机构观点: 找到 10 篇文章
+2026-06-18 05:45:02,011 [INFO] 2026/27年度机构观点: 3 条
+2026-06-18 05:45:02,011 [INFO]   Czarnikow | 2026-05-20 | surplus140万吨 | Czarnikow：2026/27年度糖市将出现小幅过剩
+2026-06-18 05:45:02,012 [INFO]   ISO | 2026-05-19 | deficit26.2万吨 | ISO将2025/26年度全球糖市过剩预估上调至224.4万吨
+2026-06-18 05:45:02,012 [INFO]   StoneX | 2026-05-13 | deficit55万吨 | StoneX：全球糖市将从过剩转向短缺，因产量缩减
+2026-06-18 05:45:02,012 [INFO] 全球供需机构观点: 3 条记录 (目标年度=2026/27)
+2026-06-18 05:45:02,012 [INFO] --- UNICA 巴西双周报告 ---
+2026-06-18 05:45:13,685 [INFO] UNICA PDF文本解析失败: No module named 'PyPDF2'
+2026-06-18 05:45:13,692 [INFO] UNICA双周报告: 1 条, source=https://unicadata.com.br/download_media.php?idM=32820684
+2026-06-18 05:45:13,693 [INFO] --- 印度 NFCSF/coopsugar ---
+2026-06-18 05:45:21,764 [INFO] PDF解析失败: No module named 'PyPDF2'
+2026-06-18 05:45:21,764 [INFO] --- 泰国 OCSB ---
+2026-06-18 05:45:21,765 [INFO] ==================================================
+2026-06-18 05:45:21,765 [INFO] 泰国数据抓取: 目标榨季=2025/26 | 日期=2026-06-18
+2026-06-18 05:45:21,765 [INFO] ==================================================
+2026-06-18 05:45:21,765 [INFO] --- [优先级1] SugarZone生产报告 ---
+2026-06-18 05:45:21,765 [INFO] ==================================================
+2026-06-18 05:45:21,765 [INFO] SugarZone泰国生产报告: https://sugarzone.in.th/production-report-by-region/
+2026-06-18 05:45:21,765 [INFO] ==================================================
+2026-06-18 05:45:25,374 [INFO] SugarZone找到 10 份报告
+2026-06-18 05:45:25,374 [INFO] SugarZone最新报告: 日期=2026-05-05 (泰文: 5 พฤษภาคม 2569), PDF=https://sugarzone.in.th/wp-content/uploads/2026/05/05May69.pdf
+2026-06-18 05:45:25,375 [INFO] SugarZone报告所属榨季: 2025/26 (报告日期: 2026-05-05)
+2026-06-18 05:45:27,076 [INFO] SugarZone PDF下载成功: 276961 bytes
+2026-06-18 05:45:27,077 [WARNING] SugarZone PDF解析失败: No module named 'PyPDF2'
+2026-06-18 05:45:27,077 [WARNING] SugarZone PDF解析未提取到数据
+2026-06-18 05:45:27,077 [INFO] --- [优先级2] OCSB Open Data ---
+2026-06-18 05:45:28,282 [INFO] OCSB Open Data入口状态码: 200
+2026-06-18 05:45:30,282 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณน้ำตาลทราย
+2026-06-18 05:45:30,283 [INFO] CKAN搜索: query=ปริมาณน้ำตาลทราย status=200 results=1
+2026-06-18 05:45:31,805 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/1ab1c731-5d59-43f0-ae4e-e4e444ffbea8/resource/31a06ac4-c858-47a3-9760-b5934074c676/download/s_production.csv
+2026-06-18 05:45:31,812 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-18 05:45:31,812 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-18 05:45:31,812 [INFO] Open Data聚合: indicator=sugar_production value=- latest_season=2023/24 status=not_published
+2026-06-18 05:45:32,927 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณอ้อย
+2026-06-18 05:45:32,927 [INFO] CKAN搜索: query=ปริมาณอ้อย status=200 results=2
+2026-06-18 05:45:58,192 [INFO] OCSB请求失败 attempt=1 url=https://catalog.ocsb.go.th/dataset/8f34c88b-db32-431f-b314-8b5808b6d63d/resource/495e4f6c-aac6-4113-afd8-9c8797223dbe/download/c_production.csv err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-18 05:46:04,536 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/8f34c88b-db32-431f-b314-8b5808b6d63d/resource/495e4f6c-aac6-4113-afd8-9c8797223dbe/download/c_production.csv
+2026-06-18 05:46:04,562 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-18 05:46:04,563 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-18 05:46:04,563 [INFO] Open Data聚合: indicator=sugarcane_volume value=- latest_season=2023/24 status=not_published
+2026-06-18 05:46:06,621 [INFO] OCSB Open Data状态码: 200 | query=สถิติพื้นที่ปลูกอ้อย
+2026-06-18 05:46:06,638 [INFO] CKAN搜索: query=สถิติพื้นที่ปลูกอ้อย status=200 results=1
+2026-06-18 05:46:08,168 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b9719ed3-17b0-49af-a216-1e207e8efb7b/resource/ca4f4879-e9e2-4970-a037-833e9954d827/download/canearea.csv
+2026-06-18 05:46:08,175 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-18 05:46:08,175 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-18 05:46:08,175 [INFO] Open Data聚合: indicator=sugarcane_area value=- latest_season=2022/23 status=not_published
+2026-06-18 05:46:10,327 [INFO] OCSB Open Data状态码: 200 | query=สถิติผลผลิตอ้อยต่อพื้นที่
+2026-06-18 05:46:10,328 [INFO] CKAN搜索: query=สถิติผลผลิตอ้อยต่อพื้นที่ status=200 results=1
+2026-06-18 05:46:11,421 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/f6286643-632b-4be7-9656-0bd4e229e723/resource/ea16cd9d-e0e6-4850-bbbf-da915a85be9a/download/caneyield.csv
+2026-06-18 05:46:11,426 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-18 05:46:11,426 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-18 05:46:11,426 [INFO] Open Data聚合: indicator=sugarcane_yield value=- latest_season=2022/23 status=not_published
+2026-06-18 05:46:12,347 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-18 05:46:12,347 [INFO] CKAN搜索: query=ข้อมูลการพยากรณ์ status=200 results=1
+2026-06-18 05:46:13,977 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-18 05:46:13,981 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-18 05:46:13,981 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-18 05:46:13,981 [INFO] Open Data聚合: indicator=production_forecast value=- latest_season=2022/23 status=not_published
+2026-06-18 05:46:17,418 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณการส่งออกน้ำตาลทราย
+2026-06-18 05:46:17,420 [INFO] CKAN搜索: query=ปริมาณการส่งออกน้ำตาลทราย status=200 results=1
+2026-06-18 05:46:21,123 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv
+2026-06-18 05:46:21,441 [INFO] 识别到的佛历年份: 2565/2566, 2566/2567, ก่อนปีการผลิต 2565/2566, ก่อนปีการผลิต 2566/2567
+2026-06-18 05:46:21,443 [INFO] 转换后的公历榨季: 2022/23, 2023/24
+2026-06-18 05:46:21,443 [INFO] Open Data聚合: indicator=sugar_exports value=- latest_season=2023/24 status=not_published
+2026-06-18 05:46:21,443 [INFO] Open Data完成: has_fresh=False has_national_total=False
+2026-06-18 05:46:21,443 [INFO] --- [优先级3] 泰国政府PRD ---
+2026-06-18 05:46:21,443 [INFO] PRD搜索: url=https://www.prd.go.th/ keywords=['อ้อย', 'น้ำตาล', 'OCSB']
+2026-06-18 05:46:38,137 [INFO] PRD找到 0 条相关链接
+2026-06-18 05:46:38,138 [INFO] PRD抓取完成: 0 条记录
+2026-06-18 05:46:38,138 [INFO] --- [优先级4] OCSB主站 ---
+2026-06-18 05:46:38,924 [INFO] OCSB主站状态码: 200
+2026-06-18 05:46:40,513 [INFO] --- [优先级5] OCSB官方Facebook ---
+2026-06-18 05:46:40,513 [INFO] OCSB Facebook: url=https://mbasic.facebook.com/ocsbofficial/
+2026-06-18 05:47:33,290 [INFO] 请求失败 https://mbasic.facebook.com/ocsbofficial/: <urlopen error _ssl.c:1112: The handshake operation timed out>
+2026-06-18 05:47:33,295 [INFO] OCSB Facebook页面不可访问（可能受限）
+2026-06-18 05:47:33,296 [INFO] --- [优先级6] OCSB区域中心 ---
+2026-06-18 05:47:33,296 [INFO] OCSB区域中心: 当前无可用结构化入口，跳过。
+2026-06-18 05:47:33,296 [INFO] --- [优先级7] CSV缓存 ---
+2026-06-18 05:47:33,300 [INFO] --- [优先级8] 官方预测 ---
+2026-06-18 05:47:34,337 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-18 05:47:38,109 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-18 05:47:38,116 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-18 05:47:38,116 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-18 05:47:38,116 [INFO] 泰国官方预测: 1 条记录
+2026-06-18 05:47:38,117 [INFO] 泰国数据汇总: fresh=0 cached=0 not_published=7 source_503=0 total=9
+2026-06-18 05:47:38,117 [INFO] 泰国最终产量: 未发布
+2026-06-18 05:47:38,117 [INFO] 泰国阶段性数据: 无
+2026-06-18 05:47:38,171 [INFO] --- 中国/广西 沐甜国内 ---
+2026-06-18 05:47:38,172 [INFO] 沐甜抓取栏目: 产销预估 (优先级1, https://www.msweet.com.cn/eportal/ui?pageId=1014225)
+2026-06-18 05:47:50,055 [INFO] 沐甜栏目 '产销预估': 找到 50 篇文章
+2026-06-18 05:47:50,057 [INFO] 沐甜抓取栏目: 各省产销 (优先级2, https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html)
+2026-06-18 05:47:51,201 [INFO] 沐甜栏目 '各省产销': 找到 100 篇文章
+2026-06-18 05:47:51,201 [INFO] 沐甜抓取栏目: 产区动态 (优先级3, https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html)
+2026-06-18 05:47:51,651 [INFO] 沐甜栏目 '产区动态': 找到 130 篇文章
+2026-06-18 05:47:51,811 [INFO] 沐甜国内文章总数: 140
+2026-06-18 05:47:51,815 [INFO] 生产文章分类: 广西=24, 云南=25, 其他=6
+2026-06-18 05:47:54,052 [INFO] 国内缓存新鲜度检查: 1 个分组
+2026-06-18 05:47:54,052 [INFO] 沐甜国内抓取完成: 6 条记录
+2026-06-18 05:47:54,056 [INFO] CSV更新: inserted=8 updated=2 conflicts=2
+2026-06-18 05:47:54,057 [INFO] 巴西: total=12 fresh=7 cached=5 stale=0
+2026-06-18 05:47:54,057 [INFO] 印度: total=1 fresh=1 cached=0 stale=0
+2026-06-18 05:47:54,057 [INFO] 泰国: total=22 fresh=3 cached=16 stale=0
+2026-06-18 05:47:54,057 [INFO] 中国: total=21 fresh=18 cached=0 stale=0
+2026-06-18 05:47:54,057 [INFO] 宏观: total=7 fresh=7 cached=0 stale=0
+2026-06-18 05:47:54,057 [INFO] [09/16] 写入市场数据到CSV...
+2026-06-18 05:47:54,059 [INFO] CSV更新: inserted=3 updated=0 conflicts=0
+2026-06-18 05:47:54,059 [INFO] [10/16] 从CSV读取有效记录...
+2026-06-18 05:47:54,060 [INFO] [10/16] 有效记录: 71 条
+2026-06-18 05:47:54,060 [INFO] [10/16] 筛选 SR2609 相关信息...
+2026-06-18 05:47:54,061 [INFO] [10/16] 模型输入: 11839 字符
+2026-06-18 05:47:54,061 [INFO] [11/16] 读取交易观点...
+2026-06-18 05:47:54,064 [INFO] 交易观点: 合约=SR2609, 确认日期=2026-06-12
+2026-06-18 05:47:54,064 [INFO] [12/16] 合约一致性检查...
+2026-06-18 05:47:54,064 [INFO] [12/16] 一致性检查通过
+2026-06-18 05:47:54,064 [WARNING] [12.5/16] 策略校验: 观点缺少参考价格
+2026-06-18 05:47:54,064 [INFO] [13/16] 调用 DeepSeek 生成基本面...
+2026-06-18 05:47:54,065 [INFO] DeepSeek 调用: model=deepseek-chat, base_url=https://api.deepseek.com/v1
+2026-06-18 05:47:54,816 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-18 05:48:07,022 [INFO] DeepSeek 调用成功: 572 字符
+2026-06-18 05:48:07,025 [INFO] [14/16] 校验模型正文...
+2026-06-18 05:48:07,025 [INFO] [14/16] 基本面正文: 574 字符
+2026-06-18 05:48:07,025 [INFO] [15/16] 最终一致性检查...
+2026-06-18 05:48:07,026 [INFO] [15/16] 最终一致性检查通过
+2026-06-18 05:48:07,026 [INFO] [16/16] 拼接日报并写入...
+2026-06-18 05:48:07,031 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-18/白糖日报_20260618.md
+2026-06-18 05:48:07,031 [INFO] ============================================================
+2026-06-18 05:48:07,031 [INFO] 日报生成完成
+2026-06-18 05:48:07,031 [INFO]   日报: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-18/白糖日报_20260618.md
+2026-06-18 05:48:07,031 [INFO]   状态: success | 合约: SR2609 | 行情日期: 2026-06-17
+2026-06-18 05:48:07,031 [INFO] ============================================================
+2026-06-18 05:48:07,064 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/public/data/reports/2026-06-18.json
+2026-06-18 05:48:07,073 [INFO] 索引已更新: /Users/mymac/codingtest/sugar-daily/public/data/reports.json (6 篇日报)
+2026-06-18 05:48:07,073 [INFO] 前端JSON已更新
+[main fb31669] Update sugar daily report 2026-06-18
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 public/data/reports/2026-06-18.json
+2026-06-18 05:48:12,059 [INFO] 已推送到 GitHub: Update sugar daily report 2026-06-18
+2026-06-18 05:48:12,065 [INFO] [OK] 日报已生成: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-18/白糖日报_20260618.md
+2026-06-19 05:45:22,757 [INFO] ============================================================
+2026-06-19 05:45:22,757 [INFO] 白糖日报生成开始
+2026-06-19 05:45:22,761 [INFO]   发布日期: 2026-06-19 | 目标合约: SR2609
+2026-06-19 05:45:22,761 [INFO] ============================================================
+2026-06-19 05:45:22,761 [INFO] [01/16] 读取目标合约: SR2609
+2026-06-19 05:45:22,761 [INFO] [02/16] 获取公开行情...
+2026-06-19 05:45:22,794 [WARNING] 请求失败 (尝试 1): https://hq.sinajs.cn/list=nf_SR0 — <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-19 05:45:28,515 [INFO] SR0展示行情: close=5320.00 chg=-0.36% date=2026-06-18
+2026-06-19 05:45:28,840 [INFO] RS展示行情: close=14.14 chg=-1.63%
+2026-06-19 05:45:28,841 [INFO] 郑糖展示行情使用SR0: 5320.00
+2026-06-19 05:45:28,842 [INFO] ICE展示行情使用RS: 14.14
+2026-06-19 05:45:34,095 [INFO] 泛糖: 发现 5 篇候选文章, 最新 title_date=2026-06-17
+2026-06-19 05:45:34,098 [INFO] 泛糖候选[0]: id=2026061808481593566980 title_date=2026-06-17
+2026-06-19 05:45:34,098 [INFO] 泛糖候选[1]: id=2026061708571408061200 title_date=2026-06-16
+2026-06-19 05:45:34,098 [INFO] 泛糖候选[2]: id=2026061608435310683251 title_date=2026-06-15
+2026-06-19 05:45:34,098 [INFO] 泛糖候选[3]: id=2026061508390971521945 title_date=2026-06-12
+2026-06-19 05:45:34,098 [INFO] 泛糖候选[4]: id=2026061208370767084441 title_date=2026-06-11
+2026-06-19 05:45:34,614 [INFO] 泛糖选中: id=2026061808481593566980 title_date=2026-06-17 body_date=2026-06-17 published_at=2026-06-18 16:21
+2026-06-19 05:45:34,683 [INFO] 泛糖结果: title_date=2026-06-17 ICE=14.37 汇率=6.7630 配额外利润=573 状态=verified
+2026-06-19 05:45:34,685 [INFO] 巴西进口利润来自泛糖科技: 573 元/吨 (数据日期 2026-06-17)
+2026-06-19 05:45:34,685 [INFO] 市场数据获取成功 | 来源: 新浪财经 | 交易日: 2026-06-18
+2026-06-19 05:45:34,685 [INFO] [03/16] 校验合约代码...
+2026-06-19 05:45:34,685 [INFO] [03/16] 行情展示合约=SR0；交易观点目标仍为 SR2609
+2026-06-19 05:45:34,686 [INFO] [05/16] 校验行情日期...
+2026-06-19 05:45:34,686 [INFO] [05/16] 行情日期: 2026-06-18 (有效)
+2026-06-19 05:45:34,686 [INFO] [06/16] 计算涨跌幅、基差...
+2026-06-19 05:45:34,686 [INFO] [06/16] 收盘=5320.00 前收=5339.00 涨跌=-0.36% 基差=N/A
+2026-06-19 05:45:34,686 [INFO] [07/16] 研究员基本面（可选）...
+2026-06-19 05:45:34,687 [INFO] 研究员基本面文件不存在（可选）: /Users/mymac/codingtest/sugar-daily/inputs/fundamentals/2026-06-19.md
+2026-06-19 05:45:34,691 [INFO] [08/16] 自动抓取基本面...
+2026-06-19 05:45:34,748 [INFO] ==================================================
+2026-06-19 05:45:34,748 [INFO] 基本面自动抓取 - 2026-06-19 | 目标合约: SR2609
+2026-06-19 05:45:34,748 [INFO] ==================================================
+2026-06-19 05:45:34,748 [INFO] --- 全球供需机构观点 ---
+2026-06-19 05:45:34,748 [INFO] 全球供需机构观点: https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html
+2026-06-19 05:45:35,064 [INFO] 沐甜机构观点: 找到 10 篇文章
+2026-06-19 05:45:43,673 [INFO] 2026/27年度机构观点: 3 条
+2026-06-19 05:45:43,673 [INFO]   Czarnikow | 2026-05-20 | surplus140万吨 | Czarnikow：2026/27年度糖市将出现小幅过剩
+2026-06-19 05:45:43,674 [INFO]   ISO | 2026-05-19 | deficit26.2万吨 | ISO将2025/26年度全球糖市过剩预估上调至224.4万吨
+2026-06-19 05:45:43,674 [INFO]   StoneX | 2026-05-13 | deficit55万吨 | StoneX：全球糖市将从过剩转向短缺，因产量缩减
+2026-06-19 05:45:43,674 [INFO] 全球供需机构观点: 3 条记录 (目标年度=2026/27)
+2026-06-19 05:45:43,674 [INFO] --- UNICA 巴西双周报告 ---
+2026-06-19 05:45:51,549 [INFO] UNICA PDF文本解析失败: No module named 'PyPDF2'
+2026-06-19 05:45:51,552 [INFO] UNICA双周报告: 1 条, source=https://unicadata.com.br/download_media.php?idM=32820684
+2026-06-19 05:45:51,552 [INFO] --- 印度 NFCSF/coopsugar ---
+2026-06-19 05:45:58,371 [INFO] PDF解析失败: No module named 'PyPDF2'
+2026-06-19 05:45:58,373 [INFO] --- 泰国 OCSB ---
+2026-06-19 05:45:58,374 [INFO] ==================================================
+2026-06-19 05:45:58,374 [INFO] 泰国数据抓取: 目标榨季=2025/26 | 日期=2026-06-19
+2026-06-19 05:45:58,374 [INFO] ==================================================
+2026-06-19 05:45:58,374 [INFO] --- [优先级1] SugarZone生产报告 ---
+2026-06-19 05:45:58,374 [INFO] ==================================================
+2026-06-19 05:45:58,374 [INFO] SugarZone泰国生产报告: https://sugarzone.in.th/production-report-by-region/
+2026-06-19 05:45:58,374 [INFO] ==================================================
+2026-06-19 05:46:03,830 [INFO] SugarZone找到 10 份报告
+2026-06-19 05:46:03,830 [INFO] SugarZone最新报告: 日期=2026-05-05 (泰文: 5 พฤษภาคม 2569), PDF=https://sugarzone.in.th/wp-content/uploads/2026/05/05May69.pdf
+2026-06-19 05:46:03,830 [INFO] SugarZone报告所属榨季: 2025/26 (报告日期: 2026-05-05)
+2026-06-19 05:46:05,398 [INFO] SugarZone PDF下载成功: 276961 bytes
+2026-06-19 05:46:05,398 [WARNING] SugarZone PDF解析失败: No module named 'PyPDF2'
+2026-06-19 05:46:05,398 [WARNING] SugarZone PDF解析未提取到数据
+2026-06-19 05:46:05,398 [INFO] --- [优先级2] OCSB Open Data ---
+2026-06-19 06:02:20,023 [INFO] OCSB HEAD请求失败 attempt=1 url=https://opendata.ocsb.go.th/ err=The read operation timed out
+2026-06-19 06:02:25,044 [INFO] OCSB HEAD请求失败 attempt=2 url=https://opendata.ocsb.go.th/ err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:25,046 [INFO] OCSB Open Data入口状态码: None
+2026-06-19 06:02:28,519 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%B2%E0%B8%A5%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:32,680 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%99%E0%B9%89%E0%B8%B3%E0%B8%95%E0%B8%B2%E0%B8%A5%E0%B8%97%E0%B8%A3%E0%B8%B2%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:32,682 [INFO] OCSB Open Data状态码: None | query=ปริมาณน้ำตาลทราย
+2026-06-19 06:02:32,683 [INFO] CKAN搜索: query=ปริมาณน้ำตาลทราย status=None results=0
+2026-06-19 06:02:35,484 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:39,876 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%9B%E0%B8%A3%E0%B8%B4%E0%B8%A1%E0%B8%B2%E0%B8%93%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:39,877 [INFO] OCSB Open Data状态码: None | query=ปริมาณอ้อย
+2026-06-19 06:02:39,877 [INFO] CKAN搜索: query=ปริมาณอ้อย status=None results=0
+2026-06-19 06:02:43,455 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9B%E0%B8%A5%E0%B8%B9%E0%B8%81%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:48,182 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%9B%E0%B8%A5%E0%B8%B9%E0%B8%81%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:48,185 [INFO] OCSB Open Data状态码: None | query=สถิติพื้นที่ปลูกอ้อย
+2026-06-19 06:02:48,185 [INFO] CKAN搜索: query=สถิติพื้นที่ปลูกอ้อย status=None results=0
+2026-06-19 06:02:52,150 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9C%E0%B8%A5%E0%B8%9C%E0%B8%A5%E0%B8%B4%E0%B8%95%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2%E0%B8%95%E0%B9%88%E0%B8%AD%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:56,518 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%AA%E0%B8%96%E0%B8%B4%E0%B8%95%E0%B8%B4%E0%B8%9C%E0%B8%A5%E0%B8%9C%E0%B8%A5%E0%B8%B4%E0%B8%95%E0%B8%AD%E0%B9%89%E0%B8%AD%E0%B8%A2%E0%B8%95%E0%B9%88%E0%B8%AD%E0%B8%9E%E0%B8%B7%E0%B9%89%E0%B8%99%E0%B8%97%E0%B8%B5%E0%B9%88&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:02:56,519 [INFO] OCSB Open Data状态码: None | query=สถิติผลผลิตอ้อยต่อพื้นที่
+2026-06-19 06:02:56,519 [INFO] CKAN搜索: query=สถิติผลผลิตอ้อยต่อพื้นที่ status=None results=0
+2026-06-19 06:02:58,919 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:03:03,455 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C&rows=5 err=<urlopen error EOF occurred in violation of protocol (_ssl.c:1129)>
+2026-06-19 06:03:03,457 [INFO] OCSB Open Data状态码: None | query=ข้อมูลการพยากรณ์
+2026-06-19 06:03:03,457 [INFO] CKAN搜索: query=ข้อมูลการพยากรณ์ status=None results=0
+2026-06-19 06:03:07,663 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณการส่งออกน้ำตาลทราย
+2026-06-19 06:03:07,664 [INFO] CKAN搜索: query=ปริมาณการส่งออกน้ำตาลทราย status=200 results=1
+2026-06-19 06:19:39,468 [INFO] OCSB请求失败 attempt=1 url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv err=IncompleteRead(4619954 bytes read, 5142916 more expected)
+2026-06-19 06:19:43,149 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv
+2026-06-19 06:19:43,634 [INFO] 识别到的佛历年份: 2565/2566, 2566/2567, ก่อนปีการผลิต 2565/2566, ก่อนปีการผลิต 2566/2567
+2026-06-19 06:19:43,635 [INFO] 转换后的公历榨季: 2022/23, 2023/24
+2026-06-19 06:19:43,637 [INFO] Open Data聚合: indicator=sugar_exports value=- latest_season=2023/24 status=not_published
+2026-06-19 06:19:43,638 [INFO] Open Data完成: has_fresh=False has_national_total=False
+2026-06-19 06:19:43,638 [INFO] --- [优先级3] 泰国政府PRD ---
+2026-06-19 06:19:43,638 [INFO] PRD搜索: url=https://www.prd.go.th/ keywords=['อ้อย', 'น้ำตาล', 'OCSB']
+2026-06-19 06:19:54,412 [INFO] PRD找到 0 条相关链接
+2026-06-19 06:19:54,413 [INFO] PRD抓取完成: 0 条记录
+2026-06-19 06:19:54,413 [INFO] --- [优先级4] OCSB主站 ---
+2026-06-19 06:20:07,127 [INFO] OCSB HEAD请求失败 attempt=1 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-19 06:36:35,683 [INFO] OCSB HEAD请求失败 attempt=2 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-19 06:36:35,692 [INFO] OCSB主站状态码: None
+2026-06-19 06:36:35,693 [INFO] --- [优先级5] OCSB官方Facebook ---
+2026-06-19 06:36:35,693 [INFO] OCSB Facebook: url=https://mbasic.facebook.com/ocsbofficial/
+2026-06-19 06:36:46,871 [INFO] OCSB Facebook抓取完成: 1 条记录
+2026-06-19 06:36:46,871 [INFO] --- [优先级6] OCSB区域中心 ---
+2026-06-19 06:36:46,871 [INFO] OCSB区域中心: 当前无可用结构化入口，跳过。
+2026-06-19 06:36:46,871 [INFO] --- [优先级7] CSV缓存 ---
+2026-06-19 06:36:46,877 [INFO] --- [优先级8] 官方预测 ---
+2026-06-19 06:36:47,829 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-19 06:36:50,758 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-19 06:36:50,767 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-19 06:36:50,768 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-19 06:36:50,768 [INFO] 泰国官方预测: 1 条记录
+2026-06-19 06:36:50,768 [INFO] 泰国数据汇总: fresh=0 cached=0 not_published=3 source_503=0 total=8
+2026-06-19 06:36:50,768 [INFO] 泰国最终产量: 未发布
+2026-06-19 06:36:50,768 [INFO] 泰国阶段性数据: 无
+2026-06-19 06:36:50,819 [INFO] --- 中国/广西 沐甜国内 ---
+2026-06-19 06:36:50,819 [INFO] 沐甜抓取栏目: 产销预估 (优先级1, https://www.msweet.com.cn/eportal/ui?pageId=1014225)
+2026-06-19 06:36:54,541 [INFO] 沐甜栏目 '产销预估': 找到 50 篇文章
+2026-06-19 06:36:54,542 [INFO] 沐甜抓取栏目: 各省产销 (优先级2, https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html)
+2026-06-19 06:36:58,032 [INFO] 沐甜栏目 '各省产销': 找到 100 篇文章
+2026-06-19 06:36:58,033 [INFO] 沐甜抓取栏目: 产区动态 (优先级3, https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html)
+2026-06-19 06:36:58,883 [INFO] 沐甜栏目 '产区动态': 找到 130 篇文章
+2026-06-19 06:36:59,491 [INFO] 沐甜国内文章总数: 140
+2026-06-19 06:36:59,496 [INFO] 生产文章分类: 广西=24, 云南=25, 其他=6
+2026-06-19 06:37:06,105 [INFO] 国内缓存新鲜度检查: 1 个分组
+2026-06-19 06:37:06,106 [INFO] 沐甜国内抓取完成: 6 条记录
+2026-06-19 06:37:06,112 [INFO] CSV更新: inserted=11 updated=3 conflicts=0
+2026-06-19 06:37:06,114 [INFO] 巴西: total=13 fresh=7 cached=6 stale=0
+2026-06-19 06:37:06,114 [INFO] 印度: total=1 fresh=1 cached=0 stale=0
+2026-06-19 06:37:06,114 [INFO] 泰国: total=28 fresh=3 cached=22 stale=0
+2026-06-19 06:37:06,114 [INFO] 中国: total=25 fresh=24 cached=0 stale=0
+2026-06-19 06:37:06,114 [INFO] 宏观: total=7 fresh=7 cached=0 stale=0
+2026-06-19 06:37:06,114 [INFO] [09/16] 写入市场数据到CSV...
+2026-06-19 06:37:06,118 [INFO] CSV更新: inserted=3 updated=0 conflicts=0
+2026-06-19 06:37:06,118 [INFO] [10/16] 从CSV读取有效记录...
+2026-06-19 06:37:06,119 [INFO] [10/16] 有效记录: 87 条
+2026-06-19 06:37:06,119 [INFO] [10/16] 筛选 SR2609 相关信息...
+2026-06-19 06:37:06,120 [INFO] [10/16] 模型输入: 14366 字符
+2026-06-19 06:37:06,120 [INFO] [11/16] 读取交易观点...
+2026-06-19 06:37:06,123 [INFO] 交易观点: 合约=SR2609, 确认日期=2026-06-12
+2026-06-19 06:37:06,123 [INFO] [12/16] 合约一致性检查...
+2026-06-19 06:37:06,123 [INFO] [12/16] 一致性检查通过
+2026-06-19 06:37:06,123 [WARNING] [12.5/16] 策略校验: 观点缺少参考价格
+2026-06-19 06:37:06,123 [INFO] [13/16] 调用 DeepSeek 生成基本面...
+2026-06-19 06:37:06,124 [INFO] DeepSeek 调用: model=deepseek-chat, base_url=https://api.deepseek.com/v1
+2026-06-19 06:37:23,221 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-19 06:37:26,803 [INFO] DeepSeek 调用成功: 433 字符
+2026-06-19 06:37:26,803 [INFO] [14/16] 校验模型正文...
+2026-06-19 06:37:26,803 [INFO] [14/16] 基本面正文: 470 字符
+2026-06-19 06:37:26,803 [INFO] [15/16] 最终一致性检查...
+2026-06-19 06:37:26,804 [INFO] [15/16] 最终一致性检查通过
+2026-06-19 06:37:26,804 [INFO] [16/16] 拼接日报并写入...
+2026-06-19 06:37:26,805 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-19/白糖日报_20260619.md
+2026-06-19 06:37:26,805 [INFO] ============================================================
+2026-06-19 06:37:26,805 [INFO] 日报生成完成
+2026-06-19 06:37:26,805 [INFO]   日报: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-19/白糖日报_20260619.md
+2026-06-19 06:37:26,805 [INFO]   状态: success | 合约: SR2609 | 行情日期: 2026-06-18
+2026-06-19 06:37:26,805 [INFO] ============================================================
+2026-06-19 06:37:26,809 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/public/data/reports/2026-06-19.json
+2026-06-19 06:37:26,811 [INFO] 索引已更新: /Users/mymac/codingtest/sugar-daily/public/data/reports.json (7 篇日报)
+2026-06-19 06:37:26,811 [INFO] 前端JSON已更新
+[main d76d31d] Update sugar daily report 2026-06-19
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 public/data/reports/2026-06-19.json
+2026-06-19 06:37:30,529 [INFO] 已推送到 GitHub: Update sugar daily report 2026-06-19
+2026-06-19 06:37:30,530 [INFO] [OK] 日报已生成: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-19/白糖日报_20260619.md
+2026-06-20 05:52:50,644 [INFO] ============================================================
+2026-06-20 05:52:50,660 [INFO] 白糖日报生成开始
+2026-06-20 05:52:50,660 [INFO]   发布日期: 2026-06-20 | 目标合约: SR2609
+2026-06-20 05:52:50,660 [INFO] ============================================================
+2026-06-20 05:52:50,660 [INFO] [01/16] 读取目标合约: SR2609
+2026-06-20 05:52:50,660 [INFO] [02/16] 获取公开行情...
+2026-06-20 05:52:50,689 [WARNING] 请求失败 (尝试 1): https://hq.sinajs.cn/list=nf_SR0 — <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 05:52:55,939 [INFO] SR0展示行情: close=5320.00 chg=-0.36% date=2026-06-18
+2026-06-20 05:52:56,352 [INFO] RS展示行情: close=14.14 chg=-1.63%
+2026-06-20 05:52:56,354 [INFO] 郑糖展示行情使用SR0: 5320.00
+2026-06-20 05:52:56,356 [INFO] ICE展示行情使用RS: 14.14
+2026-06-20 05:53:00,633 [INFO] 泛糖: 发现 5 篇候选文章, 最新 title_date=2026-06-17
+2026-06-20 05:53:00,634 [INFO] 泛糖候选[0]: id=2026061808481593566980 title_date=2026-06-17
+2026-06-20 05:53:00,634 [INFO] 泛糖候选[1]: id=2026061708571408061200 title_date=2026-06-16
+2026-06-20 05:53:00,634 [INFO] 泛糖候选[2]: id=2026061608435310683251 title_date=2026-06-15
+2026-06-20 05:53:00,634 [INFO] 泛糖候选[3]: id=2026061508390971521945 title_date=2026-06-12
+2026-06-20 05:53:00,634 [INFO] 泛糖候选[4]: id=2026061208370767084441 title_date=2026-06-11
+2026-06-20 05:53:01,519 [INFO] 泛糖选中: id=2026061808481593566980 title_date=2026-06-17 body_date=2026-06-17 published_at=2026-06-18 16:21
+2026-06-20 05:53:01,526 [INFO] 泛糖结果: title_date=2026-06-17 ICE=14.37 汇率=6.7630 配额外利润=573 状态=verified
+2026-06-20 05:53:01,526 [INFO] 巴西进口利润来自泛糖科技: 573 元/吨 (数据日期 2026-06-17)
+2026-06-20 05:53:01,526 [INFO] 市场数据获取成功 | 来源: 新浪财经 | 交易日: 2026-06-18
+2026-06-20 05:53:01,526 [INFO] [03/16] 校验合约代码...
+2026-06-20 05:53:01,526 [INFO] [03/16] 行情展示合约=SR0；交易观点目标仍为 SR2609
+2026-06-20 05:53:01,526 [INFO] [05/16] 校验行情日期...
+2026-06-20 05:53:01,526 [INFO] [05/16] 行情日期: 2026-06-18 (有效)
+2026-06-20 05:53:01,526 [INFO] [06/16] 计算涨跌幅、基差...
+2026-06-20 05:53:01,526 [INFO] [06/16] 收盘=5320.00 前收=5339.00 涨跌=-0.36% 基差=N/A
+2026-06-20 05:53:01,526 [INFO] [07/16] 研究员基本面（可选）...
+2026-06-20 05:53:01,527 [INFO] 研究员基本面文件不存在（可选）: /Users/mymac/codingtest/sugar-daily/inputs/fundamentals/2026-06-20.md
+2026-06-20 05:53:01,527 [INFO] [08/16] 自动抓取基本面...
+2026-06-20 05:53:01,564 [INFO] ==================================================
+2026-06-20 05:53:01,564 [INFO] 基本面自动抓取 - 2026-06-20 | 目标合约: SR2609
+2026-06-20 05:53:01,564 [INFO] ==================================================
+2026-06-20 05:53:01,564 [INFO] --- 全球供需机构观点 ---
+2026-06-20 05:53:01,564 [INFO] 全球供需机构观点: https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html
+2026-06-20 05:53:01,738 [INFO] 沐甜机构观点: 找到 10 篇文章
+2026-06-20 05:53:08,803 [INFO] 2026/27年度机构观点: 3 条
+2026-06-20 05:53:08,805 [INFO]   Czarnikow | 2026-05-20 | surplus140万吨 | Czarnikow：2026/27年度糖市将出现小幅过剩
+2026-06-20 05:53:08,806 [INFO]   ISO | 2026-05-19 | deficit26.2万吨 | ISO将2025/26年度全球糖市过剩预估上调至224.4万吨
+2026-06-20 05:53:08,806 [INFO]   StoneX | 2026-05-13 | deficit55万吨 | StoneX：全球糖市将从过剩转向短缺，因产量缩减
+2026-06-20 05:53:08,806 [INFO] 全球供需机构观点: 3 条记录 (目标年度=2026/27)
+2026-06-20 05:53:08,806 [INFO] --- UNICA 巴西双周报告 ---
+2026-06-20 05:53:15,668 [INFO] UNICA PDF文本解析失败: No module named 'PyPDF2'
+2026-06-20 05:53:15,671 [INFO] UNICA双周报告: 1 条, source=https://unicadata.com.br/download_media.php?idM=32820684
+2026-06-20 05:53:15,671 [INFO] --- 印度 NFCSF/coopsugar ---
+2026-06-20 05:53:21,518 [INFO] PDF解析失败: No module named 'PyPDF2'
+2026-06-20 05:53:21,518 [INFO] --- 泰国 OCSB ---
+2026-06-20 05:53:21,519 [INFO] ==================================================
+2026-06-20 05:53:21,519 [INFO] 泰国数据抓取: 目标榨季=2025/26 | 日期=2026-06-20
+2026-06-20 05:53:21,519 [INFO] ==================================================
+2026-06-20 05:53:21,519 [INFO] --- [优先级1] SugarZone生产报告 ---
+2026-06-20 05:53:21,519 [INFO] ==================================================
+2026-06-20 05:53:21,519 [INFO] SugarZone泰国生产报告: https://sugarzone.in.th/production-report-by-region/
+2026-06-20 05:53:21,519 [INFO] ==================================================
+2026-06-20 05:53:24,848 [INFO] SugarZone找到 10 份报告
+2026-06-20 05:53:24,848 [INFO] SugarZone最新报告: 日期=2026-05-05 (泰文: 5 พฤษภาคม 2569), PDF=https://sugarzone.in.th/wp-content/uploads/2026/05/05May69.pdf
+2026-06-20 05:53:24,848 [INFO] SugarZone报告所属榨季: 2025/26 (报告日期: 2026-05-05)
+2026-06-20 05:53:25,984 [INFO] SugarZone PDF下载成功: 276961 bytes
+2026-06-20 05:53:25,986 [WARNING] SugarZone PDF解析失败: No module named 'PyPDF2'
+2026-06-20 05:53:25,986 [WARNING] SugarZone PDF解析未提取到数据
+2026-06-20 05:53:25,987 [INFO] --- [优先级2] OCSB Open Data ---
+2026-06-20 05:53:26,991 [INFO] OCSB Open Data入口状态码: 200
+2026-06-20 05:53:27,781 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณน้ำตาลทราย
+2026-06-20 05:53:27,782 [INFO] CKAN搜索: query=ปริมาณน้ำตาลทราย status=200 results=1
+2026-06-20 05:53:28,668 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/1ab1c731-5d59-43f0-ae4e-e4e444ffbea8/resource/31a06ac4-c858-47a3-9760-b5934074c676/download/s_production.csv
+2026-06-20 05:53:28,672 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-20 05:53:28,673 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-20 05:53:28,673 [INFO] Open Data聚合: indicator=sugar_production value=- latest_season=2023/24 status=not_published
+2026-06-20 05:53:29,648 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณอ้อย
+2026-06-20 05:53:29,649 [INFO] CKAN搜索: query=ปริมาณอ้อย status=200 results=2
+2026-06-20 05:53:30,491 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/8f34c88b-db32-431f-b314-8b5808b6d63d/resource/495e4f6c-aac6-4113-afd8-9c8797223dbe/download/c_production.csv
+2026-06-20 05:53:30,498 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-20 05:53:30,498 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-20 05:53:30,498 [INFO] Open Data聚合: indicator=sugarcane_volume value=- latest_season=2023/24 status=not_published
+2026-06-20 05:53:31,278 [INFO] OCSB Open Data状态码: 200 | query=สถิติพื้นที่ปลูกอ้อย
+2026-06-20 05:53:31,278 [INFO] CKAN搜索: query=สถิติพื้นที่ปลูกอ้อย status=200 results=1
+2026-06-20 05:53:32,180 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b9719ed3-17b0-49af-a216-1e207e8efb7b/resource/ca4f4879-e9e2-4970-a037-833e9954d827/download/canearea.csv
+2026-06-20 05:53:32,187 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-20 05:53:32,187 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-20 05:53:32,187 [INFO] Open Data聚合: indicator=sugarcane_area value=- latest_season=2022/23 status=not_published
+2026-06-20 05:53:32,941 [INFO] OCSB Open Data状态码: 200 | query=สถิติผลผลิตอ้อยต่อพื้นที่
+2026-06-20 05:53:32,941 [INFO] CKAN搜索: query=สถิติผลผลิตอ้อยต่อพื้นที่ status=200 results=1
+2026-06-20 05:53:33,946 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/f6286643-632b-4be7-9656-0bd4e229e723/resource/ea16cd9d-e0e6-4850-bbbf-da915a85be9a/download/caneyield.csv
+2026-06-20 05:53:33,953 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-20 05:53:33,953 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-20 05:53:33,953 [INFO] Open Data聚合: indicator=sugarcane_yield value=- latest_season=2022/23 status=not_published
+2026-06-20 06:09:06,341 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C&rows=5 err=The read operation timed out
+2026-06-20 06:09:08,308 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-20 06:09:08,309 [INFO] CKAN搜索: query=ข้อมูลการพยากรณ์ status=200 results=1
+2026-06-20 06:09:09,150 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-20 06:09:09,155 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-20 06:09:09,156 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-20 06:09:09,156 [INFO] Open Data聚合: indicator=production_forecast value=- latest_season=2022/23 status=not_published
+2026-06-20 06:09:10,003 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณการส่งออกน้ำตาลทราย
+2026-06-20 06:09:10,003 [INFO] CKAN搜索: query=ปริมาณการส่งออกน้ำตาลทราย status=200 results=1
+2026-06-20 06:09:12,162 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv
+2026-06-20 06:09:12,461 [INFO] 识别到的佛历年份: 2565/2566, 2566/2567, ก่อนปีการผลิต 2565/2566, ก่อนปีการผลิต 2566/2567
+2026-06-20 06:09:12,462 [INFO] 转换后的公历榨季: 2022/23, 2023/24
+2026-06-20 06:09:12,462 [INFO] Open Data聚合: indicator=sugar_exports value=- latest_season=2023/24 status=not_published
+2026-06-20 06:09:12,462 [INFO] Open Data完成: has_fresh=False has_national_total=False
+2026-06-20 06:09:12,462 [INFO] --- [优先级3] 泰国政府PRD ---
+2026-06-20 06:09:12,462 [INFO] PRD搜索: url=https://www.prd.go.th/ keywords=['อ้อย', 'น้ำตาล', 'OCSB']
+2026-06-20 06:09:23,024 [INFO] PRD找到 0 条相关链接
+2026-06-20 06:09:23,027 [INFO] PRD抓取完成: 0 条记录
+2026-06-20 06:09:23,027 [INFO] --- [优先级4] OCSB主站 ---
+2026-06-20 06:25:06,830 [INFO] OCSB HEAD请求失败 attempt=1 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-20 06:25:07,991 [INFO] OCSB HEAD请求失败 attempt=2 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:07,993 [INFO] OCSB主站状态码: None
+2026-06-20 06:25:07,994 [INFO] --- [优先级5] OCSB官方Facebook ---
+2026-06-20 06:25:07,994 [INFO] OCSB Facebook: url=https://mbasic.facebook.com/ocsbofficial/
+2026-06-20 06:25:08,006 [INFO] 请求失败 https://mbasic.facebook.com/ocsbofficial/: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:08,008 [INFO] OCSB Facebook页面不可访问（可能受限）
+2026-06-20 06:25:08,011 [INFO] --- [优先级6] OCSB区域中心 ---
+2026-06-20 06:25:08,011 [INFO] OCSB区域中心: 当前无可用结构化入口，跳过。
+2026-06-20 06:25:08,011 [INFO] --- [优先级7] CSV缓存 ---
+2026-06-20 06:25:08,024 [INFO] --- [优先级8] 官方预测 ---
+2026-06-20 06:25:08,033 [INFO] OCSB请求失败 attempt=1 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,178 [INFO] OCSB请求失败 attempt=2 url=https://opendata.ocsb.go.th/api/3/action/package_search?q=%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%B9%E0%B8%A5%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3%E0%B8%93%E0%B9%8C&rows=5 err=<urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,179 [INFO] OCSB Open Data状态码: None | query=ข้อมูลการพยากรณ์
+2026-06-20 06:25:09,179 [INFO] 泰国官方预测: 0 条记录
+2026-06-20 06:25:09,179 [INFO] 泰国数据汇总: fresh=0 cached=0 not_published=6 source_503=0 total=7
+2026-06-20 06:25:09,179 [INFO] 泰国最终产量: 未发布
+2026-06-20 06:25:09,179 [INFO] 泰国阶段性数据: 无
+2026-06-20 06:25:09,231 [INFO] --- 中国/广西 沐甜国内 ---
+2026-06-20 06:25:09,232 [INFO] 沐甜抓取栏目: 产销预估 (优先级1, https://www.msweet.com.cn/eportal/ui?pageId=1014225)
+2026-06-20 06:25:09,237 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=1: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,243 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=2: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,249 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=3: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,253 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=4: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,258 [INFO] 请求失败 https://www.msweet.com.cn/eportal/ui?pageId=1014225&currentPage=5: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,259 [INFO] 沐甜栏目 '产销预估': 找到 0 篇文章
+2026-06-20 06:25:09,259 [INFO] 沐甜抓取栏目: 各省产销 (优先级2, https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html)
+2026-06-20 06:25:09,263 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=1: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,268 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=2: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,273 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=3: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,280 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=4: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,288 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html?currentPage=5: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,289 [INFO] 沐甜栏目 '各省产销': 找到 0 篇文章
+2026-06-20 06:25:09,289 [INFO] 沐甜抓取栏目: 产区动态 (优先级3, https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html)
+2026-06-20 06:25:09,296 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html?currentPage=1: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,306 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html?currentPage=2: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,314 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html?currentPage=3: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,315 [INFO] 沐甜栏目 '产区动态': 找到 0 篇文章
+2026-06-20 06:25:09,322 [INFO] 请求失败 https://www.msweet.com.cn/mtkj/xwzx62/gn97/index.html: <urlopen error [Errno 8] nodename nor servname provided, or not known>
+2026-06-20 06:25:09,323 [INFO] 沐甜国内文章总数: 0
+2026-06-20 06:25:09,323 [INFO] 生产文章分类: 广西=0, 云南=0, 其他=0
+2026-06-20 06:25:09,328 [INFO] 国内缓存新鲜度检查: 3 个分组
+2026-06-20 06:25:09,328 [INFO] 沐甜国内抓取完成: 3 条记录
+2026-06-20 06:25:09,334 [INFO] CSV更新: inserted=2 updated=3 conflicts=3
+2026-06-20 06:25:09,335 [INFO] 巴西: total=14 fresh=7 cached=7 stale=0
+2026-06-20 06:25:09,335 [INFO] 印度: total=1 fresh=1 cached=0 stale=0
+2026-06-20 06:25:09,335 [INFO] 泰国: total=29 fresh=3 cached=22 stale=0
+2026-06-20 06:25:09,335 [INFO] 中国: total=25 fresh=21 cached=0 stale=0
+2026-06-20 06:25:09,335 [INFO] 宏观: total=7 fresh=7 cached=0 stale=0
+2026-06-20 06:25:09,336 [INFO] [09/16] 写入市场数据到CSV...
+2026-06-20 06:25:09,338 [INFO] CSV更新: inserted=0 updated=0 conflicts=0
+2026-06-20 06:25:09,339 [INFO] [10/16] 从CSV读取有效记录...
+2026-06-20 06:25:09,340 [INFO] [10/16] 有效记录: 85 条
+2026-06-20 06:25:09,340 [INFO] [10/16] 筛选 SR2609 相关信息...
+2026-06-20 06:25:09,340 [INFO] [10/16] 模型输入: 14104 字符
+2026-06-20 06:25:09,340 [INFO] [11/16] 读取交易观点...
+2026-06-20 06:25:09,343 [WARNING] 观点已过期: 2026-06-19
+2026-06-20 06:25:09,343 [INFO] 交易观点: 合约=SR2609, 确认日期=2026-06-12
+2026-06-20 06:25:09,343 [INFO] [12/16] 合约一致性检查...
+2026-06-20 06:25:09,343 [WARNING] [12/16] 一致性问题 (1 项):
+2026-06-20 06:25:09,343 [WARNING]   - 观点已过期
+2026-06-20 06:25:09,343 [WARNING] [12.5/16] 策略校验: 观点已过有效期
+2026-06-20 06:25:09,343 [INFO] [13/16] 调用 DeepSeek 生成基本面...
+2026-06-20 06:25:09,344 [INFO] DeepSeek 调用: model=deepseek-chat, base_url=https://api.deepseek.com/v1
+2026-06-20 06:25:15,250 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-20 06:25:20,072 [INFO] DeepSeek 调用成功: 493 字符
+2026-06-20 06:25:20,072 [INFO] [14/16] 校验模型正文...
+2026-06-20 06:25:20,072 [INFO] [14/16] 基本面正文: 530 字符
+2026-06-20 06:25:20,072 [INFO] [15/16] 最终一致性检查...
+2026-06-20 06:25:20,073 [INFO] [15/16] 最终一致性检查通过
+2026-06-20 06:25:20,073 [INFO] [16/16] 拼接日报并写入...
+2026-06-20 06:25:20,074 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-20/白糖日报_20260620.md
+2026-06-20 06:25:20,074 [INFO] ============================================================
+2026-06-20 06:25:20,074 [INFO] 日报生成完成
+2026-06-20 06:25:20,074 [INFO]   日报: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-20/白糖日报_20260620.md
+2026-06-20 06:25:20,074 [INFO]   状态: needs_contract_confirmation | 合约: SR2609 | 行情日期: 2026-06-18
+2026-06-20 06:25:20,074 [INFO] ============================================================
+2026-06-20 06:25:20,078 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/public/data/reports/2026-06-20.json
+2026-06-20 06:25:20,083 [INFO] 索引已更新: /Users/mymac/codingtest/sugar-daily/public/data/reports.json (8 篇日报)
+2026-06-20 06:25:20,083 [INFO] 前端JSON已更新
+[main dc8e9ab] Update sugar daily report 2026-06-20
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 public/data/reports/2026-06-20.json
+2026-06-20 06:25:22,542 [INFO] 已推送到 GitHub: Update sugar daily report 2026-06-20
+2026-06-20 06:25:22,543 [INFO] [OK] 日报已生成: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-20/白糖日报_20260620.md
+2026-06-21 05:42:47,492 [INFO] ============================================================
+2026-06-21 05:42:47,492 [INFO] 白糖日报生成开始
+2026-06-21 05:42:47,492 [INFO]   发布日期: 2026-06-21 | 目标合约: SR2609
+2026-06-21 05:42:47,493 [INFO] ============================================================
+2026-06-21 05:42:47,493 [INFO] [01/16] 读取目标合约: SR2609
+2026-06-21 05:42:47,493 [INFO] [02/16] 获取公开行情...
+2026-06-21 05:42:47,764 [INFO] SR0展示行情: close=5320.00 chg=-0.36% date=2026-06-18
+2026-06-21 05:42:47,901 [INFO] RS展示行情: close=14.14 chg=-1.63%
+2026-06-21 05:42:47,901 [INFO] 郑糖展示行情使用SR0: 5320.00
+2026-06-21 05:42:47,901 [INFO] ICE展示行情使用RS: 14.14
+2026-06-21 05:42:51,002 [INFO] 泛糖: 发现 5 篇候选文章, 最新 title_date=2026-06-17
+2026-06-21 05:42:51,010 [INFO] 泛糖候选[0]: id=2026061808481593566980 title_date=2026-06-17
+2026-06-21 05:42:51,010 [INFO] 泛糖候选[1]: id=2026061708571408061200 title_date=2026-06-16
+2026-06-21 05:42:51,010 [INFO] 泛糖候选[2]: id=2026061608435310683251 title_date=2026-06-15
+2026-06-21 05:42:51,010 [INFO] 泛糖候选[3]: id=2026061508390971521945 title_date=2026-06-12
+2026-06-21 05:42:51,010 [INFO] 泛糖候选[4]: id=2026061208370767084441 title_date=2026-06-11
+2026-06-21 05:42:51,540 [INFO] 泛糖选中: id=2026061808481593566980 title_date=2026-06-17 body_date=2026-06-17 published_at=2026-06-18 16:21
+2026-06-21 05:42:51,548 [INFO] 泛糖结果: title_date=2026-06-17 ICE=14.37 汇率=6.7630 配额外利润=573 状态=verified
+2026-06-21 05:42:51,548 [INFO] 巴西进口利润来自泛糖科技: 573 元/吨 (数据日期 2026-06-17)
+2026-06-21 05:42:51,548 [INFO] 市场数据获取成功 | 来源: 新浪财经 | 交易日: 2026-06-18
+2026-06-21 05:42:51,548 [INFO] [03/16] 校验合约代码...
+2026-06-21 05:42:51,548 [INFO] [03/16] 行情展示合约=SR0；交易观点目标仍为 SR2609
+2026-06-21 05:42:51,548 [INFO] [05/16] 校验行情日期...
+2026-06-21 05:42:51,549 [INFO] [05/16] 行情日期: 2026-06-18 (有效)
+2026-06-21 05:42:51,549 [INFO] [06/16] 计算涨跌幅、基差...
+2026-06-21 05:42:51,549 [INFO] [06/16] 收盘=5320.00 前收=5339.00 涨跌=-0.36% 基差=N/A
+2026-06-21 05:42:51,549 [INFO] [07/16] 研究员基本面（可选）...
+2026-06-21 05:42:51,550 [INFO] 研究员基本面文件不存在（可选）: /Users/mymac/codingtest/sugar-daily/inputs/fundamentals/2026-06-21.md
+2026-06-21 05:42:51,554 [INFO] [08/16] 自动抓取基本面...
+2026-06-21 05:42:51,657 [INFO] ==================================================
+2026-06-21 05:42:51,657 [INFO] 基本面自动抓取 - 2026-06-21 | 目标合约: SR2609
+2026-06-21 05:42:51,657 [INFO] ==================================================
+2026-06-21 05:42:51,657 [INFO] --- 全球供需机构观点 ---
+2026-06-21 05:42:51,657 [INFO] 全球供需机构观点: https://www.msweet.com.cn/mtkj/xwzx62/gj29/jggd22/index.html
+2026-06-21 05:42:51,881 [INFO] 沐甜机构观点: 找到 10 篇文章
+2026-06-21 05:43:03,829 [INFO] 2026/27年度机构观点: 3 条
+2026-06-21 05:43:03,853 [INFO]   Czarnikow | 2026-05-20 | surplus140万吨 | Czarnikow：2026/27年度糖市将出现小幅过剩
+2026-06-21 05:43:03,855 [INFO]   ISO | 2026-05-19 | deficit26.2万吨 | ISO将2025/26年度全球糖市过剩预估上调至224.4万吨
+2026-06-21 05:43:03,856 [INFO]   StoneX | 2026-05-13 | deficit55万吨 | StoneX：全球糖市将从过剩转向短缺，因产量缩减
+2026-06-21 05:43:03,864 [INFO] 全球供需机构观点: 3 条记录 (目标年度=2026/27)
+2026-06-21 05:43:03,864 [INFO] --- UNICA 巴西双周报告 ---
+2026-06-21 05:43:11,047 [INFO] UNICA PDF文本解析失败: No module named 'PyPDF2'
+2026-06-21 05:43:11,056 [INFO] UNICA双周报告: 1 条, source=https://unicadata.com.br/download_media.php?idM=32820684
+2026-06-21 05:43:11,056 [INFO] --- 印度 NFCSF/coopsugar ---
+2026-06-21 05:53:10,977 [INFO] 请求失败 https://coopsugar.org/statistics/: The read operation timed out
+2026-06-21 05:53:10,982 [INFO] --- 泰国 OCSB ---
+2026-06-21 05:53:10,984 [INFO] ==================================================
+2026-06-21 05:53:10,984 [INFO] 泰国数据抓取: 目标榨季=2025/26 | 日期=2026-06-21
+2026-06-21 05:53:10,984 [INFO] ==================================================
+2026-06-21 05:53:10,984 [INFO] --- [优先级1] SugarZone生产报告 ---
+2026-06-21 05:53:10,984 [INFO] ==================================================
+2026-06-21 05:53:10,984 [INFO] SugarZone泰国生产报告: https://sugarzone.in.th/production-report-by-region/
+2026-06-21 05:53:10,985 [INFO] ==================================================
+2026-06-21 05:53:17,747 [INFO] SugarZone找到 10 份报告
+2026-06-21 05:53:17,750 [INFO] SugarZone最新报告: 日期=2026-05-05 (泰文: 5 พฤษภาคม 2569), PDF=https://sugarzone.in.th/wp-content/uploads/2026/05/05May69.pdf
+2026-06-21 05:53:17,751 [INFO] SugarZone报告所属榨季: 2025/26 (报告日期: 2026-05-05)
+2026-06-21 05:53:21,525 [INFO] SugarZone PDF下载成功: 276961 bytes
+2026-06-21 05:53:21,526 [WARNING] SugarZone PDF解析失败: No module named 'PyPDF2'
+2026-06-21 05:53:21,526 [WARNING] SugarZone PDF解析未提取到数据
+2026-06-21 05:53:21,526 [INFO] --- [优先级2] OCSB Open Data ---
+2026-06-21 05:53:25,572 [INFO] OCSB Open Data入口状态码: 200
+2026-06-21 05:53:27,677 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณน้ำตาลทราย
+2026-06-21 05:53:27,677 [INFO] CKAN搜索: query=ปริมาณน้ำตาลทราย status=200 results=1
+2026-06-21 05:53:32,288 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/1ab1c731-5d59-43f0-ae4e-e4e444ffbea8/resource/31a06ac4-c858-47a3-9760-b5934074c676/download/s_production.csv
+2026-06-21 05:53:32,297 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-21 05:53:32,297 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-21 05:53:32,297 [INFO] Open Data聚合: indicator=sugar_production value=- latest_season=2023/24 status=not_published
+2026-06-21 05:53:35,078 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณอ้อย
+2026-06-21 05:53:35,079 [INFO] CKAN搜索: query=ปริมาณอ้อย status=200 results=2
+2026-06-21 06:03:11,714 [INFO] OCSB请求失败 attempt=1 url=https://catalog.ocsb.go.th/dataset/8f34c88b-db32-431f-b314-8b5808b6d63d/resource/495e4f6c-aac6-4113-afd8-9c8797223dbe/download/c_production.csv err=<urlopen error _ssl.c:1112: The handshake operation timed out>
+2026-06-21 06:03:15,363 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/8f34c88b-db32-431f-b314-8b5808b6d63d/resource/495e4f6c-aac6-4113-afd8-9c8797223dbe/download/c_production.csv
+2026-06-21 06:03:15,371 [INFO] 识别到的佛历年份: 2562/63, 2563/64, 2564/65, 2565/66, 2566/67
+2026-06-21 06:03:15,371 [INFO] 转换后的公历榨季: 2019/20, 2020/21, 2021/22, 2022/23, 2023/24
+2026-06-21 06:03:15,372 [INFO] Open Data聚合: indicator=sugarcane_volume value=- latest_season=2023/24 status=not_published
+2026-06-21 06:03:19,359 [INFO] OCSB Open Data状态码: 200 | query=สถิติพื้นที่ปลูกอ้อย
+2026-06-21 06:03:19,359 [INFO] CKAN搜索: query=สถิติพื้นที่ปลูกอ้อย status=200 results=1
+2026-06-21 06:03:22,194 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b9719ed3-17b0-49af-a216-1e207e8efb7b/resource/ca4f4879-e9e2-4970-a037-833e9954d827/download/canearea.csv
+2026-06-21 06:03:22,201 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-21 06:03:22,201 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-21 06:03:22,201 [INFO] Open Data聚合: indicator=sugarcane_area value=- latest_season=2022/23 status=not_published
+2026-06-21 06:03:24,374 [INFO] OCSB Open Data状态码: 200 | query=สถิติผลผลิตอ้อยต่อพื้นที่
+2026-06-21 06:03:24,375 [INFO] CKAN搜索: query=สถิติผลผลิตอ้อยต่อพื้นที่ status=200 results=1
+2026-06-21 06:03:26,709 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/f6286643-632b-4be7-9656-0bd4e229e723/resource/ea16cd9d-e0e6-4850-bbbf-da915a85be9a/download/caneyield.csv
+2026-06-21 06:03:26,714 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-21 06:03:26,714 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-21 06:03:26,714 [INFO] Open Data聚合: indicator=sugarcane_yield value=- latest_season=2022/23 status=not_published
+2026-06-21 06:03:28,834 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-21 06:03:28,835 [INFO] CKAN搜索: query=ข้อมูลการพยากรณ์ status=200 results=1
+2026-06-21 06:03:31,096 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-21 06:03:31,103 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-21 06:03:31,103 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-21 06:03:31,103 [INFO] Open Data聚合: indicator=production_forecast value=- latest_season=2022/23 status=not_published
+2026-06-21 06:03:33,136 [INFO] OCSB Open Data状态码: 200 | query=ปริมาณการส่งออกน้ำตาลทราย
+2026-06-21 06:03:33,136 [INFO] CKAN搜索: query=ปริมาณการส่งออกน้ำตาลทราย status=200 results=1
+2026-06-21 06:03:38,450 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/b7038e76-8139-48ab-85f9-1eb7872d81c3/resource/0705aff2-07b8-490e-89d7-b08dfc86ade2/download/s_export.csv
+2026-06-21 06:03:38,747 [INFO] 识别到的佛历年份: 2565/2566, 2566/2567, ก่อนปีการผลิต 2565/2566, ก่อนปีการผลิต 2566/2567
+2026-06-21 06:03:38,747 [INFO] 转换后的公历榨季: 2022/23, 2023/24
+2026-06-21 06:03:38,747 [INFO] Open Data聚合: indicator=sugar_exports value=- latest_season=2023/24 status=not_published
+2026-06-21 06:03:38,748 [INFO] Open Data完成: has_fresh=False has_national_total=False
+2026-06-21 06:03:38,748 [INFO] --- [优先级3] 泰国政府PRD ---
+2026-06-21 06:03:38,748 [INFO] PRD搜索: url=https://www.prd.go.th/ keywords=['อ้อย', 'น้ำตาล', 'OCSB']
+2026-06-21 06:23:11,494 [INFO] 请求失败 https://www.prd.go.th/: <urlopen error _ssl.c:1112: The handshake operation timed out>
+2026-06-21 06:23:40,792 [INFO] PRD找到 0 条相关链接
+2026-06-21 06:23:40,794 [INFO] PRD抓取完成: 0 条记录
+2026-06-21 06:23:40,794 [INFO] --- [优先级4] OCSB主站 ---
+2026-06-21 06:33:15,362 [INFO] OCSB HEAD请求失败 attempt=1 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-21 06:33:30,210 [INFO] OCSB HEAD请求失败 attempt=2 url=https://www.ocsb.go.th/report_can_sugar_production_2565-66/ err=The read operation timed out
+2026-06-21 06:33:30,213 [INFO] OCSB主站状态码: None
+2026-06-21 06:33:30,214 [INFO] --- [优先级5] OCSB官方Facebook ---
+2026-06-21 06:33:30,214 [INFO] OCSB Facebook: url=https://mbasic.facebook.com/ocsbofficial/
+2026-06-21 06:33:34,103 [INFO] OCSB Facebook抓取完成: 1 条记录
+2026-06-21 06:33:34,103 [INFO] --- [优先级6] OCSB区域中心 ---
+2026-06-21 06:33:34,103 [INFO] OCSB区域中心: 当前无可用结构化入口，跳过。
+2026-06-21 06:33:34,103 [INFO] --- [优先级7] CSV缓存 ---
+2026-06-21 06:33:34,108 [INFO] --- [优先级8] 官方预测 ---
+2026-06-21 06:33:38,385 [INFO] OCSB Open Data状态码: 200 | query=ข้อมูลการพยากรณ์
+2026-06-21 06:33:40,874 [INFO] OCSB资源下载: status=200 format=CSV url=https://catalog.ocsb.go.th/dataset/82cc694c-d1fe-43b5-bea0-b5b9f21a2c7e/resource/6b54078a-e2f6-4b1d-8fe2-e6ae00055b29/download/predict_cane.csv
+2026-06-21 06:33:40,891 [INFO] 识别到的佛历年份: 2561/62, 2562/63, 2563/64, 2564/65, 2565/66
+2026-06-21 06:33:40,892 [INFO] 转换后的公历榨季: 2018/19, 2019/20, 2020/21, 2021/22, 2022/23
+2026-06-21 06:33:40,899 [INFO] 泰国官方预测: 1 条记录
+2026-06-21 06:33:40,902 [INFO] 泰国数据汇总: fresh=0 cached=0 not_published=8 source_503=0 total=8
+2026-06-21 06:33:40,902 [INFO] 泰国最终产量: 未发布
+2026-06-21 06:33:40,902 [INFO] 泰国阶段性数据: 无
+2026-06-21 06:33:41,313 [INFO] --- 中国/广西 沐甜国内 ---
+2026-06-21 06:33:41,314 [INFO] 沐甜抓取栏目: 产销预估 (优先级1, https://www.msweet.com.cn/eportal/ui?pageId=1014225)
+2026-06-21 06:33:44,269 [INFO] 沐甜栏目 '产销预估': 找到 50 篇文章
+2026-06-21 06:33:44,271 [INFO] 沐甜抓取栏目: 各省产销 (优先级2, https://www.msweet.com.cn/mtkj/xwzx62/gn97/hx98/index.html)
+2026-06-21 06:33:45,103 [INFO] 沐甜栏目 '各省产销': 找到 100 篇文章
+2026-06-21 06:33:45,103 [INFO] 沐甜抓取栏目: 产区动态 (优先级3, https://www.msweet.com.cn/mtkj/xwzx62/gn97/xy26/index.html)
+2026-06-21 06:33:45,583 [INFO] 沐甜栏目 '产区动态': 找到 130 篇文章
+2026-06-21 06:33:45,716 [INFO] 沐甜国内文章总数: 140
+2026-06-21 06:33:45,720 [INFO] 生产文章分类: 广西=24, 云南=25, 其他=6
+2026-06-21 06:33:48,770 [INFO] 国内缓存新鲜度检查: 1 个分组
+2026-06-21 06:33:48,770 [INFO] 沐甜国内抓取完成: 6 条记录
+2026-06-21 06:33:48,778 [INFO] CSV更新: inserted=7 updated=2 conflicts=2
+2026-06-21 06:33:48,779 [INFO] 巴西: total=15 fresh=7 cached=8 stale=0
+2026-06-21 06:33:48,779 [INFO] 印度: total=1 fresh=1 cached=0 stale=0
+2026-06-21 06:33:48,779 [INFO] 泰国: total=31 fresh=3 cached=24 stale=0
+2026-06-21 06:33:48,779 [INFO] 中国: total=29 fresh=25 cached=0 stale=0
+2026-06-21 06:33:48,779 [INFO] 宏观: total=7 fresh=7 cached=0 stale=0
+2026-06-21 06:33:48,779 [INFO] [09/16] 写入市场数据到CSV...
+2026-06-21 06:33:48,783 [INFO] CSV更新: inserted=0 updated=0 conflicts=0
+2026-06-21 06:33:48,783 [INFO] [10/16] 从CSV读取有效记录...
+2026-06-21 06:33:48,784 [INFO] [10/16] 有效记录: 92 条
+2026-06-21 06:33:48,784 [INFO] [10/16] 筛选 SR2609 相关信息...
+2026-06-21 06:33:48,785 [INFO] [10/16] 模型输入: 15541 字符
+2026-06-21 06:33:48,785 [INFO] [11/16] 读取交易观点...
+2026-06-21 06:33:48,788 [WARNING] 观点已过期: 2026-06-19
+2026-06-21 06:33:48,788 [INFO] 交易观点: 合约=SR2609, 确认日期=2026-06-12
+2026-06-21 06:33:48,788 [INFO] [12/16] 合约一致性检查...
+2026-06-21 06:33:48,788 [WARNING] [12/16] 一致性问题 (1 项):
+2026-06-21 06:33:48,788 [WARNING]   - 观点已过期
+2026-06-21 06:33:48,788 [WARNING] [12.5/16] 策略校验: 观点已过有效期
+2026-06-21 06:33:48,788 [INFO] [13/16] 调用 DeepSeek 生成基本面...
+2026-06-21 06:33:48,789 [INFO] DeepSeek 调用: model=deepseek-chat, base_url=https://api.deepseek.com/v1
+2026-06-21 06:33:49,627 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-21 06:42:55,768 [INFO] Retrying request to /chat/completions in 0.472356 seconds
+2026-06-21 06:42:56,581 [INFO] HTTP Request: POST https://api.deepseek.com/v1/chat/completions "HTTP/1.1 200 OK"
+2026-06-21 06:43:00,312 [INFO] DeepSeek 调用成功: 443 字符
+2026-06-21 06:43:00,313 [INFO] [14/16] 校验模型正文...
+2026-06-21 06:43:00,313 [INFO] [14/16] 基本面正文: 458 字符
+2026-06-21 06:43:00,313 [INFO] [15/16] 最终一致性检查...
+2026-06-21 06:43:00,313 [INFO] [15/16] 最终一致性检查通过
+2026-06-21 06:43:00,313 [INFO] [16/16] 拼接日报并写入...
+2026-06-21 06:43:00,315 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-21/白糖日报_20260621.md
+2026-06-21 06:43:00,315 [INFO] ============================================================
+2026-06-21 06:43:00,315 [INFO] 日报生成完成
+2026-06-21 06:43:00,315 [INFO]   日报: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-21/白糖日报_20260621.md
+2026-06-21 06:43:00,315 [INFO]   状态: needs_contract_confirmation | 合约: SR2609 | 行情日期: 2026-06-18
+2026-06-21 06:43:00,315 [INFO] ============================================================
+2026-06-21 06:43:00,320 [INFO] 已写入: /Users/mymac/codingtest/sugar-daily/public/data/reports/2026-06-21.json
+2026-06-21 06:43:00,322 [INFO] 索引已更新: /Users/mymac/codingtest/sugar-daily/public/data/reports.json (9 篇日报)
+2026-06-21 06:43:00,323 [INFO] 前端JSON已更新
+[main 8d4d2a3] Update sugar daily report 2026-06-21
+ 2 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 public/data/reports/2026-06-21.json
+2026-06-21 06:43:03,304 [INFO] 已推送到 GitHub: Update sugar daily report 2026-06-21
+2026-06-21 06:43:03,307 [INFO] [OK] 日报已生成: /Users/mymac/codingtest/sugar-daily/outputs/2026-06-21/白糖日报_20260621.md

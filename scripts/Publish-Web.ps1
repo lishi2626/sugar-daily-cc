@@ -7,7 +7,7 @@ $ProjectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $ProjectRoot
 
 Write-Host "=== 更新前端 JSON ===" -ForegroundColor Cyan
-& python scripts/update_web_reports.py
+& py scripts/update_web_reports.py
 if ($LASTEXITCODE -ne 0) {
     Write-Host "update_web_reports.py 失败，终止。" -ForegroundColor Red
     exit 1

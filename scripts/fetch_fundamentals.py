@@ -17,8 +17,8 @@ from __future__ import annotations
   - 多源冲突标记 conflict
 
 用法:
-  python -m scripts.fetch_fundamentals
-  python -m scripts.fetch_fundamentals --date 2026-06-13
+  py -m scripts.fetch_fundamentals
+  py -m scripts.fetch_fundamentals --date 2026-06-13
 """
 
 import argparse

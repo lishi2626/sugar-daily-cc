@@ -365,6 +365,24 @@ approved_view:
     - SR509
     - SR0
 
+# ── 研究员确认固定事实（日报写作不可由模型覆盖） ─────────────
+researcher_confirmed_facts:
+  china_26_27_planting_area:
+    text: "26/27榨季甘蔗种植面积确定增加"
+    direction: increase
+    data_type: researcher_confirmed_view
+    status: confirmed
+    editable_by_model: false
+    allow_model_override: false
+  guangxi_weather_current_impact:
+    text: "广西当前天气暂未对甘蔗生长和产量预期形成实质影响"
+    region: 广西
+    current_impact: no_material_impact
+    data_type: researcher_confirmed_view
+    status: confirmed
+    editable_by_model: false
+    allow_model_override: false
+
 # ── 模型 ────────────────────────────────────────────────
 model:
   provider: "deepseek"

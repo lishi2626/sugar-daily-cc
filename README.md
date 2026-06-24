@@ -8,9 +8,9 @@
 
 ```powershell
 cd sugar-daily
-python -m venv .venv
+py -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+py -m pip install -r requirements.txt
 ```
 
 ### 2. 配置 DeepSeek
@@ -23,7 +23,7 @@ copy .env.example .env
 ### 3. 运行
 
 ```powershell
-python scripts/run_daily.py
+py scripts/run_daily.py
 ```
 
 日报输出到 `outputs/YYYY-MM-DD/白糖日报_YYYYMMDD.md`，同时自动更新前端 JSON。
@@ -31,13 +31,13 @@ python scripts/run_daily.py
 ## 本地运行
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\run_daily.py
+py scripts\run_daily.py
 ```
 
 ## 单独更新网页数据
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\update_web_reports.py
+py scripts\update_web_reports.py
 ```
 
 ## 本地预览
@@ -47,7 +47,7 @@ python scripts/run_daily.py
 使用：
 
 ```powershell
-.\.venv\Scripts\python.exe -m http.server 8000
+py -m http.server 8000
 ```
 
 浏览器打开：http://localhost:8000
@@ -76,7 +76,7 @@ python scripts/run_daily.py
 如果自动推送失败，可手动执行：
 
 ```powershell
-cd ~/codingtest/sugar-daily
+cd d:\Desktop\ai\sugar-daily
 git add public/data
 git commit -m "Update report"
 git push

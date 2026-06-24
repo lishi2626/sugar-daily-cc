@@ -24,7 +24,7 @@ try {
 
     # 运行主程序
     $PythonScript = Join-Path $ProjectRoot "scripts\run_daily.py"
-    python $PythonScript
+    py $PythonScript
 
     $exitCode = $LASTEXITCODE
     if ($exitCode -eq 0) {

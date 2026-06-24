@@ -14,8 +14,8 @@ SR2609 仍用于交易观点/基本面判断的目标合约，不再用于市场
   3. 本地备用 CSV → 现货、基差补充；网络失败时可补行情
 
 用法:
-  python -m scripts.fetch_market
-  python -m scripts.fetch_market --date 2026-06-13
+  py -m scripts.fetch_market
+  py -m scripts.fetch_market --date 2026-06-13
 """
 
 import argparse
