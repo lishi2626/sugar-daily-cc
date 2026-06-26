@@ -1,0 +1,262 @@
+{
+  "generated_at": "2026-06-26 09:40:14",
+  "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
+  "sheets": [
+    "南宁白糖现货",
+    "日照现货",
+    "1月基差",
+    "5月基差",
+    "9月基差",
+    "91价差",
+    "59价差",
+    "15价差"
+  ],
+  "marketPerformance": {
+    "date": "2026-06-25",
+    "reportDate": "2026-06-26",
+    "generatedAt": "2026-06-26 05:44:33",
+    "source": "Sugar Daily 市场表现",
+    "sourceFile": "D:\\Desktop\\ai\\sugar-daily\\public\\data\\reports\\2026-06-26.json",
+    "rawText": "郑糖主力合约收5210元/吨，日跌幅0.15%。 ICE原糖主力合约收14.12美分/磅，日涨幅0.75%。 配额外巴西糖加工完税估算利润为805元/吨。",
+    "items": [
+      {
+        "name": "郑糖主力合约",
+        "value": 5210.0,
+        "unit": "元/吨",
+        "changeText": "日跌幅0.15%",
+        "displayValue": "5210元/吨",
+        "source": "Sugar Daily 市场表现",
+        "rawText": "郑糖主力合约收5210元/吨，日跌幅0.15%"
+      },
+      {
+        "name": "ICE原糖主力合约",
+        "value": 14.12,
+        "unit": "美分/磅",
+        "changeText": "日涨幅0.75%",
+        "displayValue": "14.12美分/磅",
+        "source": "Sugar Daily 市场表现",
+        "rawText": "ICE原糖主力合约收14.12美分/磅，日涨幅0.75%"
+      },
+      {
+        "name": "配额外巴西糖加工完税估算利润",
+        "value": 805.0,
+        "unit": "元/吨",
+        "changeText": "",
+        "displayValue": "805元/吨",
+        "source": "Sugar Daily 市场表现",
+        "rawText": "配额外巴西糖加工完税估算利润为805元/吨"
+      }
+    ]
+  },
+  "charts": [
+    {
+      "sheet": "南宁白糖现货",
+      "metric": "南宁白糖现货价",
+      "axis_column": 1,
+      "value_column": 2,
+      "series_count": 10,
+      "point_count": 2070,
+      "start_date": "2017-01-03",
+      "end_date": "2026-06-25",
+      "start_year": "2017",
+      "end_year": "2026",
+      "years": [
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ],
+      "min_value": 5010.0,
+      "max_value": 7750.0,
+      "invalid_or_empty_rows": 5,
+      "note": ""
+    },
+    {
+      "sheet": "日照现货",
+      "metric": "日照白糖现货价",
+      "axis_column": 1,
+      "value_column": 2,
+      "series_count": 10,
+      "point_count": 2313,
+      "start_date": "2017-01-03",
+      "end_date": "2026-06-25",
+      "start_year": "2017",
+      "end_year": "2026",
+      "years": [
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ],
+      "min_value": 5265.0,
+      "max_value": 7750.0,
+      "invalid_or_empty_rows": 5,
+      "note": ""
+    },
+    {
+      "sheet": "1月基差",
+      "metric": "1月基差",
+      "contract_month": 1,
+      "series_count": 9,
+      "point_count": 2192,
+      "start_contract": "SR1801",
+      "end_contract": "SR2601",
+      "contracts": [
+        "SR1801",
+        "SR1901",
+        "SR2001",
+        "SR2101",
+        "SR2201",
+        "SR2301",
+        "SR2401",
+        "SR2501",
+        "SR2601"
+      ],
+      "min_value": -417.0,
+      "max_value": 854.0,
+      "empty_contracts": [],
+      "skipped_invalid_dates": 0
+    },
+    {
+      "sheet": "5月基差",
+      "metric": "5月基差",
+      "contract_month": 5,
+      "series_count": 9,
+      "point_count": 2196,
+      "start_contract": "SR1805",
+      "end_contract": "SR2605",
+      "contracts": [
+        "SR1805",
+        "SR1905",
+        "SR2005",
+        "SR2105",
+        "SR2205",
+        "SR2305",
+        "SR2405",
+        "SR2505",
+        "SR2605"
+      ],
+      "min_value": -496.0,
+      "max_value": 960.0,
+      "empty_contracts": [],
+      "skipped_invalid_dates": 0
+    },
+    {
+      "sheet": "9月基差",
+      "metric": "9月基差",
+      "contract_month": 9,
+      "series_count": 9,
+      "point_count": 2134,
+      "start_contract": "SR1809",
+      "end_contract": "SR2609",
+      "contracts": [
+        "SR1809",
+        "SR1909",
+        "SR2009",
+        "SR2109",
+        "SR2209",
+        "SR2309",
+        "SR2409",
+        "SR2509",
+        "SR2609"
+      ],
+      "min_value": -535.0,
+      "max_value": 894.0,
+      "empty_contracts": [],
+      "skipped_invalid_dates": 0
+    },
+    {
+      "sheet": "91价差",
+      "metric": "91价差",
+      "series_count": 11,
+      "point_count": 1688,
+      "start_spread": "SR1609-SR1701",
+      "end_spread": "SR2609-SR2701",
+      "spreads": [
+        "SR1609-SR1701",
+        "SR1709-SR1801",
+        "SR1809-SR1901",
+        "SR1909-SR2001",
+        "SR2009-SR2101",
+        "SR2109-SR2201",
+        "SR2209-SR2301",
+        "SR2309-SR2401",
+        "SR2409-SR2501",
+        "SR2509-SR2601",
+        "SR2609-SR2701"
+      ],
+      "min_value": -454.0,
+      "max_value": 479.0,
+      "empty_spreads": [],
+      "skipped_invalid_dates": 0,
+      "skipped_outside_window": 878
+    },
+    {
+      "sheet": "59价差",
+      "metric": "59价差",
+      "series_count": 11,
+      "point_count": 1695,
+      "start_spread": "SR1605-SR1609",
+      "end_spread": "SR2605-SR2609",
+      "spreads": [
+        "SR1605-SR1609",
+        "SR1705-SR1709",
+        "SR1805-SR1809",
+        "SR1905-SR1909",
+        "SR2005-SR2009",
+        "SR2105-SR2109",
+        "SR2205-SR2209",
+        "SR2305-SR2309",
+        "SR2405-SR2409",
+        "SR2505-SR2509",
+        "SR2605-SR2609"
+      ],
+      "min_value": -159.0,
+      "max_value": 455.0,
+      "empty_spreads": [
+        "SR2705-SR2709"
+      ],
+      "skipped_invalid_dates": 0,
+      "skipped_outside_window": 829
+    },
+    {
+      "sheet": "15价差",
+      "metric": "15价差",
+      "series_count": 12,
+      "point_count": 1828,
+      "start_spread": "SR1601-SR1605",
+      "end_spread": "SR2701-SR2705",
+      "spreads": [
+        "SR1601-SR1605",
+        "SR1701-SR1705",
+        "SR1801-SR1805",
+        "SR1901-SR1905",
+        "SR2001-SR2005",
+        "SR2101-SR2105",
+        "SR2201-SR2205",
+        "SR2301-SR2305",
+        "SR2401-SR2405",
+        "SR2501-SR2505",
+        "SR2601-SR2605",
+        "SR2701-SR2705"
+      ],
+      "min_value": -155.0,
+      "max_value": 431.0,
+      "empty_spreads": [],
+      "skipped_invalid_dates": 0,
+      "skipped_outside_window": 657
+    }
+  ]
+}
