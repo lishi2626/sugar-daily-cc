@@ -1,40 +1,113 @@
 # Publish-Web.ps1
-# 将日报 JSON 更新并推送到 GitHub，触发 Vercel 自动部署。
-# 用法: PowerShell -ExecutionPolicy Bypass -File scripts\Publish-Web.ps1
+# Updates public report JSON and pushes changes to GitHub to trigger Vercel.
+# Usage: PowerShell -ExecutionPolicy Bypass -File scripts\Publish-Web.ps1
 
 $ErrorActionPreference = "Stop"
+
 $ProjectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $ProjectRoot
+$env:PYTHONIOENCODING = "utf-8"
+$DashboardRoot = Join-Path (Split-Path -Parent $ProjectRoot) "nutstore_database_sync"
+$DashboardData = Join-Path $ProjectRoot "public\dashboard\sugar_basis_dashboard_data.json"
+$DashboardHtml = Join-Path $ProjectRoot "public\dashboard\sugar_basis_dashboard.html"
 
-Write-Host "=== 更新前端 JSON ===" -ForegroundColor Cyan
-& py scripts/update_web_reports.py
+$VenvPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
+if (Test-Path $VenvPython) {
+    $PythonExe = $VenvPython
+} else {
+    $PythonExe = "python"
+}
+
+Write-Host "=== Updating frontend JSON ===" -ForegroundColor Cyan
+& $PythonExe scripts/update_web_reports.py
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "update_web_reports.py 失败，终止。" -ForegroundColor Red
+    Write-Host "update_web_reports.py failed; stopping." -ForegroundColor Red
     exit 1
 }
 
-Write-Host "`n=== 检查 Git 状态 ===" -ForegroundColor Cyan
-$status = git status --porcelain
-if (-not $status) {
-    Write-Host "没有文件变化，无需提交。" -ForegroundColor Yellow
-    exit 0
+Write-Host "`n=== Building sugar dashboard ===" -ForegroundColor Cyan
+$DashboardScript = Join-Path $DashboardRoot "scripts\build_sugar_dashboard.py"
+if (-not (Test-Path -LiteralPath $DashboardScript)) {
+    Write-Host "Dashboard build script not found: $DashboardScript" -ForegroundColor Red
+    exit 1
 }
-
-Write-Host "`n=== 提交并推送 ===" -ForegroundColor Cyan
+$DashboardVenvPython = Join-Path $DashboardRoot ".venv\Scripts\python.exe"
+if (Test-Path -LiteralPath $DashboardVenvPython) {
+    $DashboardPython = $DashboardVenvPython
+} else {
+    $DashboardPython = "python"
+}
+Push-Location $DashboardRoot
+try {
+    & $DashboardPython scripts/build_sugar_dashboard.py
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "build_sugar_dashboard.py failed; stopping." -ForegroundColor Red
+        exit 1
+    }
+} finally {
+    Pop-Location
+}
+if (-not (Test-Path -LiteralPath $DashboardHtml)) {
+    Write-Host "Dashboard HTML not generated: $DashboardHtml" -ForegroundColor Red
+    exit 1
+}
+if (-not (Test-Path -LiteralPath $DashboardData)) {
+    Write-Host "Dashboard data not generated: $DashboardData" -ForegroundColor Red
+    exit 1
+}
+$dashboardPayload = Get-Content -LiteralPath $DashboardData -Raw -Encoding UTF8 | ConvertFrom-Json
 $date = Get-Date -Format "yyyy-MM-dd"
-git add index.html public/data .gitignore
-git commit -m "Update sugar daily report $date"
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "git commit 失败。" -ForegroundColor Red
+if (-not $dashboardPayload.marketPerformance) {
+    Write-Host "Dashboard data missing marketPerformance." -ForegroundColor Red
+    exit 1
+}
+if ($dashboardPayload.marketPerformance.reportDate -ne $date) {
+    Write-Host "Dashboard marketPerformance reportDate mismatch: expected $date got $($dashboardPayload.marketPerformance.reportDate)" -ForegroundColor Red
+    exit 1
+}
+if ($dashboardPayload.marketPerformance.items.Count -ne 3) {
+    Write-Host "Dashboard marketPerformance must contain 3 items, got $($dashboardPayload.marketPerformance.items.Count)" -ForegroundColor Red
     exit 1
 }
 
-git push
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "git push 失败，请检查网络和 Git 凭据。" -ForegroundColor Red
+Write-Host "`n=== Checking Git status ===" -ForegroundColor Cyan
+$status = git status --porcelain
+$ahead = git status -sb | Select-String -Pattern "\[ahead [0-9]+\]"
+if (-not $status) {
+    if ($ahead) {
+        Write-Host "No file changes, but local branch has unpushed commits. Will push existing commits." -ForegroundColor Yellow
+    } else {
+        Write-Host "No file changes and no unpushed commits." -ForegroundColor Yellow
+        exit 0
+    }
+}
+
+Write-Host "`n=== Committing and pushing ===" -ForegroundColor Cyan
+if ($status) {
+    git add index.html public .gitignore
+    git commit -m "Update sugar daily report $date"
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "git commit failed." -ForegroundColor Red
+        exit 1
+    }
+}
+
+$pushOk = $false
+for ($i = 1; $i -le 3; $i++) {
+    Write-Host "git push attempt $i/3" -ForegroundColor Cyan
+    git push
+    if ($LASTEXITCODE -eq 0) {
+        $pushOk = $true
+        break
+    }
+    Start-Sleep -Seconds (10 * $i)
+}
+
+if (-not $pushOk) {
+    Write-Host "git push failed after 3 attempts; Vercel will not update until push succeeds." -ForegroundColor Red
     exit 1
 }
 
-Write-Host "`n=== 完成 ===" -ForegroundColor Green
-Write-Host "已推送: Update sugar daily report $date"
-Write-Host "Vercel 将自动重新部署。"
+Write-Host "`n=== Done ===" -ForegroundColor Green
+Write-Host "Pushed: Update sugar daily report $date"
+Write-Host "Vercel should redeploy automatically."
