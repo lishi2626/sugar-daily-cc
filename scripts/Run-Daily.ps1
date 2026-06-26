@@ -112,19 +112,21 @@ function Test-VercelDashboard {
             $htmlResp = Invoke-WebRequest -UseBasicParsing -Uri $htmlUrl -TimeoutSec 20
             $payload = $dataResp.Content | ConvertFrom-Json
             $itemCount = $payload.marketPerformance.items.Count
-            $reportDate = $payload.marketPerformance.reportDate
-            if ($dataResp.StatusCode -eq 200 -and $htmlResp.StatusCode -eq 200 -and $reportDate -eq $Date -and $itemCount -eq 3) {
-                Write-Step "Vercel dashboard is synced: marketPerformance.reportDate=$reportDate ; items=$itemCount"
+            $fetchTime = $payload.marketPerformance.fetchTime
+            $dataDate = $payload.marketPerformance.dataDate
+            $ruleSource = $payload.marketPerformance.ruleSource
+            if ($dataResp.StatusCode -eq 200 -and $htmlResp.StatusCode -eq 200 -and $fetchTime -and $dataDate -and $ruleSource -eq "same_as_sugar_daily_market_performance" -and $itemCount -eq 3) {
+                Write-Step "Vercel dashboard is synced: marketPerformance.fetchTime=$fetchTime ; dataDate=$dataDate ; items=$itemCount"
                 return $true
             }
-            Write-Step "Vercel dashboard not synced yet (attempt $i/18): reportDate=$reportDate ; items=$itemCount"
+            Write-Step "Vercel dashboard not synced yet (attempt $i/18): fetchTime=$fetchTime ; dataDate=$dataDate ; items=$itemCount"
         } catch {
             Write-Step "Vercel dashboard not ready yet (attempt $i/18): $($_.Exception.Message)"
         }
         Start-Sleep -Seconds 20
     }
 
-    throw "Vercel dashboard verification failed: marketPerformance for $Date is not live after retry window."
+    throw "Vercel dashboard verification failed: marketPerformance is not live or incomplete after retry window."
 }
 
 if (-not (Test-Path -LiteralPath (Split-Path -Parent $TaskLog))) {

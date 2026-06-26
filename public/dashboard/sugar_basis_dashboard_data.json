@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-26 09:40:14",
+  "generated_at": "2026-06-26 09:58:33",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,41 +12,54 @@
     "15价差"
   ],
   "marketPerformance": {
-    "date": "2026-06-25",
-    "reportDate": "2026-06-26",
-    "generatedAt": "2026-06-26 05:44:33",
-    "source": "Sugar Daily 市场表现",
-    "sourceFile": "D:\\Desktop\\ai\\sugar-daily\\public\\data\\reports\\2026-06-26.json",
-    "rawText": "郑糖主力合约收5210元/吨，日跌幅0.15%。 ICE原糖主力合约收14.12美分/磅，日涨幅0.75%。 配额外巴西糖加工完税估算利润为805元/吨。",
+    "fetchTime": "2026-06-26 09:58:24",
+    "dataDate": "2026-06-26",
+    "tradeDate": "2026-06-26",
+    "ruleSource": "same_as_sugar_daily_market_performance",
+    "trigger": "手动构建",
+    "rawText": "郑糖主力合约收5238元/吨，日涨幅0.38%。 ICE原糖主力合约收14.12美分/磅，日涨幅0.75%。 广西白糖现货与郑糖主力合约基差为139元/吨。 配额外巴西糖加工完税估算利润为805元/吨。",
     "items": [
       {
         "name": "郑糖主力合约",
-        "value": 5210.0,
+        "value": 5238.0,
         "unit": "元/吨",
-        "changeText": "日跌幅0.15%",
-        "displayValue": "5210元/吨",
-        "source": "Sugar Daily 市场表现",
-        "rawText": "郑糖主力合约收5210元/吨，日跌幅0.15%"
+        "changePct": 0.38,
+        "displayValue": "5238元/吨",
+        "displayChange": "日涨幅0.38%",
+        "dataDate": "2026-06-26",
+        "source": "新浪财经",
+        "sourceUrl": "https://finance.sina.com.cn/futures/quotes/SR0.shtml",
+        "fallbackUsed": false,
+        "fallbackReason": ""
       },
       {
         "name": "ICE原糖主力合约",
         "value": 14.12,
         "unit": "美分/磅",
-        "changeText": "日涨幅0.75%",
+        "changePct": 0.75,
         "displayValue": "14.12美分/磅",
-        "source": "Sugar Daily 市场表现",
-        "rawText": "ICE原糖主力合约收14.12美分/磅，日涨幅0.75%"
+        "displayChange": "日涨幅0.75%",
+        "dataDate": "2026-06-26",
+        "source": "新浪财经",
+        "sourceUrl": "https://finance.sina.com.cn/futures/quotes/RS.shtml",
+        "fallbackUsed": false,
+        "fallbackReason": ""
       },
       {
         "name": "配额外巴西糖加工完税估算利润",
         "value": 805.0,
         "unit": "元/吨",
-        "changeText": "",
         "displayValue": "805元/吨",
-        "source": "Sugar Daily 市场表现",
-        "rawText": "配额外巴西糖加工完税估算利润为805元/吨"
+        "displayChange": "",
+        "dataDate": "2026-06-24",
+        "source": "泛糖科技",
+        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026062508285616617821",
+        "fallbackUsed": false,
+        "fallbackReason": ""
       }
-    ]
+    ],
+    "fallbackUsed": false,
+    "fallbackReasons": []
   },
   "charts": [
     {

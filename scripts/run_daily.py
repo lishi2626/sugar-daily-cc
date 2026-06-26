@@ -281,7 +281,7 @@ def _categorize_fundamentals(cache_records: list[dict], researcher_text: str | N
     for r in cache_records:
         country = r.get("country", "")
         indicator = r.get("indicator", "")
-        val = r.get("value", "") or r.get("text_value", "")
+        val = r.get("value", "") or r.get("text_value", "") or r.get("value_or_fact", "")
         unit = r.get("unit", "")
         ddate = r.get("data_date", "")
         pub_at = r.get("published_at", "")
@@ -314,6 +314,16 @@ def _categorize_fundamentals(cache_records: list[dict], researcher_text: str | N
             "impact_direction": impact_dir,
             "impact_timing": impact_time,
             "notes": notes,
+            "period_start": r.get("period_start", ""),
+            "period_end": r.get("period_end", ""),
+            "period_type": r.get("period_type", ""),
+            "table_number": r.get("table_number", ""),
+            "attribution": r.get("attribution", ""),
+            "sugar_mix_yoy_change_pp": r.get("sugar_mix_yoy_change_pp", ""),
+            "comparison_date": r.get("comparison_date", ""),
+            "comparison_type": r.get("comparison_type", ""),
+            "previous_value": r.get("previous_value", ""),
+            "current_value": r.get("current_value", ""),
         }
 
         # 巴西
@@ -368,7 +378,7 @@ def build_structured_fundamentals(cache_records: list[dict], researcher_text: st
     lines = []
 
     def _fmt_entry(e: dict) -> str:
-        return (
+        base = (
             f"  [{e['data_type']}][{e['status']}] {e['country']}/{e['indicator']}: "
             f"{e['fact_or_value']} ({e['unit']}) | 数据日期:{e['data_date']} "
             f"| 来源:{e['source']} | 来源通道:{e.get('source_channel') or 'N/A'} "
@@ -376,6 +386,22 @@ def build_structured_fundamentals(cache_records: list[dict], researcher_text: st
             f"| 来源状态:{e.get('source_status') or e['status']} "
             f"| 影响:{e['impact_direction'] or 'N/A'} | 时点:{e['impact_timing'] or 'N/A'}"
         )
+        extras = []
+        for key, label in [
+            ("period_start", "双周起始"),
+            ("period_end", "双周结束"),
+            ("sugar_mix_yoy_change_pp", "制糖比同比百分点"),
+            ("attribution", "归因结论"),
+            ("comparison_date", "对比日期"),
+            ("comparison_type", "对比类型"),
+            ("previous_value", "上期/上年值"),
+            ("current_value", "当前值"),
+        ]:
+            if e.get(key):
+                extras.append(f"{label}:{e[key]}")
+        if extras:
+            base += " | " + " | ".join(extras)
+        return base
 
     # ── 国际部分 ──
     lines.append("## 国际部分")
@@ -984,8 +1010,9 @@ def call_deepseek(market_summary: str, fundamentals_text: str, approved_view: di
         f"- 如果CSV中有sugar_mix_yoy_change_pp字段，必须写: '制糖比同比下降X.XX个百分点'\n"
         f"- 如果CSV中有attribution字段，必须使用该归因结论\n"
         f"- 巴西分析重点是归因: 甘蔗量变化 + 制糖比变化 → 食糖产量变化\n"
-        f"- 当前已确认逻辑: 甘蔗压榨量增加抵消了制糖比下降的影响，因此糖产量同比增加\n"
-        f"- 推荐写法: '尽管制糖比同比下降X.XX个百分点，但甘蔗压榨量增加抵消了制糖比下滑，食糖产量仍同比增加'\n\n"
+        f"- 必须根据最新UNICA报告中的UNICA Table2 Sugarcane Var、Share sugar Var、Sugar Var判断方向，不得预设'压榨增加'或'产糖增加'\n"
+        f"- 巴西结论必须同时引用甘蔗压榨量及同比、制糖比及同比百分点变化、食糖产量及同比\n"
+        f"- 推荐写法: '甘蔗压榨量同比下降X.XX%，制糖比同比下降X.XX个百分点，食糖产量同比下降X.XX%，巴西阶段供应端收缩'\n\n"
         f"【印度单位和出口政策】\n"
         f"- Lmts必须转换为万吨: 1 Lmts = 10万吨，273.90 Lmts = 2739万吨\n"
         f"- 日报正文只写'万吨'，不得出现'Lmts'\n"
@@ -1215,6 +1242,61 @@ def run_consistency_check(market: dict, fundamentals_text: str | None, approved_
     trade_date = market.get("trade_date", "")
     if trade_date and is_weekend(trade_date):
         issues.append(f"行情日期 {trade_date} 为周末")
+
+    return len(issues) == 0, issues
+
+
+def validate_strategy(approved_view: dict | None, market: dict) -> tuple[bool, str]:
+    """Validate whether the researcher strategy can be used in today's report."""
+    if not approved_view:
+        return True, ""
+
+    if approved_view.get("_contract_mismatch"):
+        return False, "approved_view contract does not match target contract"
+    if approved_view.get("_contract_rejected"):
+        return False, "approved_view contract is in reject list"
+    if approved_view.get("_expired"):
+        return False, "approved_view is expired"
+
+    applicable = str(approved_view.get("applicable_contract", "")).strip().upper()
+    if applicable and applicable != TARGET_CONTRACT:
+        return False, f"approved_view contract {applicable} != {TARGET_CONTRACT}"
+
+    if market.get("zz_close", {}).get("value") is None:
+        return False, "market close price is unavailable"
+
+    return True, ""
+
+
+def final_consistency_check(
+    market: dict,
+    fundamentals_ai: str | None,
+    approved_view: dict | None,
+    strategy_valid: bool,
+) -> tuple[bool, list[str]]:
+    """Final non-throwing guard before writing the report."""
+    issues: list[str] = []
+
+    if not market.get("ok"):
+        issues.append("market data is not ok")
+    if market.get("zz_close", {}).get("value") is None:
+        issues.append("market close price is unavailable")
+    if not fundamentals_ai or not fundamentals_ai.strip():
+        issues.append("fundamentals text is empty")
+    if not strategy_valid:
+        issues.append("strategy requires researcher confirmation")
+
+    if approved_view:
+        if approved_view.get("_contract_mismatch"):
+            issues.append("approved_view contract does not match target contract")
+        if approved_view.get("_contract_rejected"):
+            issues.append("approved_view contract is rejected")
+        if approved_view.get("_expired"):
+            issues.append("approved_view is expired")
+
+    trade_date = market.get("trade_date", "")
+    if trade_date and is_weekend(trade_date):
+        issues.append(f"market trade date {trade_date} is weekend")
 
     return len(issues) == 0, issues
 
@@ -1759,6 +1841,13 @@ def _write_review_and_sources(out_dir: Path, review_md: str, sources_md: str):
     with open(sp, "w", encoding="utf-8") as f:
         f.write(sources_md)
     logger.info("fundamental_sources.md 已写入: %s", sp)
+
+
+def build_market_summary(market: dict) -> str:
+    """Use the shared Sugar Daily market-performance formatting rules."""
+    from market_performance import build_market_summary as _shared_build_market_summary
+
+    return _shared_build_market_summary(market)
 
 
 def main():

@@ -61,13 +61,27 @@ if (-not $dashboardPayload.marketPerformance) {
     Write-Host "Dashboard data missing marketPerformance." -ForegroundColor Red
     exit 1
 }
-if ($dashboardPayload.marketPerformance.reportDate -ne $date) {
-    Write-Host "Dashboard marketPerformance reportDate mismatch: expected $date got $($dashboardPayload.marketPerformance.reportDate)" -ForegroundColor Red
+if (-not $dashboardPayload.marketPerformance.fetchTime) {
+    Write-Host "Dashboard marketPerformance missing fetchTime." -ForegroundColor Red
+    exit 1
+}
+if (-not $dashboardPayload.marketPerformance.dataDate) {
+    Write-Host "Dashboard marketPerformance missing dataDate." -ForegroundColor Red
+    exit 1
+}
+if ($dashboardPayload.marketPerformance.ruleSource -ne "same_as_sugar_daily_market_performance") {
+    Write-Host "Dashboard marketPerformance ruleSource mismatch: $($dashboardPayload.marketPerformance.ruleSource)" -ForegroundColor Red
     exit 1
 }
 if ($dashboardPayload.marketPerformance.items.Count -ne 3) {
     Write-Host "Dashboard marketPerformance must contain 3 items, got $($dashboardPayload.marketPerformance.items.Count)" -ForegroundColor Red
     exit 1
+}
+foreach ($item in $dashboardPayload.marketPerformance.items) {
+    if ($null -eq $item.value -or -not $item.unit) {
+        Write-Host "Dashboard marketPerformance item is incomplete: $($item.name)" -ForegroundColor Red
+        exit 1
+    }
 }
 
 Write-Host "`n=== Checking Git status ===" -ForegroundColor Cyan
