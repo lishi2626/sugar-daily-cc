@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-27 05:45:47",
+  "generated_at": "2026-06-28 05:45:55",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,7 +12,7 @@
     "15价差"
   ],
   "marketPerformance": {
-    "fetchTime": "2026-06-27 05:45:38",
+    "fetchTime": "2026-06-28 05:45:42",
     "dataDate": "2026-06-27",
     "tradeDate": "2026-06-26",
     "ruleSource": "same_as_sugar_daily_market_performance",
