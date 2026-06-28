@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-28 05:45:55",
+  "generated_at": "2026-06-29 05:45:59",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,12 +12,12 @@
     "15价差"
   ],
   "marketPerformance": {
-    "fetchTime": "2026-06-28 05:45:42",
+    "fetchTime": "2026-06-29 05:45:48",
     "dataDate": "2026-06-27",
     "tradeDate": "2026-06-26",
     "ruleSource": "same_as_sugar_daily_market_performance",
     "trigger": "手动构建",
-    "rawText": "郑糖主力合约收5262元/吨，日涨幅0.71%。 ICE原糖主力合约收14.56美分/磅，日涨幅3.28%。 广西白糖现货与郑糖主力合约基差为115元/吨。 配额外巴西糖加工完税估算利润为805元/吨。",
+    "rawText": "郑糖主力合约收5262元/吨，日涨幅0.71%。 ICE原糖主力合约收14.56美分/磅，日涨幅3.28%。 广西白糖现货与郑糖主力合约基差为115元/吨。 配额外巴西糖加工完税估算利润为781元/吨。",
     "items": [
       {
         "name": "郑糖主力合约",
@@ -47,13 +47,13 @@
       },
       {
         "name": "配额外巴西糖加工完税估算利润",
-        "value": 805.0,
+        "value": 781.0,
         "unit": "元/吨",
-        "displayValue": "805元/吨",
+        "displayValue": "781元/吨",
         "displayChange": "",
-        "dataDate": "2026-06-24",
+        "dataDate": "2026-06-25",
         "source": "泛糖科技",
-        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026062508285616617821",
+        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026062608412240331390",
         "fallbackUsed": false,
         "fallbackReason": ""
       }
