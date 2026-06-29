@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-29 10:39:29",
+  "generated_at": "2026-06-29 17:05:46",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,20 +12,20 @@
     "15价差"
   ],
   "marketPerformance": {
-    "fetchTime": "2026-06-29 10:39:17",
+    "fetchTime": "2026-06-29 17:05:36",
     "dataDate": "2026-06-29",
     "tradeDate": "2026-06-29",
     "ruleSource": "same_as_sugar_daily_market_performance",
     "trigger": "output_dashboard_16:00",
-    "rawText": "郑糖主力合约收5249元/吨，日涨幅0.46%。 ICE原糖主力合约收14.56美分/磅，日涨幅3.28%。 广西白糖现货与郑糖主力合约基差为128元/吨。 配额外巴西糖加工完税估算利润为781元/吨。",
+    "rawText": "郑糖主力合约收5270元/吨，日涨幅0.86%。 ICE原糖主力合约收14.52美分/磅，日涨幅0.04%。 广西白糖现货与郑糖主力合约基差为107元/吨。 配额外巴西糖加工完税估算利润为641元/吨。",
     "items": [
       {
         "name": "郑糖主力合约",
-        "value": 5249.0,
+        "value": 5270.0,
         "unit": "元/吨",
-        "changePct": 0.46,
-        "displayValue": "5249元/吨",
-        "displayChange": "日涨幅0.46%",
+        "changePct": 0.86,
+        "displayValue": "5270元/吨",
+        "displayChange": "日涨幅0.86%",
         "dataDate": "2026-06-29",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/SR0.shtml",
@@ -34,12 +34,12 @@
       },
       {
         "name": "ICE原糖主力合约",
-        "value": 14.56,
+        "value": 14.52,
         "unit": "美分/磅",
-        "changePct": 3.28,
-        "displayValue": "14.56美分/磅",
-        "displayChange": "日涨幅3.28%",
-        "dataDate": "2026-06-27",
+        "changePct": 0.04,
+        "displayValue": "14.52美分/磅",
+        "displayChange": "日涨幅0.04%",
+        "dataDate": "2026-06-29",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/RS.shtml",
         "fallbackUsed": false,
@@ -47,13 +47,13 @@
       },
       {
         "name": "配额外巴西糖加工完税估算利润",
-        "value": 781.0,
+        "value": 641.0,
         "unit": "元/吨",
-        "displayValue": "781元/吨",
+        "displayValue": "641元/吨",
         "displayChange": "",
-        "dataDate": "2026-06-25",
+        "dataDate": "2026-06-26",
         "source": "泛糖科技",
-        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026062608412240331390",
+        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026062908484522073777",
         "fallbackUsed": false,
         "fallbackReason": ""
       }
