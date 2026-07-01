@@ -93,12 +93,23 @@ git push
 ## 安装定时任务（可选）
 
 ```powershell
-# 安装（每天 05:40 自动执行，目标 06:00 前完成）
+# 安装（每天 05:40 自动执行）
 PowerShell -ExecutionPolicy Bypass -File scripts\Install-Task.ps1
 
 # 卸载
 PowerShell -ExecutionPolicy Bypass -File scripts\Install-Task.ps1 -Uninstall
 ```
+
+定时任务会执行 `scripts/Run-Daily.ps1`：
+
+1. 生成当日 `outputs/YYYY-MM-DD/白糖日报_YYYYMMDD.md`。
+2. 检查当日 Markdown、`public/data/reports/YYYY-MM-DD.json` 和 `reports.json` 是否存在。
+3. 如果当日文件缺失，自动补跑一次生成流程。
+4. 执行 `scripts/Publish-Web.ps1`，提交并推送 `public/data` 与 dashboard 文件，触发 Vercel 自动部署。
+5. 轮询访问 `https://sugar-daily-cc.vercel.app/public/data/reports.json` 和 `public/data/reports/YYYY-MM-DD.json`，确认线上最新日报日期等于当天。
+6. 校验 `https://sugar-daily-cc.vercel.app/public/dashboard/sugar_basis_dashboard_data.json` 和 HTML 页面可访问。
+7. 只有 Vercel 日报和 dashboard 都校验通过，工作流才算完成；否则任务失败并保留本地提交等待下次 push。
+8. 运行日志写入 `outputs/task_YYYYMMDD.log`。
 
 ## 数据源
 

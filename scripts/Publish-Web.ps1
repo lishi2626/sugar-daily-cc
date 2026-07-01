@@ -10,6 +10,7 @@ $env:PYTHONIOENCODING = "utf-8"
 $DashboardRoot = Join-Path (Split-Path -Parent $ProjectRoot) "nutstore_database_sync"
 $DashboardData = Join-Path $ProjectRoot "public\dashboard\sugar_basis_dashboard_data.json"
 $DashboardHtml = Join-Path $ProjectRoot "public\dashboard\sugar_basis_dashboard.html"
+$VercelBaseUrl = "https://sugar-daily-cc.vercel.app"
 
 $VenvPython = Join-Path $ProjectRoot ".venv\Scripts\python.exe"
 if (Test-Path $VenvPython) {
@@ -125,6 +126,62 @@ if (-not $pushOk) {
     exit 1
 }
 
+function Test-VercelReport {
+    param([string]$Date)
+
+    $reportUrl = "$VercelBaseUrl/public/data/reports/$Date.json"
+    $indexUrl = "$VercelBaseUrl/public/data/reports.json"
+    Write-Host "`n=== Verifying Vercel report ===" -ForegroundColor Cyan
+
+    for ($i = 1; $i -le 18; $i++) {
+        try {
+            $reportResp = Invoke-WebRequest -UseBasicParsing -Uri $reportUrl -TimeoutSec 20
+            $indexResp = Invoke-WebRequest -UseBasicParsing -Uri $indexUrl -TimeoutSec 20
+            $indexPayload = $indexResp.Content | ConvertFrom-Json
+            $latestDate = $indexPayload.reports[0].date
+            if ($reportResp.StatusCode -eq 200 -and $indexResp.StatusCode -eq 200 -and $latestDate -eq $Date) {
+                Write-Host "Vercel report verified: latest=$latestDate ; $reportUrl" -ForegroundColor Green
+                return
+            }
+            Write-Host "Vercel report not synced yet (attempt $i/18): latest=$latestDate" -ForegroundColor Yellow
+        } catch {
+            Write-Host "Vercel report not ready yet (attempt $i/18): $($_.Exception.Message)" -ForegroundColor Yellow
+        }
+        Start-Sleep -Seconds 20
+    }
+    throw "Vercel report verification failed: $Date is not live after retry window."
+}
+
+function Test-VercelDashboard {
+    $dataUrl = "$VercelBaseUrl/public/dashboard/sugar_basis_dashboard_data.json"
+    $htmlUrl = "$VercelBaseUrl/public/dashboard/sugar_basis_dashboard.html"
+    Write-Host "`n=== Verifying Vercel dashboard ===" -ForegroundColor Cyan
+
+    for ($i = 1; $i -le 18; $i++) {
+        try {
+            $dataResp = Invoke-WebRequest -UseBasicParsing -Uri $dataUrl -TimeoutSec 20
+            $htmlResp = Invoke-WebRequest -UseBasicParsing -Uri $htmlUrl -TimeoutSec 20
+            $payload = $dataResp.Content | ConvertFrom-Json
+            $itemCount = $payload.marketPerformance.items.Count
+            $fetchTime = $payload.marketPerformance.fetchTime
+            $dataDate = $payload.marketPerformance.dataDate
+            $ruleSource = $payload.marketPerformance.ruleSource
+            if ($dataResp.StatusCode -eq 200 -and $htmlResp.StatusCode -eq 200 -and $fetchTime -and $dataDate -and $ruleSource -eq "same_as_sugar_daily_market_performance" -and $itemCount -eq 3) {
+                Write-Host "Vercel dashboard verified: fetchTime=$fetchTime ; dataDate=$dataDate ; items=$itemCount" -ForegroundColor Green
+                return
+            }
+            Write-Host "Vercel dashboard not synced yet (attempt $i/18): fetchTime=$fetchTime ; dataDate=$dataDate ; items=$itemCount" -ForegroundColor Yellow
+        } catch {
+            Write-Host "Vercel dashboard not ready yet (attempt $i/18): $($_.Exception.Message)" -ForegroundColor Yellow
+        }
+        Start-Sleep -Seconds 20
+    }
+    throw "Vercel dashboard verification failed after retry window."
+}
+
+Test-VercelReport -Date $date
+Test-VercelDashboard
+
 Write-Host "`n=== Done ===" -ForegroundColor Green
 Write-Host "Pushed: Update sugar daily report $date"
-Write-Host "Vercel should redeploy automatically."
+Write-Host "Vercel publish verified."
