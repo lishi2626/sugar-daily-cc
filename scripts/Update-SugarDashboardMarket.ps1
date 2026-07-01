@@ -108,17 +108,20 @@ try {
         return
     }
 
+    $MaxPushAttempts = 12
     $pushOk = $false
-    for ($i = 1; $i -le 3; $i++) {
-        Write-Step "git push attempt $i/3"
+    for ($i = 1; $i -le $MaxPushAttempts; $i++) {
+        Write-Step "git push attempt $i/$MaxPushAttempts"
         git push
         if ($LASTEXITCODE -eq 0) {
             $pushOk = $true
             break
         }
-        Start-Sleep -Seconds (10 * $i)
+        if ($i -lt $MaxPushAttempts) {
+            Start-Sleep -Seconds ([Math]::Min(300, 30 * $i))
+        }
     }
-    if (-not $pushOk) { throw "git push failed after 3 attempts; Vercel will not update until push succeeds." }
+    if (-not $pushOk) { throw "git push failed after $MaxPushAttempts attempts; local commit is kept and Vercel will not update until push succeeds." }
 
     Test-VercelDashboard
     Write-Step "Sugar dashboard market-performance update complete."

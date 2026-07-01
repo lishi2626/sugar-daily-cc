@@ -106,19 +106,22 @@ if ($status) {
     }
 }
 
+$MaxPushAttempts = 12
 $pushOk = $false
-for ($i = 1; $i -le 3; $i++) {
-    Write-Host "git push attempt $i/3" -ForegroundColor Cyan
+for ($i = 1; $i -le $MaxPushAttempts; $i++) {
+    Write-Host "git push attempt $i/$MaxPushAttempts" -ForegroundColor Cyan
     git push
     if ($LASTEXITCODE -eq 0) {
         $pushOk = $true
         break
     }
-    Start-Sleep -Seconds (10 * $i)
+    if ($i -lt $MaxPushAttempts) {
+        Start-Sleep -Seconds ([Math]::Min(300, 30 * $i))
+    }
 }
 
 if (-not $pushOk) {
-    Write-Host "git push failed after 3 attempts; Vercel will not update until push succeeds." -ForegroundColor Red
+    Write-Host "git push failed after $MaxPushAttempts attempts; local commit is kept and Vercel will not update until push succeeds." -ForegroundColor Red
     exit 1
 }
 
