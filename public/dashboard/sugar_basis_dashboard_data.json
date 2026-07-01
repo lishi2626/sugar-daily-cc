@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-01 09:29:45",
+  "generated_at": "2026-07-01 10:25:12",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,20 +12,20 @@
     "15价差"
   ],
   "marketPerformance": {
-    "fetchTime": "2026-07-01 09:29:32",
+    "fetchTime": "2026-07-01 10:25:02",
     "dataDate": "2026-07-01",
     "tradeDate": "2026-07-01",
     "ruleSource": "same_as_sugar_daily_market_performance",
     "trigger": "手动构建",
-    "rawText": "郑糖主力合约收5259元/吨，日跌幅0.47%。 ICE原糖主力合约收14.80美分/磅，日涨幅0.12%。 广西白糖现货与郑糖主力合约基差为118元/吨。 配额外巴西糖加工完税估算利润为515元/吨。",
+    "rawText": "郑糖主力合约收5275元/吨，日跌幅0.17%。 ICE原糖主力合约收14.80美分/磅，日涨幅0.12%。 广西白糖现货与郑糖主力合约基差为102元/吨。 配额外巴西糖加工完税估算利润为515元/吨。",
     "items": [
       {
         "name": "郑糖主力合约",
-        "value": 5259.0,
+        "value": 5275.0,
         "unit": "元/吨",
-        "changePct": -0.47,
-        "displayValue": "5259元/吨",
-        "displayChange": "日跌幅0.47%",
+        "changePct": -0.17,
+        "displayValue": "5275元/吨",
+        "displayChange": "日跌幅0.17%",
         "dataDate": "2026-07-01",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/SR0.shtml",
@@ -68,9 +68,9 @@
       "axis_column": 1,
       "value_column": 2,
       "series_count": 10,
-      "point_count": 2071,
+      "point_count": 2073,
       "start_date": "2017-01-03",
-      "end_date": "2026-06-26",
+      "end_date": "2026-06-30",
       "start_year": "2017",
       "end_year": "2026",
       "years": [
@@ -96,9 +96,9 @@
       "axis_column": 1,
       "value_column": 2,
       "series_count": 10,
-      "point_count": 2314,
+      "point_count": 2316,
       "start_date": "2017-01-03",
-      "end_date": "2026-06-26",
+      "end_date": "2026-06-30",
       "start_year": "2017",
       "end_year": "2026",
       "years": [
@@ -123,7 +123,9 @@
       "metric": "1月基差",
       "contract_month": 1,
       "series_count": 10,
-      "point_count": 2298,
+      "point_count": 2300,
+      "start_date": "2017-01-16",
+      "end_date": "2026-06-30",
       "start_contract": "SR1801",
       "end_contract": "SR2701",
       "contracts": [
@@ -148,7 +150,9 @@
       "metric": "5月基差",
       "contract_month": 5,
       "series_count": 10,
-      "point_count": 2227,
+      "point_count": 2229,
+      "start_date": "2017-05-15",
+      "end_date": "2026-07-01",
       "start_contract": "SR1805",
       "end_contract": "SR2705",
       "contracts": [
@@ -173,7 +177,9 @@
       "metric": "9月基差",
       "contract_month": 9,
       "series_count": 9,
-      "point_count": 2136,
+      "point_count": 2138,
+      "start_date": "2017-09-15",
+      "end_date": "2026-06-30",
       "start_contract": "SR1809",
       "end_contract": "SR2609",
       "contracts": [
@@ -198,7 +204,9 @@
       "sheet": "91价差",
       "metric": "91价差",
       "series_count": 11,
-      "point_count": 1689,
+      "point_count": 1691,
+      "start_date": "2016-01-19",
+      "end_date": "2026-06-30",
       "start_spread": "SR1609-SR1701",
       "end_spread": "SR2609-SR2701",
       "spreads": [
@@ -225,6 +233,8 @@
       "metric": "59价差",
       "series_count": 11,
       "point_count": 1695,
+      "start_date": "2015-09-18",
+      "end_date": "2026-05-13",
       "start_spread": "SR1605-SR1609",
       "end_spread": "SR2605-SR2609",
       "spreads": [
@@ -252,7 +262,9 @@
       "sheet": "15价差",
       "metric": "15价差",
       "series_count": 12,
-      "point_count": 1829,
+      "point_count": 1831,
+      "start_date": "2015-05-20",
+      "end_date": "2026-06-30",
       "start_spread": "SR1601-SR1605",
       "end_spread": "SR2701-SR2705",
       "spreads": [
