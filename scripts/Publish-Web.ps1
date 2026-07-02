@@ -92,12 +92,13 @@ if (-not $status) {
     if ($ahead) {
         Write-Host "No file changes, but local branch has unpushed commits. Will push existing commits." -ForegroundColor Yellow
     } else {
-        Write-Host "No file changes and no unpushed commits." -ForegroundColor Yellow
-        exit 0
+        Write-Host "No file changes and no unpushed commits. Will still verify Vercel is live for today." -ForegroundColor Yellow
     }
 }
 
-Write-Host "`n=== Committing and pushing ===" -ForegroundColor Cyan
+if ($status -or $ahead) {
+    Write-Host "`n=== Committing and pushing ===" -ForegroundColor Cyan
+}
 if ($status) {
     git add index.html public .gitignore
     git commit -m "Update sugar daily report $date"
@@ -109,21 +110,25 @@ if ($status) {
 
 $MaxPushAttempts = 12
 $pushOk = $false
-for ($i = 1; $i -le $MaxPushAttempts; $i++) {
-    Write-Host "git push attempt $i/$MaxPushAttempts" -ForegroundColor Cyan
-    git push
-    if ($LASTEXITCODE -eq 0) {
-        $pushOk = $true
-        break
+if ($status -or $ahead) {
+    for ($i = 1; $i -le $MaxPushAttempts; $i++) {
+        Write-Host "git push attempt $i/$MaxPushAttempts" -ForegroundColor Cyan
+        git push
+        if ($LASTEXITCODE -eq 0) {
+            $pushOk = $true
+            break
+        }
+        if ($i -lt $MaxPushAttempts) {
+            Start-Sleep -Seconds ([Math]::Min(300, 30 * $i))
+        }
     }
-    if ($i -lt $MaxPushAttempts) {
-        Start-Sleep -Seconds ([Math]::Min(300, 30 * $i))
-    }
-}
 
-if (-not $pushOk) {
-    Write-Host "git push failed after $MaxPushAttempts attempts; local commit is kept and Vercel will not update until push succeeds." -ForegroundColor Red
-    exit 1
+    if (-not $pushOk) {
+        Write-Host "git push failed after $MaxPushAttempts attempts; local commit is kept and Vercel will not update until push succeeds." -ForegroundColor Red
+        exit 1
+    }
+} else {
+    Write-Host "Skip git push: no file changes and no unpushed commits." -ForegroundColor Yellow
 }
 
 function Test-VercelReport {
