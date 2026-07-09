@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-09 16:01:17",
+  "generated_at": "2026-07-10 05:42:36",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,20 +12,20 @@
     "15价差"
   ],
   "marketPerformance": {
-    "fetchTime": "2026-07-09 16:01:07",
-    "dataDate": "2026-07-09",
+    "fetchTime": "2026-07-10 05:42:24",
+    "dataDate": "2026-07-10",
     "tradeDate": "2026-07-09",
     "ruleSource": "same_as_sugar_daily_market_performance",
-    "trigger": "output_dashboard_16:00",
-    "rawText": "郑糖主力合约收5249元/吨，日跌幅0.68%。 ICE原糖主力合约收15.02美分/磅，日跌幅0.61%。 广西白糖现货与郑糖主力合约基差为128元/吨。 配额外巴西糖加工完税估算利润为647元/吨。",
+    "trigger": "手动构建",
+    "rawText": "郑糖主力合约收5246元/吨，日跌幅0.23%。 ICE原糖主力合约收15.15美分/磅，日涨幅0.30%。 广西白糖现货与郑糖主力合约基差为131元/吨。 配额外巴西糖加工完税估算利润为635元/吨。",
     "items": [
       {
         "name": "郑糖主力合约",
-        "value": 5249.0,
+        "value": 5246.0,
         "unit": "元/吨",
-        "changePct": -0.68,
-        "displayValue": "5249元/吨",
-        "displayChange": "日跌幅0.68%",
+        "changePct": -0.23,
+        "displayValue": "5246元/吨",
+        "displayChange": "日跌幅0.23%",
         "dataDate": "2026-07-09",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/SR0.shtml",
@@ -34,12 +34,12 @@
       },
       {
         "name": "ICE原糖主力合约",
-        "value": 15.02,
+        "value": 15.15,
         "unit": "美分/磅",
-        "changePct": -0.61,
-        "displayValue": "15.02美分/磅",
-        "displayChange": "日跌幅0.61%",
-        "dataDate": "2026-07-09",
+        "changePct": 0.3,
+        "displayValue": "15.15美分/磅",
+        "displayChange": "日涨幅0.30%",
+        "dataDate": "2026-07-10",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/RS.shtml",
         "fallbackUsed": false,
@@ -47,13 +47,13 @@
       },
       {
         "name": "配额外巴西糖加工完税估算利润",
-        "value": 647.0,
+        "value": 635.0,
         "unit": "元/吨",
-        "displayValue": "647元/吨",
+        "displayValue": "635元/吨",
         "displayChange": "",
-        "dataDate": "2026-07-07",
+        "dataDate": "2026-07-08",
         "source": "泛糖科技",
-        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026070808432845051763",
+        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026070909092171345186",
         "fallbackUsed": false,
         "fallbackReason": ""
       }
