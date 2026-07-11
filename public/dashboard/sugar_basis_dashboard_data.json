@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-11 16:02:35",
+  "generated_at": "2026-07-12 05:45:09",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,11 +12,11 @@
     "15价差"
   ],
   "marketPerformance": {
-    "fetchTime": "2026-07-11 16:02:23",
+    "fetchTime": "2026-07-12 05:44:57",
     "dataDate": "2026-07-11",
     "tradeDate": "2026-07-10",
     "ruleSource": "same_as_sugar_daily_market_performance",
-    "trigger": "output_dashboard_16:00",
+    "trigger": "手动构建",
     "rawText": "郑糖主力合约收5261元/吨，日跌幅0.02%。 ICE原糖主力合约收14.85美分/磅，日跌幅1.82%。 广西白糖现货与郑糖主力合约基差为116元/吨。 配额外巴西糖加工完税估算利润为636元/吨。",
     "items": [
       {
@@ -29,8 +29,8 @@
         "dataDate": "2026-07-10",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/SR0.shtml",
-        "fallbackUsed": false,
-        "fallbackReason": ""
+        "fallbackUsed": true,
+        "fallbackReason": "实时市场表现取值失败，沿用上一版看板数据: marketPerformance has empty values: 配额外巴西糖加工完税估算利润"
       },
       {
         "name": "ICE原糖主力合约",
@@ -42,8 +42,8 @@
         "dataDate": "2026-07-11",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/RS.shtml",
-        "fallbackUsed": false,
-        "fallbackReason": ""
+        "fallbackUsed": true,
+        "fallbackReason": "实时市场表现取值失败，沿用上一版看板数据: marketPerformance has empty values: 配额外巴西糖加工完税估算利润"
       },
       {
         "name": "配额外巴西糖加工完税估算利润",
@@ -54,12 +54,15 @@
         "dataDate": "2026-07-09",
         "source": "泛糖科技",
         "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026071008463250033185",
-        "fallbackUsed": false,
-        "fallbackReason": ""
+        "fallbackUsed": true,
+        "fallbackReason": "实时市场表现取值失败，沿用上一版看板数据: marketPerformance has empty values: 配额外巴西糖加工完税估算利润"
       }
     ],
-    "fallbackUsed": false,
-    "fallbackReasons": []
+    "fallbackUsed": true,
+    "fallbackReasons": [
+      "实时市场表现取值失败，沿用上一版看板数据: marketPerformance has empty values: 配额外巴西糖加工完税估算利润"
+    ],
+    "fallbackSourceFile": "D:\\Desktop\\ai\\nutstore_database_sync\\outputs\\dashboard\\sugar_basis_dashboard_data.json"
   },
   "charts": [
     {
