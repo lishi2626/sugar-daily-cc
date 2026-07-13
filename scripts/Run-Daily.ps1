@@ -125,7 +125,12 @@ function Test-VercelDashboard {
             foreach ($item in $quoteItems) {
                 if ($item.dataDate -ne $dbLatest) { $marketDatesOk = $false }
             }
-            if ($payload.marketPerformance.fallbackUsed -or (-not $dbLatest) -or (-not $marketDatesOk)) {
+            $profitItem = @($payload.marketPerformance.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+            $profitDateOk = $true
+            if ($profitItem -and $profitItem.articleTitleDate -and $profitItem.dataDate -ne $profitItem.articleTitleDate) {
+                $profitDateOk = $false
+            }
+            if ($payload.marketPerformance.fallbackUsed -or (-not $dbLatest) -or (-not $marketDatesOk) -or (-not $profitDateOk)) {
                 throw "Market Summary 数据未更新到最新交易日，取消发布。"
             }
             if ($dataResp.StatusCode -eq 200 -and $htmlResp.StatusCode -eq 200 -and $fetchTime -and $dataDate -and $ruleSource -eq "same_as_sugar_daily_market_performance" -and $itemCount -eq 3) {

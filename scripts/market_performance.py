@@ -131,6 +131,7 @@ def build_market_performance_items(market: dict, target_date: str | None = None)
     profit = market.get("brazil_profit")
     profit_value = _num(profit)
     profit_fallback, profit_reason = _fallback_info(profit, target_date, errors)
+    profit_meta = market.get("_import_profit_meta", {}) or {}
 
     return [
         {
@@ -170,6 +171,8 @@ def build_market_performance_items(market: dict, target_date: str | None = None)
             "displayValue": "N/A" if profit_value is None else f"{profit_value:.0f}元/吨",
             "displayChange": "",
             "dataDate": _field_date(profit, trade_date),
+            "articleTitleDate": str(profit_meta.get("article_title_date") or ""),
+            "iceReferenceDate": str(profit_meta.get("ice_reference_date") or ""),
             "source": _field_source(profit),
             "sourceUrl": _field_url(profit),
             "fallbackUsed": profit_fallback,

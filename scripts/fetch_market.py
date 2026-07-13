@@ -696,9 +696,13 @@ def fetch_hisugar_import_profit(target_date: str | None = None) -> dict | None:
 
     步骤:
       1. 发现候选文章 → 2. 读取真实标题解析title_date →
-      3. 按title_date排序选最新 → 4. 打开详情解析body_date和字段 →
-      5. 强制校验 title_date == body_date → 6. 通过后返回
+      3. 按title_date排序 → 4. 逐篇打开详情解析字段 →
+      5. 使用最新一篇有效文章的title_date作为利润指标日期
     文章ID禁止用于推断任何日期。
+
+    泛糖正文首句中的日期是ICE参考行情日期，可能早于文章期次一个交易日。
+    因此利润指标的更新时间不得使用body_date，否则会出现数值来自最新文章、
+    页面日期却显示上一交易日的错位。
     """
     cfg = config.get("hisugar", {}).get("import_profit", {})
     if not cfg.get("enabled", True):
@@ -712,70 +716,87 @@ def fetch_hisugar_import_profit(target_date: str | None = None) -> dict | None:
     for i, c in enumerate(candidates):
         logger.info("泛糖候选[%d]: id=%s title_date=%s", i, c["article_id"], c["title_date"])
 
-    best = candidates[0]
-    article_id = best["article_id"]
+    skipped = []
+    for best in candidates:
+        article_id = best["article_id"]
+        raw = _fetch_hisugar_page(article_id)
+        if not raw:
+            skipped.append(f"{article_id}: page fetch failed")
+            continue
 
-    raw = _fetch_hisugar_page(article_id)
-    if not raw:
-        return None
+        title_date = _parse_title_date(raw)
+        body_date = _parse_body_date(raw)
+        published_at = _parse_published_at(raw)
 
-    title_date = _parse_title_date(raw)
-    body_date = _parse_body_date(raw)
-    published_at = _parse_published_at(raw)
+        logger.info("泛糖选中候选: id=%s title_date=%s body_date=%s published_at=%s",
+                    article_id, title_date, body_date, published_at)
 
-    logger.info("泛糖选中: id=%s title_date=%s body_date=%s published_at=%s",
-                article_id, title_date, body_date, published_at)
+        if not title_date:
+            skipped.append(f"{article_id}: title_date missing")
+            continue
 
-    # 强制一致性校验
-    if title_date != body_date:
-        logger.error("HISUGAR_DATE_MISMATCH: title_date=%s body_date=%s — 拒绝使用", title_date, body_date)
-        return None
+        if published_at and published_at[:10] < title_date:
+            logger.warning("泛糖: published_at=%s 早于 title_date=%s", published_at, title_date)
 
-    if published_at and published_at[:10] < title_date:
-        logger.warning("泛糖: published_at=%s 早于 title_date=%s", published_at, title_date)
+        fields = _parse_profit_fields(raw)
+        if not fields:
+            logger.warning("泛糖: 利润字段解析失败 id=%s", article_id)
+            save_raw_to_data(title_date.replace("-", ""), "hisugar_parse_fail", _clean_html(raw)[:3000])
+            skipped.append(f"{article_id}: profit fields parse failed")
+            continue
 
-    fields = _parse_profit_fields(raw)
-    if not fields:
-        logger.warning("泛糖: 利润字段解析失败 id=%s", article_id)
-        save_raw_to_data(title_date.replace("-", ""), "hisugar_parse_fail", _clean_html(raw)[:3000])
-        return None
+        errors = []
+        warnings = []
+        if fields["quota_outside_profit"] <= 0:
+            errors.append(f"配额外利润 {fields['quota_outside_profit']} 无效")
+        if fields["ice_close"] <= 0 or fields["ice_close"] > 50:
+            errors.append(f"ICE价格 {fields['ice_close']} 异常")
+        if "日照" not in _clean_html(raw):
+            warnings.append("正文未提及日照白糖现货价")
+        if errors:
+            logger.warning("泛糖候选无效 id=%s: %s", article_id, "; ".join(errors))
+            skipped.append(f"{article_id}: {'; '.join(errors)}")
+            continue
+        if warnings:
+            logger.warning("泛糖候选提示 id=%s: %s", article_id, "; ".join(warnings))
 
-    errors = []
-    if fields["quota_outside_profit"] <= 0:
-        errors.append(f"配额外利润 {fields['quota_outside_profit']} 无效")
-    if fields["ice_close"] <= 0 or fields["ice_close"] > 50:
-        errors.append(f"ICE价格 {fields['ice_close']} 异常")
-    if "日照" not in _clean_html(raw):
-        errors.append("正文未提及日照白糖现货价")
+        if body_date and body_date != title_date:
+            logger.info(
+                "泛糖利润日期使用文章期次 title_date=%s；正文ICE参考日期 body_date=%s",
+                title_date,
+                body_date,
+            )
 
-    status = "needs_verification" if errors else "verified"
-    if errors:
-        logger.warning("泛糖校验: %s", "; ".join(errors))
+        save_raw_to_data(title_date.replace("-", ""), "hisugar", _clean_html(raw)[:5000])
 
-    save_raw_to_data(title_date.replace("-", ""), "hisugar", _clean_html(raw)[:5000])
+        result = {
+            "data_date": title_date,
+            "title_date": title_date,
+            "body_date": body_date or fields.get("body_date") or "",
+            "ice_reference_date": body_date or fields.get("body_date") or "",
+            "published_at": published_at,
+            "ice_close": fields["ice_close"],
+            "usd_cny": fields["usd_cny"],
+            "quota_inside_cost": fields["quota_inside_cost"],
+            "quota_outside_cost": fields["quota_outside_cost"],
+            "quota_inside_profit": fields["quota_inside_profit"],
+            "quota_outside_profit": fields["quota_outside_profit"],
+            "profit_reference_spot": "日照白糖现货价",
+            "source_name": cfg.get("source_name", "泛糖科技"),
+            "source_url": f"{HISUGAR_BASE}/home/articleContent?id={article_id}",
+            "article_id": article_id,
+            "article_title": best["article_title"],
+            "status": "needs_verification" if warnings else "verified",
+            "warnings": warnings,
+        }
 
-    result = {
-        "data_date": body_date,
-        "title_date": title_date,
-        "published_at": published_at,
-        "ice_close": fields["ice_close"],
-        "usd_cny": fields["usd_cny"],
-        "quota_inside_cost": fields["quota_inside_cost"],
-        "quota_outside_cost": fields["quota_outside_cost"],
-        "quota_inside_profit": fields["quota_inside_profit"],
-        "quota_outside_profit": fields["quota_outside_profit"],
-        "profit_reference_spot": "日照白糖现货价",
-        "source_name": cfg.get("source_name", "泛糖科技"),
-        "source_url": f"{HISUGAR_BASE}/home/articleContent?id={article_id}",
-        "article_id": article_id,
-        "article_title": best["article_title"],
-        "status": status,
-    }
+        logger.info("泛糖结果: data_date=%s ice_reference_date=%s ICE=%.2f 汇率=%.4f 配额外利润=%.0f 状态=%s",
+                    result["data_date"], result["ice_reference_date"], fields["ice_close"], fields["usd_cny"],
+                    fields["quota_outside_profit"], result["status"])
+        return result
 
-    logger.info("泛糖结果: title_date=%s ICE=%.2f 汇率=%.4f 配额外利润=%.0f 状态=%s",
-                title_date, fields["ice_close"], fields["usd_cny"],
-                fields["quota_outside_profit"], status)
-    return result
+    logger.warning("泛糖: 未找到有效进口利润文章: %s", "; ".join(skipped))
+    return None
 
 
 def save_raw_to_data(date_str: str, label: str, content: str):
@@ -1094,6 +1115,9 @@ def collect_market_data(target_date: str | None = None) -> dict:
             "reference_spot": hisugar_data.get("profit_reference_spot", "日照白糖现货价"),
             "source_url": profit_url,
             "ice_close": hisugar_data.get("ice_close"),
+            "ice_reference_date": hisugar_data.get("ice_reference_date", ""),
+            "article_title_date": hisugar_data.get("title_date", ""),
+            "published_at": hisugar_data.get("published_at", ""),
             "usd_cny": hisugar_data.get("usd_cny"),
             "quota_outside_cost": hisugar_data.get("quota_outside_cost"),
             "quota_outside_profit": profit_val,

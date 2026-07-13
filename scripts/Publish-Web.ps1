@@ -108,6 +108,11 @@ foreach ($item in $dashboardPayload.marketPerformance.items) {
         exit 1
     }
 }
+$profitItem = @($dashboardPayload.marketPerformance.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+if ($profitItem -and $profitItem.articleTitleDate -and $profitItem.dataDate -ne $profitItem.articleTitleDate) {
+    Write-Host "Market Summary 数据未更新到最新交易日，取消发布。" -ForegroundColor Red
+    exit 1
+}
 
 Write-Host "`n=== Checking Git status ===" -ForegroundColor Cyan
 $status = git status --porcelain
@@ -205,7 +210,12 @@ function Test-VercelDashboard {
             foreach ($item in $remoteQuoteItems) {
                 if ($item.dataDate -ne $remoteDbLatest) { $remoteMarketDatesOk = $false }
             }
-            if ($payload.marketPerformance.fallbackUsed -or (-not $remoteDbLatest) -or (-not $remoteMarketDatesOk)) {
+            $remoteProfitItem = @($payload.marketPerformance.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+            $remoteProfitDateOk = $true
+            if ($remoteProfitItem -and $remoteProfitItem.articleTitleDate -and $remoteProfitItem.dataDate -ne $remoteProfitItem.articleTitleDate) {
+                $remoteProfitDateOk = $false
+            }
+            if ($payload.marketPerformance.fallbackUsed -or (-not $remoteDbLatest) -or (-not $remoteMarketDatesOk) -or (-not $remoteProfitDateOk)) {
                 throw "Market Summary 数据未更新到最新交易日，取消发布。"
             }
             if ($dataResp.StatusCode -eq 200 -and $htmlResp.StatusCode -eq 200 -and $fetchTime -and $dataDate -and $ruleSource -eq "same_as_sugar_daily_market_performance" -and $itemCount -eq 3) {

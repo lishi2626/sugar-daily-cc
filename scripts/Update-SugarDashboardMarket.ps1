@@ -57,6 +57,10 @@ function Test-MarketPerformancePayload {
             throw "marketPerformance item is incomplete: $($item.name)"
         }
     }
+    $profitItem = @($mp.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+    if ($profitItem -and $profitItem.articleTitleDate -and $profitItem.dataDate -ne $profitItem.articleTitleDate) {
+        throw "Market Summary 数据未更新到最新交易日，取消发布。"
+    }
 }
 
 function Test-VercelDashboard {
