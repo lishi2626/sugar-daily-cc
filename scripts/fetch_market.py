@@ -19,6 +19,7 @@ SR2609 仍用于交易观点/基本面判断的目标合约，不再用于市场
 """
 
 import argparse
+import calendar
 import csv
 import json
 import logging
@@ -251,6 +252,116 @@ def _try_float(val) -> float | None:
         return float(s)
     except (ValueError, TypeError):
         return None
+
+
+def parse_sina_jsonp(raw_text: str) -> Any:
+    """Parse Sina JSONP responses in the form: var x=(...);"""
+    match = re.search(r"=\((.*)\);\s*$", raw_text or "", re.S)
+    if not match:
+        raise ValueError("新浪JSONP响应格式无法解析")
+    return json.loads(match.group(1))
+
+
+def fetch_sina_daily_kline(symbol: str, service: str, timeout: int = 20) -> list[dict]:
+    """Fetch daily K-line rows from Sina futures services."""
+    url = (
+        "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/"
+        f"var%20_{symbol}=/{service}?symbol={symbol}"
+    )
+    raw = http_get(url, timeout)
+    if not raw:
+        raise RuntimeError(f"新浪日K接口无响应: {symbol}")
+    payload = parse_sina_jsonp(raw)
+    if not isinstance(payload, list) or not payload:
+        raise RuntimeError(f"新浪日K接口无有效数据: {symbol}")
+    return payload
+
+
+def latest_daily_quote(rows: list[dict], *, date_key: str, close_key: str) -> dict:
+    """Return the latest completed daily close and close-to-close change."""
+    valid_rows: list[dict[str, Any]] = []
+    for row in rows:
+        row_date = str(row.get(date_key) or "").strip()
+        close = _try_float(row.get(close_key))
+        if not row_date or close is None or close <= 0:
+            continue
+        if not is_valid_trading_date(row_date):
+            continue
+        item = dict(row)
+        item["_row_date"] = row_date
+        item["_row_close"] = close
+        valid_rows.append(item)
+
+    valid_rows.sort(key=lambda item: item["_row_date"])
+    if len(valid_rows) < 2:
+        raise RuntimeError("新浪日K有效行不足，无法计算涨跌幅")
+
+    latest = valid_rows[-1]
+    previous = valid_rows[-2]
+    close = float(latest["_row_close"])
+    prev_close = float(previous["_row_close"])
+    if prev_close <= 0:
+        raise RuntimeError(f"新浪日K前收无效: {previous}")
+
+    return {
+        "close": round(close, 3),
+        "prev_close": round(prev_close, 3),
+        "change_pct": round((close - prev_close) / prev_close * 100, 2),
+        "trade_date": str(latest["_row_date"]),
+        "previous_trade_date": str(previous["_row_date"]),
+        "raw_latest": latest,
+        "raw_previous": previous,
+    }
+
+
+def fetch_sina_sr_main_contract() -> str:
+    """Read the current SR main contract code from Sina's SR0 page."""
+    display_cfg = config["display_contract"]["zhengzhou"]
+    url = display_cfg.get("source_url", "https://finance.sina.com.cn/futures/quotes/SR0.shtml")
+    raw = http_get(url, config["market_data"]["sources"]["sina_finance"].get("timeout", 15))
+    if not raw:
+        raise RuntimeError("新浪SR0页面无响应，无法识别郑糖主力合约")
+
+    match = re.search(r'chicang_code\s*=\s*"([A-Z]{1,3}\d{4})"', raw)
+    if not match:
+        raise RuntimeError("新浪SR0页面未返回持仓主力合约代码")
+
+    contract_code = match.group(1).upper()
+    if not re.match(r"^SR\d{4}$", contract_code):
+        raise RuntimeError(f"新浪SR0页面返回的主力合约代码无效: {contract_code}")
+    if contract_code in FORBIDDEN_CONTRACT_CODES:
+        raise RuntimeError(f"新浪SR0页面返回旧合约，拒绝使用: {contract_code}")
+    return contract_code
+
+
+ICE_SUGAR_MONTH_CODES = [(3, "H"), (5, "K"), (7, "N"), (10, "V")]
+
+
+def _last_business_day(year: int, month: int) -> datetime:
+    day = calendar.monthrange(year, month)[1]
+    result = datetime(year, month, day)
+    while result.weekday() >= 5:
+        result -= timedelta(days=1)
+    return result
+
+
+def identify_ice_sugar_front_month(as_of_date: str) -> dict[str, str]:
+    """Identify ICE Sugar No.11 front month from standard H/K/N/V contract cycle."""
+    trade_day = datetime.strptime(as_of_date, "%Y-%m-%d")
+    for year in (trade_day.year, trade_day.year + 1):
+        for month, month_code in ICE_SUGAR_MONTH_CODES:
+            prev_month_year = year if month > 1 else year - 1
+            prev_month = month - 1 if month > 1 else 12
+            last_trade_cutoff = _last_business_day(prev_month_year, prev_month)
+            if trade_day <= last_trade_cutoff:
+                yy = year % 100
+                return {
+                    "contract_code": f"SB{month_code}{yy:02d}",
+                    "contract_month": f"{year:04d}-{month:02d}",
+                    "month_code": month_code,
+                    "last_trade_cutoff": last_trade_cutoff.strftime("%Y-%m-%d"),
+                }
+    raise RuntimeError(f"无法识别ICE原糖Front Month: {as_of_date}")
 
 
 def fetch_from_sina(target_date: str | None = None) -> dict:
@@ -739,108 +850,99 @@ def fetch_ice_from_sina() -> dict | None:
 
 def fetch_sr0_display() -> dict | None:
     """
-    从新浪获取 SR0（郑糖连续/主力）行情，仅用于展示。
-    返回的 display_name 固定为'郑糖主力合约'，不写 SR2609。
+    从新浪自动识别郑糖当前主力，并读取日K最新收盘行情。
+    返回的 display_name 固定为'郑糖主力合约'，合约代码来自新浪页面而非配置写死。
     """
     cfg = config["market_data"]["sources"]["sina_finance"]
-    url = cfg.get("sr0_url", "http://hq.sinajs.cn/list=SR0")
-    raw = http_get(url, cfg.get("timeout", 15))
-    if not raw or len(raw) < 50:
-        return None
-
-    match = re.search(r'"([^"]*)"', raw)
-    if not match:
-        return None
-    fields = match.group(1).split(",")
-    if len(fields) < 6:
-        return None
-
-    if "nf_SR0" in url or (len(fields) > 17 and fields[1].isdigit()):
-        # 新浪期货页 SR0.shtml 对应的实时接口为 nf_SR0。
-        # 字段8为最新/收盘展示价，字段10为昨结/前值口径。
-        close = _to_float(fields[8])
-        prev = _to_float(fields[10])
-    else:
-        close = _to_float(fields[3])
-        prev = _to_float(fields[2])
-    chg_pct = ((close - prev) / prev * 100) if prev != 0 else 0.0
-    trade_date = ""
-    for idx in [17, -1]:
-        try:
-            d = fields[idx].strip()
-            if re.match(r"\d{4}-\d{2}-\d{2}", d):
-                trade_date = d
-                break
-        except IndexError:
-            continue
-
     display_cfg = config["display_contract"]["zhengzhou"]
-    src_name = display_cfg["source_name"]
+    try:
+        main_contract = fetch_sina_sr_main_contract()
+        rows = fetch_sina_daily_kline(
+            main_contract,
+            "InnerFuturesNewService.getDailyKLine",
+            cfg.get("timeout", 20),
+        )
+        quote = latest_daily_quote(rows, date_key="d", close_key="c")
+    except Exception as exc:  # noqa: BLE001
+        logger.error("郑糖主力日K行情获取失败: %s", exc)
+        return None
+
+    src_name = display_cfg.get("source_name", cfg.get("name", "新浪财经"))
     result = {
-        "contract_code": "SR0",
+        "contract_code": main_contract,
         "display_name": display_cfg["display_name"],
-        "close": round(close, 2),
-        "prev_close": round(prev, 2),
-        "change_pct": round(chg_pct, 2),
-        "trade_date": trade_date,
+        "close": round(float(quote["close"]), 2),
+        "prev_close": round(float(quote["prev_close"]), 2),
+        "change_pct": quote["change_pct"],
+        "trade_date": quote["trade_date"],
+        "previous_trade_date": quote["previous_trade_date"],
         "source_name": src_name,
         "source_url": display_cfg.get("source_url", cfg.get("sr0_url", "")),
-        "raw_url": cfg.get("sr0_url", ""),
+        "raw_url": (
+            "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/"
+            f"var%20_{main_contract}=/InnerFuturesNewService.getDailyKLine?symbol={main_contract}"
+        ),
         "_is_display_only": True,
-        "_note": "SR0为连续主力行情，不等于SR2609",
+        "_note": "郑糖主力合约由新浪SR0页面动态识别，收盘价来自日K",
     }
-    logger.info("SR0展示行情: close=%.2f chg=%.2f%% date=%s", close, chg_pct, trade_date)
+    logger.info(
+        "郑糖主力日K行情: contract=%s close=%.2f chg=%.2f%% date=%s",
+        main_contract,
+        result["close"],
+        result["change_pct"],
+        result["trade_date"],
+    )
     return result
 
 
 def fetch_rs_display() -> dict | None:
     """
-    从新浪获取 RS（ICE原糖连续/主力）行情，仅用于展示。
-    返回的 display_name 固定为'ICE原糖主力合约'。
+    从新浪获取 ICE 原糖连续主力日K，并按 Sugar No.11 合约周期识别 Front Month。
     """
     cfg = config["market_data"]["sources"]["sina_finance"]
-    url = cfg.get("rs_url", "http://hq.sinajs.cn/list=RS")
-    raw = http_get(url, cfg.get("timeout", 15))
-    if not raw or len(raw) < 50 or '=""' in raw:
-        logger.info("新浪RS接口无数据（可能需用网页版）")
-        return None
-
-    match = re.search(r'"([^"]*)"', raw)
-    if not match:
-        return None
-    fields = match.group(1).split(",")
-    if len(fields) < 4:
-        return None
-
-    if "hf_RS" in url:
-        # 新浪 RS.shtml 对应的实时接口为 hf_RS。
-        # 格式: latest, ..., time, prev_close, ..., date, name, ...
-        close = _to_float(fields[0])
-        prev = _to_float(fields[7])
-        trade_date = fields[12].strip() if len(fields) > 12 else ""
-    else:
-        # 旧 RS 接口格式: name, open, prev_close, close, high, low, ...
-        close = _to_float(fields[3])
-        prev = _to_float(fields[2])
-        trade_date = ""
-    chg_pct = ((close - prev) / prev * 100) if prev != 0 else 0.0
-
     display_cfg = config["display_contract"]["ice"]
-    src_name = display_cfg["source_name"]
+    try:
+        rows = fetch_sina_daily_kline(
+            "RS",
+            "GlobalFuturesService.getGlobalFuturesDailyKLine",
+            cfg.get("timeout", 20),
+        )
+        quote = latest_daily_quote(rows, date_key="date", close_key="close")
+        front_month = identify_ice_sugar_front_month(quote["trade_date"])
+    except Exception as exc:  # noqa: BLE001
+        logger.error("ICE原糖主力日K行情获取失败: %s", exc)
+        return None
+
+    src_name = display_cfg.get("source_name", cfg.get("name", "新浪财经"))
     result = {
-        "contract_code": "RS",
+        "contract_code": front_month["contract_code"],
+        "contract_month": front_month["contract_month"],
+        "continuous_symbol": "RS",
         "display_name": display_cfg["display_name"],
-        "close": round(close, 2),
-        "prev_close": round(prev, 2),
-        "change_pct": round(chg_pct, 2),
-        "trade_date": trade_date,
+        "close": round(float(quote["close"]), 2),
+        "prev_close": round(float(quote["prev_close"]), 2),
+        "change_pct": quote["change_pct"],
+        "trade_date": quote["trade_date"],
+        "previous_trade_date": quote["previous_trade_date"],
         "source_name": src_name,
         "source_url": display_cfg.get("source_url", cfg.get("rs_url", "")),
-        "raw_url": cfg.get("rs_url", ""),
+        "raw_url": (
+            "https://stock2.finance.sina.com.cn/futures/api/jsonp.php/"
+            "var%20_RS=/GlobalFuturesService.getGlobalFuturesDailyKLine?symbol=RS"
+        ),
         "_is_display_only": True,
-        "_note": "RS为ICE原糖主力连续行情，具体交割月份未确认",
+        "_note": (
+            "ICE Sugar No.11 Front Month按H/K/N/V合约周期自动识别；"
+            f"当前识别为{front_month['contract_code']}"
+        ),
     }
-    logger.info("RS展示行情: close=%.2f chg=%.2f%%", close, chg_pct)
+    logger.info(
+        "ICE原糖主力日K行情: contract=%s close=%.2f chg=%.2f%% date=%s",
+        result["contract_code"],
+        result["close"],
+        result["change_pct"],
+        result["trade_date"],
+    )
     return result
 
 
@@ -868,22 +970,27 @@ def collect_market_data(target_date: str | None = None) -> dict:
     else:
         all_errors.extend(csv_result.get("errors", []))
 
-    # 2. 新浪 SR0/RS 为展示行情主来源
+    # 2. 新浪日K为郑糖/ICE展示行情唯一主来源；失败则停止发布，不用CSV兜底。
     sr0 = fetch_sr0_display()
     rs = fetch_rs_display()
     if sr0 and not is_recent_enough(sr0.get("trade_date", ""), target_date):
-        all_errors.append(f"新浪SR0行情日期 {sr0.get('trade_date')} 超过时效阈值")
-        logger.warning("新浪SR0行情日期过旧，拒绝使用: %s", sr0.get("trade_date"))
+        all_errors.append(f"新浪郑糖主力行情日期 {sr0.get('trade_date')} 超过时效阈值")
+        logger.warning("新浪郑糖主力行情日期过旧，拒绝使用: %s", sr0.get("trade_date"))
         sr0 = None
     if rs and rs.get("trade_date") and not is_recent_enough(rs.get("trade_date", ""), target_date):
-        all_errors.append(f"新浪RS行情日期 {rs.get('trade_date')} 超过时效阈值")
-        logger.warning("新浪RS行情日期过旧，拒绝使用: %s", rs.get("trade_date"))
+        all_errors.append(f"新浪ICE原糖主力行情日期 {rs.get('trade_date')} 超过时效阈值")
+        logger.warning("新浪ICE原糖主力行情日期过旧，拒绝使用: %s", rs.get("trade_date"))
         rs = None
 
-    if sr0 is None and csv_zz_data is None:
+    if sr0 is None or rs is None:
+        missing = []
+        if sr0 is None:
+            missing.append("郑糖主力")
+        if rs is None:
+            missing.append("ICE原糖主力")
         return {
             "ok": False,
-            "errors": all_errors + ["新浪SR0不可用，CSV也无可用郑糖备用行情"],
+            "errors": all_errors + [f"新浪日K行情不可用，停止发布: {', '.join(missing)}"],
             "trade_date": "",
             "_source_label": "",
             "_source_url": "",
@@ -909,11 +1016,13 @@ def collect_market_data(target_date: str | None = None) -> dict:
         "_from_sina": sr0 is not None or rs is not None,
     }
 
-    # 郑糖 SR0 展示行情
+    # 郑糖主力展示行情
     if sr0 and sr0.get("close"):
         result["zz_display_name"] = sr0["display_name"]
-        result["zz_contract_code"] = make_field("SR0", sr0.get("trade_date", trade_date),
+        result["zz_contract_code"] = make_field(sr0.get("contract_code", ""), sr0.get("trade_date", trade_date),
                                                 sr0["source_name"], sr0["source_url"])
+        result["zz_contract_month"] = make_field(str(sr0.get("contract_code", ""))[-2:], sr0.get("trade_date", trade_date),
+                                                 sr0["source_name"], sr0["source_url"])
         result["zz_close"] = make_field(sr0["close"], sr0.get("trade_date", trade_date),
                                         sr0["source_name"], sr0["source_url"])
         result["zz_prev_close"] = make_field(sr0["prev_close"], sr0.get("trade_date", trade_date),
@@ -921,7 +1030,7 @@ def collect_market_data(target_date: str | None = None) -> dict:
         result["zz_change_pct"] = make_field(sr0["change_pct"], sr0.get("trade_date", trade_date),
                                              sr0["source_name"], sr0["source_url"])
         result["_sr0_note"] = sr0.get("_note", "")
-        logger.info("郑糖展示行情使用SR0: %.2f", sr0["close"])
+        logger.info("郑糖展示行情使用%s日K: %.2f", sr0.get("contract_code", ""), sr0["close"])
     else:
         # SR0不可用时使用CSV值
         zz_data = csv_zz_data
@@ -942,12 +1051,13 @@ def collect_market_data(target_date: str | None = None) -> dict:
     if rs and rs.get("close"):
         result["ice_display_name"] = rs["display_name"]
         rs_date = rs.get("trade_date") or trade_date
-        result["ice_contract_code"] = make_field("RS", rs_date, rs["source_name"], rs["source_url"])
+        result["ice_contract_code"] = make_field(rs.get("contract_code", ""), rs_date, rs["source_name"], rs["source_url"])
+        result["ice_contract_month"] = make_field(rs.get("contract_month", ""), rs_date, rs["source_name"], rs["source_url"])
         result["ice_close"] = make_field(rs["close"], rs_date, rs["source_name"], rs["source_url"])
         result["ice_prev_close"] = make_field(rs["prev_close"], rs_date, rs["source_name"], rs["source_url"])
         result["ice_change_pct"] = make_field(rs["change_pct"], rs_date, rs["source_name"], rs["source_url"])
         result["_ice_note"] = rs.get("_note", "")
-        logger.info("ICE展示行情使用RS: %.2f", rs["close"])
+        logger.info("ICE展示行情使用%s日K: %.2f", rs.get("contract_code", ""), rs["close"])
     else:
         result["ice_display_name"] = config["display_contract"]["ice"]["display_name"]
         if csv_ice_data:

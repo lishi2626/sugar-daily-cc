@@ -91,6 +91,15 @@ def _field_url(field: dict | None) -> str:
     return str(field.get("source_url") or "")
 
 
+def _field_value(field: dict | None, fallback: str = "") -> str:
+    if not field:
+        return fallback
+    value = field.get("value")
+    if value is None:
+        return fallback
+    return str(value)
+
+
 def _fallback_info(field: dict | None, target_date: str | None, errors: list[str]) -> tuple[bool, str]:
     data_date = _field_date(field)
     fallback_used = bool(target_date and data_date and data_date != target_date)
@@ -134,6 +143,8 @@ def build_market_performance_items(market: dict, target_date: str | None = None)
             "dataDate": _field_date(zz_close, trade_date),
             "source": _field_source(zz_close),
             "sourceUrl": _field_url(zz_close),
+            "contractCode": _field_value(market.get("zz_contract_code")),
+            "contractMonth": _field_value(market.get("zz_contract_month")),
             "fallbackUsed": zz_fallback,
             "fallbackReason": zz_reason,
         },
@@ -147,6 +158,8 @@ def build_market_performance_items(market: dict, target_date: str | None = None)
             "dataDate": _field_date(ice_close, trade_date),
             "source": _field_source(ice_close),
             "sourceUrl": _field_url(ice_close),
+            "contractCode": _field_value(market.get("ice_contract_code")),
+            "contractMonth": _field_value(market.get("ice_contract_month")),
             "fallbackUsed": ice_fallback,
             "fallbackReason": ice_reason,
         },
@@ -165,9 +178,26 @@ def build_market_performance_items(market: dict, target_date: str | None = None)
     ]
 
 
+def validate_required_market_date(items: list[dict[str, Any]], required_market_date: str | None) -> None:
+    if not required_market_date:
+        return
+    mismatches = []
+    for item in items[:2]:
+        item_date = str(item.get("dataDate") or "")
+        if item_date != required_market_date:
+            mismatches.append(f"{item.get('name', '')}: {item_date or 'N/A'}")
+    if mismatches:
+        raise RuntimeError(
+            "Market Summary 数据未更新到最新交易日，取消发布。"
+            f" 数据库最新交易日={required_market_date}; "
+            + "; ".join(mismatches)
+        )
+
+
 def build_market_performance_payload(
     target_date: str | None = None,
     *,
+    required_market_date: str | None = None,
     fetch_time: str | None = None,
     trigger: str = "dashboard",
 ) -> dict[str, Any]:
@@ -184,11 +214,19 @@ def build_market_performance_payload(
     if missing:
         raise RuntimeError("marketPerformance has empty values: " + ", ".join(missing))
 
-    dates = [str(item.get("dataDate") or "") for item in items if item.get("dataDate")]
-    data_date = max(dates) if dates else str(market.get("trade_date") or "")
+    validate_required_market_date(items, required_market_date)
+
+    quote_dates = [str(item.get("dataDate") or "") for item in items[:2] if item.get("dataDate")]
+    if required_market_date:
+        data_date = required_market_date
+    elif len(set(quote_dates)) == 1:
+        data_date = quote_dates[0]
+    else:
+        data_date = max(quote_dates) if quote_dates else str(market.get("trade_date") or "")
     return {
         "fetchTime": now_text,
         "dataDate": data_date,
+        "databaseLatestTradeDate": required_market_date or "",
         "tradeDate": str(market.get("trade_date") or ""),
         "ruleSource": "same_as_sugar_daily_market_performance",
         "trigger": trigger,

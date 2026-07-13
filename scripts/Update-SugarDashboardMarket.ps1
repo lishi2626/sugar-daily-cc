@@ -32,6 +32,26 @@ function Test-MarketPerformancePayload {
     if ($mp.items.Count -ne 3) {
         throw "marketPerformance must contain 3 items, got $($mp.items.Count)"
     }
+    if ($mp.fallbackUsed) {
+        throw "Market Summary 数据未更新到最新交易日，取消发布。"
+    }
+    $dbLatest = $Payload.charts |
+        ForEach-Object { $_.end_date } |
+        Where-Object { $_ -match '^\d{4}-\d{2}-\d{2}$' } |
+        Sort-Object -Descending |
+        Select-Object -First 1
+    if (-not $dbLatest) {
+        throw "Cannot determine database latest trading date from dashboard charts"
+    }
+    if ($mp.databaseLatestTradeDate -and $mp.databaseLatestTradeDate -ne $dbLatest) {
+        throw "Market Summary 数据未更新到最新交易日，取消发布。"
+    }
+    $quoteItems = @($mp.items | Select-Object -First 2)
+    foreach ($item in $quoteItems) {
+        if ($item.dataDate -ne $dbLatest) {
+            throw "Market Summary 数据未更新到最新交易日，取消发布。"
+        }
+    }
     foreach ($item in $mp.items) {
         if ($null -eq $item.value -or -not $item.unit) {
             throw "marketPerformance item is incomplete: $($item.name)"

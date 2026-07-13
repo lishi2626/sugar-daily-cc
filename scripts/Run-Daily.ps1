@@ -115,6 +115,19 @@ function Test-VercelDashboard {
             $fetchTime = $payload.marketPerformance.fetchTime
             $dataDate = $payload.marketPerformance.dataDate
             $ruleSource = $payload.marketPerformance.ruleSource
+            $dbLatest = $payload.charts |
+                ForEach-Object { $_.end_date } |
+                Where-Object { $_ -match '^\d{4}-\d{2}-\d{2}$' } |
+                Sort-Object -Descending |
+                Select-Object -First 1
+            $quoteItems = @($payload.marketPerformance.items | Select-Object -First 2)
+            $marketDatesOk = $true
+            foreach ($item in $quoteItems) {
+                if ($item.dataDate -ne $dbLatest) { $marketDatesOk = $false }
+            }
+            if ($payload.marketPerformance.fallbackUsed -or (-not $dbLatest) -or (-not $marketDatesOk)) {
+                throw "Market Summary 数据未更新到最新交易日，取消发布。"
+            }
             if ($dataResp.StatusCode -eq 200 -and $htmlResp.StatusCode -eq 200 -and $fetchTime -and $dataDate -and $ruleSource -eq "same_as_sugar_daily_market_performance" -and $itemCount -eq 3) {
                 Write-Step "Vercel dashboard is synced: marketPerformance.fetchTime=$fetchTime ; dataDate=$dataDate ; items=$itemCount"
                 return $true

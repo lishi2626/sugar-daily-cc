@@ -78,6 +78,30 @@ if ($dashboardPayload.marketPerformance.items.Count -ne 3) {
     Write-Host "Dashboard marketPerformance must contain 3 items, got $($dashboardPayload.marketPerformance.items.Count)" -ForegroundColor Red
     exit 1
 }
+if ($dashboardPayload.marketPerformance.fallbackUsed) {
+    Write-Host "Market Summary 数据未更新到最新交易日，取消发布。" -ForegroundColor Red
+    exit 1
+}
+$dbLatest = $dashboardPayload.charts |
+    ForEach-Object { $_.end_date } |
+    Where-Object { $_ -match '^\d{4}-\d{2}-\d{2}$' } |
+    Sort-Object -Descending |
+    Select-Object -First 1
+if (-not $dbLatest) {
+    Write-Host "Cannot determine database latest trading date from dashboard charts." -ForegroundColor Red
+    exit 1
+}
+if ($dashboardPayload.marketPerformance.databaseLatestTradeDate -and $dashboardPayload.marketPerformance.databaseLatestTradeDate -ne $dbLatest) {
+    Write-Host "Market Summary 数据未更新到最新交易日，取消发布。" -ForegroundColor Red
+    exit 1
+}
+$quoteItems = @($dashboardPayload.marketPerformance.items | Select-Object -First 2)
+foreach ($item in $quoteItems) {
+    if ($item.dataDate -ne $dbLatest) {
+        Write-Host "Market Summary 数据未更新到最新交易日，取消发布。" -ForegroundColor Red
+        exit 1
+    }
+}
 foreach ($item in $dashboardPayload.marketPerformance.items) {
     if ($null -eq $item.value -or -not $item.unit) {
         Write-Host "Dashboard marketPerformance item is incomplete: $($item.name)" -ForegroundColor Red
@@ -171,6 +195,19 @@ function Test-VercelDashboard {
             $fetchTime = $payload.marketPerformance.fetchTime
             $dataDate = $payload.marketPerformance.dataDate
             $ruleSource = $payload.marketPerformance.ruleSource
+            $remoteDbLatest = $payload.charts |
+                ForEach-Object { $_.end_date } |
+                Where-Object { $_ -match '^\d{4}-\d{2}-\d{2}$' } |
+                Sort-Object -Descending |
+                Select-Object -First 1
+            $remoteQuoteItems = @($payload.marketPerformance.items | Select-Object -First 2)
+            $remoteMarketDatesOk = $true
+            foreach ($item in $remoteQuoteItems) {
+                if ($item.dataDate -ne $remoteDbLatest) { $remoteMarketDatesOk = $false }
+            }
+            if ($payload.marketPerformance.fallbackUsed -or (-not $remoteDbLatest) -or (-not $remoteMarketDatesOk)) {
+                throw "Market Summary 数据未更新到最新交易日，取消发布。"
+            }
             if ($dataResp.StatusCode -eq 200 -and $htmlResp.StatusCode -eq 200 -and $fetchTime -and $dataDate -and $ruleSource -eq "same_as_sugar_daily_market_performance" -and $itemCount -eq 3) {
                 Write-Host "Vercel dashboard verified: fetchTime=$fetchTime ; dataDate=$dataDate ; items=$itemCount" -ForegroundColor Green
                 return
