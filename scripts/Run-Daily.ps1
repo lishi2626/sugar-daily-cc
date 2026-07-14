@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Sugar Daily Report daily runner.
 .DESCRIPTION
@@ -125,7 +125,7 @@ function Test-VercelDashboard {
             foreach ($item in $quoteItems) {
                 if ($item.dataDate -ne $dbLatest) { $marketDatesOk = $false }
             }
-            $profitItem = @($payload.marketPerformance.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+            $profitItem = @($payload.marketPerformance.items | Select-Object -Skip 2 -First 1)
             $profitDateOk = $true
             if ($profitItem -and $profitItem.articleTitleDate -and $profitItem.dataDate -ne $profitItem.articleTitleDate) {
                 $profitDateOk = $false

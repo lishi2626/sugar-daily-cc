@@ -1,4 +1,4 @@
-# Update-SugarDashboardMarket.ps1
+﻿# Update-SugarDashboardMarket.ps1
 # Runs the independent 16:00 sugar dashboard market-performance refresh.
 # It reuses Sugar Daily market-performance rules through scripts/market_performance.py
 # but does not read generated Sugar Daily report output as a data source.
@@ -57,7 +57,7 @@ function Test-MarketPerformancePayload {
             throw "marketPerformance item is incomplete: $($item.name)"
         }
     }
-    $profitItem = @($mp.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+    $profitItem = @($mp.items | Select-Object -Skip 2 -First 1)
     if ($profitItem -and $profitItem.articleTitleDate -and $profitItem.dataDate -ne $profitItem.articleTitleDate) {
         throw "Market Summary 数据未更新到最新交易日，取消发布。"
     }

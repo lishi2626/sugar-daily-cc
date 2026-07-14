@@ -1,4 +1,4 @@
-# Publish-Web.ps1
+﻿# Publish-Web.ps1
 # Updates public report JSON and pushes changes to GitHub to trigger Vercel.
 # Usage: PowerShell -ExecutionPolicy Bypass -File scripts\Publish-Web.ps1
 
@@ -108,7 +108,7 @@ foreach ($item in $dashboardPayload.marketPerformance.items) {
         exit 1
     }
 }
-$profitItem = @($dashboardPayload.marketPerformance.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+$profitItem = @($dashboardPayload.marketPerformance.items | Select-Object -Skip 2 -First 1)
 if ($profitItem -and $profitItem.articleTitleDate -and $profitItem.dataDate -ne $profitItem.articleTitleDate) {
     Write-Host "Market Summary 数据未更新到最新交易日，取消发布。" -ForegroundColor Red
     exit 1
@@ -210,7 +210,7 @@ function Test-VercelDashboard {
             foreach ($item in $remoteQuoteItems) {
                 if ($item.dataDate -ne $remoteDbLatest) { $remoteMarketDatesOk = $false }
             }
-            $remoteProfitItem = @($payload.marketPerformance.items | Where-Object { $_.name -like "*配额外巴西糖加工完税估算利润*" } | Select-Object -First 1)
+            $remoteProfitItem = @($payload.marketPerformance.items | Select-Object -Skip 2 -First 1)
             $remoteProfitDateOk = $true
             if ($remoteProfitItem -and $remoteProfitItem.articleTitleDate -and $remoteProfitItem.dataDate -ne $remoteProfitItem.articleTitleDate) {
                 $remoteProfitDateOk = $false

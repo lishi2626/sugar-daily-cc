@@ -643,12 +643,25 @@ def _parse_unica_report_date(text: str, target_date: str) -> str:
     months = {
         "january": 1, "february": 2, "march": 3, "april": 4, "may": 5, "june": 6,
         "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
+        "janeiro": 1, "fevereiro": 2, "marco": 3, "março": 3, "abril": 4, "maio": 5, "junho": 6,
+        "julho": 7, "agosto": 8, "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12,
     }
     m = re.search(r"until\s+([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})", text, re.I)
     if m:
         mon = months.get(m.group(1).lower())
         if mon:
             return f"{int(m.group(3)):04d}-{mon:02d}-{int(m.group(2)):02d}"
+    # UNICA English PDFs may use "Position until MM/DD/YYYY"; Portuguese pages
+    # commonly use "ate DD/MM/YYYY". Keep both so the latest report date drives
+    # data_date and the biweekly period dynamically.
+    m = re.search(r"position\s+until\s+(\d{1,2})/(\d{1,2})/(\d{4})", text, re.I)
+    if m:
+        month, day, year = map(int, m.groups())
+        return f"{year:04d}-{month:02d}-{day:02d}"
+    m = re.search(r"\b(?:at[ée]|ate)\s+(\d{1,2})/(\d{1,2})/(\d{4})", text, re.I)
+    if m:
+        day, month, year = map(int, m.groups())
+        return f"{year:04d}-{month:02d}-{day:02d}"
     return target_date
 
 
@@ -667,8 +680,38 @@ def _parse_unica_biweekly_period(text: str) -> dict:
         "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
         "jan": 1, "feb": 2, "mar": 3, "apr": 4, "jun": 6,
         "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+        "janeiro": 1, "fevereiro": 2, "marco": 3, "março": 3, "abril": 4, "maio": 5, "junho": 6,
+        "julho": 7, "agosto": 8, "setembro": 9, "outubro": 10, "novembro": 11, "dezembro": 12,
     }
     result = {"period_start": "", "period_end": "", "period_type": "biweekly", "table_number": 2}
+
+    position_date = _parse_unica_report_date(text, "")
+
+    # Prefer the Table 2 title, e.g. "2nd two-week period of May, 2026" or
+    # "2ª quinzena de maio de 2026". For UNICA, the second quinzena uses the
+    # report's "Position until" date as the period end, e.g. May 15 to Jun 1.
+    m = re.search(
+        r"(1st|first|2nd|second|1[ªa]|2[ªa])\s+(?:two-week\s+period\s+of|quinzena\s+de)\s+([A-Za-zçÇ]+),?\s*(?:de\s+)?(\d{4})",
+        text,
+        re.I,
+    )
+    if m:
+        mon = months.get(m.group(2).lower())
+        year = int(m.group(3))
+        if mon:
+            half = m.group(1).lower()
+            if half in ("1st", "first", "1ª", "1a"):
+                result["period_start"] = f"{year:04d}-{mon:02d}-01"
+                result["period_end"] = position_date or f"{year:04d}-{mon:02d}-15"
+            else:
+                result["period_start"] = f"{year:04d}-{mon:02d}-15"
+                if position_date:
+                    result["period_end"] = position_date
+                else:
+                    next_month = 1 if mon == 12 else mon + 1
+                    next_year = year + 1 if mon == 12 else year
+                    result["period_end"] = f"{next_year:04d}-{next_month:02d}-01"
+            return result
 
     # Pattern 1: "until Month DD, YYYY" — end of period
     m = re.search(r"until\s+([A-Za-z]+)\s+(\d{1,2}),\s*(\d{4})", text, re.I)
@@ -703,46 +746,44 @@ def _parse_unica_biweekly_period(text: str) -> dict:
 
 
 def _parse_unica_table2_values(text: str) -> list[tuple[str, str, str]]:
-    """
-    解析 Table 2: BI-WEEKLY values 的 Sugar 与 Share %。
-    同时提取上年同期数据用于计算同比百分点变化。
+    """Parse UNICA Table 2 biweekly rows for South-Central Brazil.
 
-    PDF格式: Sugar行每组有 PreviousYear | Current | Var%
-    验证: (1800-859)/859 = 109.5% ≈ 109.48% ✓
+    The PDF text contains both accumulated and biweekly sections. The second
+    occurrence of Sugarcane/Sugar rows is Table 2. Columns are previous year,
+    current year and YoY variation for South-Central Brazil.
     """
     normalized = re.sub(r"\s+", " ", text)
-    out = []
+    out: list[tuple[str, str, str]] = []
 
-    # Sugar行: "Sugar ¹ 859 1,800 109.48% 558 1,237 121.75% 301 563 86.75%"
-    # 格式: PrevYear_SC Current_SC Var%_SC PrevYear_SP Current_SP Var%_SP ...
-    sugar_rows = re.findall(
-        r"Sugar\s+¹?\s+([\d,]+)\s+([\d,]+)\s+([\d.]+%)",
-        normalized, re.I
-    )
+    def add_table2_row(label: str, row_name: str):
+        rows = re.findall(
+            rf"{row_name}\s+[^\d]{{0,6}}\s*([\d,]+)\s+([\d,]+)\s+(-?[\d.]+%)",
+            normalized,
+            re.I,
+        )
+        if len(rows) >= 2:
+            prev_year, current, var_pct = rows[1]
+            out.append((f"UNICA Table2 {label}", current.replace(",", ""), "千吨"))
+            out.append((f"UNICA Table2 {label} PrevYear", prev_year.replace(",", ""), "千吨"))
+            out.append((f"UNICA Table2 {label} Var", var_pct, "%"))
 
-    # 第二组是Table 2
-    if len(sugar_rows) >= 2:
-        row = sugar_rows[1]  # (859, 1800, 109.48%)
-        prev_year = row[0].replace(",", "")  # 859 = 上年同期
-        current = row[1].replace(",", "")    # 1800 = 本期双周
-        var_pct = row[2]                      # 109.48% = 同比变化
-        out.append(("UNICA Table2 Sugar", current, "千吨"))       # 1800
-        out.append(("UNICA Table2 Sugar PrevYear", prev_year, "千吨"))  # 859
-        out.append(("UNICA Table2 Sugar Var", var_pct, "%"))      # 109.48%
+    add_table2_row("Sugarcane", "Sugarcane")
+    add_table2_row("Sugar", "Sugar")
 
-    # Share sugar行:
-    # "sugar 45.23% 38.16% 50.51% 46.14% 39.03% 27.83%" (Table 1)
-    # "sugar 45.69% 40.34% 51.41% 47.71% 37.89% 30.12%" (Table 2)
-    # 格式: PrevYear_SC Current_SC Other_SC PrevYear_SP Current_SP Other_SP
     share_all = re.findall(
         r"sugar\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)\s+([\d.]+%)",
-        normalized, re.I
+        normalized,
+        re.I,
     )
     if len(share_all) >= 2:
-        table2 = share_all[1]  # Table 2: (45.69%, 40.34%, 51.41%, 47.71%, 37.89%, 30.12%)
-        # PrevYear_SC=45.69%, Current_SC=40.34%
-        out.append(("UNICA Table2 Share sugar", table2[1], "%"))  # 40.34% = 本期制糖比
-        out.append(("UNICA Table2 Share sugar PrevYear", table2[0], "%"))  # 45.69% = 上年同期
+        table2 = share_all[1]
+        out.append(("UNICA Table2 Share sugar", table2[1], "%"))
+        out.append(("UNICA Table2 Share sugar PrevYear", table2[0], "%"))
+        try:
+            share_change = float(table2[1].rstrip("%")) - float(table2[0].rstrip("%"))
+            out.append(("UNICA Table2 Share sugar Var", f"{share_change:+.2f}", "百分点"))
+        except ValueError:
+            pass
 
     return out
 
@@ -1148,50 +1189,32 @@ def fetch_unica_biweekly(target_date: str) -> list[dict]:
         period_notes += f" | period_end={period_info['period_end']}"
     period_notes += f" | table_number={period_info['table_number']}"
 
-    # 提取本期和上年同期制糖比，计算同比百分点变化
-    current_sugar_mix = None
-    prev_year_sugar_mix = None
-    current_sugar_val = None
-    prev_year_sugar_val = None
-
-    for indicator, value, unit in parsed:
-        if indicator == "UNICA Table2 Share sugar":
-            current_sugar_mix = value.replace("%", "")
-        elif indicator == "UNICA Table2 Share sugar PrevYear":
-            prev_year_sugar_mix = value.replace("%", "")
-        elif indicator == "UNICA Table2 Sugar":
-            current_sugar_val = value
-        elif indicator == "UNICA Table2 Sugar PrevYear":
-            prev_year_sugar_val = value
-
-    # 计算制糖比同比百分点变化
+    parsed_map = {indicator: value for indicator, value, _unit in parsed}
     sugar_mix_yoy_pp = ""
-    if current_sugar_mix and prev_year_sugar_mix:
-        try:
-            diff = float(current_sugar_mix) - float(prev_year_sugar_mix)
-            sugar_mix_yoy_pp = f"{diff:+.2f}"
-        except ValueError:
-            pass
-
-    # 生成归因结论
     attribution = ""
-    if current_sugar_val and prev_year_sugar_val and sugar_mix_yoy_pp:
-        try:
-            cur_sugar = float(current_sugar_val)
-            prev_sugar = float(prev_year_sugar_val)
-            mix_change = float(sugar_mix_yoy_pp)
-            sugar_change_pct = ((cur_sugar - prev_sugar) / prev_sugar * 100) if prev_sugar > 0 else 0
 
-            if sugar_change_pct > 0 and mix_change < 0:
-                attribution = f"甘蔗压榨量增加抵消了制糖比下降{sugar_mix_yoy_pp}个百分点的影响，食糖产量仍同比增加{sugar_change_pct:.2f}%"
-            elif sugar_change_pct > 0 and mix_change > 0:
-                attribution = f"甘蔗压榨量和制糖比均同比上升，食糖产量同比增加{sugar_change_pct:.2f}%"
-            elif sugar_change_pct < 0 and mix_change < 0:
-                attribution = f"甘蔗压榨量减少叠加制糖比下降，食糖产量同比减少{abs(sugar_change_pct):.2f}%"
-            elif sugar_change_pct < 0 and mix_change > 0:
-                attribution = f"制糖比上升未能完全抵消甘蔗压榨量减少的影响，食糖产量同比减少{abs(sugar_change_pct):.2f}%"
+    def _unica_num_final(name: str) -> float | None:
+        raw = str(parsed_map.get(name, "")).replace(",", "").replace("%", "").strip()
+        if not raw:
+            return None
+        try:
+            return float(raw)
         except ValueError:
-            pass
+            return None
+
+    cane_yoy = _unica_num_final("UNICA Table2 Sugarcane Var")
+    sugar_yoy = _unica_num_final("UNICA Table2 Sugar Var")
+    mix_yoy_pp = _unica_num_final("UNICA Table2 Share sugar Var")
+    if cane_yoy is not None and sugar_yoy is not None and mix_yoy_pp is not None:
+        sugar_mix_yoy_pp = f"{mix_yoy_pp:+.2f}"
+        cane_phrase = "甘蔗压榨量同比增加" if cane_yoy > 0 else "甘蔗压榨量同比下降"
+        mix_phrase = "制糖比同比提高" if mix_yoy_pp > 0 else "制糖比同比下降"
+        sugar_phrase = "食糖产量同比增加" if sugar_yoy > 0 else "食糖产量同比下降"
+        attribution = (
+            f"{cane_phrase}{abs(cane_yoy):.2f}%，"
+            f"{mix_phrase}{abs(mix_yoy_pp):.2f}个百分点，"
+            f"{sugar_phrase}{abs(sugar_yoy):.2f}%"
+        )
 
     for indicator, value, unit in parsed:
         rec = {
@@ -1214,8 +1237,8 @@ def fetch_unica_biweekly(target_date: str) -> list[dict]:
             "table_number": period_info["table_number"],
             "notes": period_notes,
         }
-        # 在Sugar记录中附加归因和制糖比同比信息
-        if indicator == "UNICA Table2 Sugar":
+        # Attach the report-level attribution to every core Table 2 row so CSV readers can see it.
+        if indicator in ("UNICA Table2 Sugarcane", "UNICA Table2 Share sugar", "UNICA Table2 Sugar"):
             if sugar_mix_yoy_pp:
                 rec["sugar_mix_yoy_change_pp"] = sugar_mix_yoy_pp
             if attribution:
@@ -2507,12 +2530,18 @@ def fetch_thailand_ocsb_production(target_date: str) -> list[dict]:
         logger.info("SugarZone已获取全国累计产量数据")
 
     # ── 第2优先级: OCSB Open Data 结构化数据 ──────────────
-    if not has_fresh_data or not has_national_total:
+    # SugarZone已拿到当前榨季全国累计数据时，OCSB Open Data只是补充信息；
+    # 跳过它可以避免单个泰国开放数据接口阻塞整份日报生成。
+    ocsb_specs = OCSB_DATASET_SPECS
+    if has_fresh_data and has_national_total:
+        logger.info("--- [优先级2] OCSB Open Data: SugarZone已满足，跳过补充抓取 ---")
+        ocsb_specs = []
+    else:
         logger.info("--- [优先级2] OCSB Open Data ---")
-    open_status = _ocsb_head_status(open_base, timeout=15, retries=2)
-    logger.info("OCSB Open Data入口状态码: %s", open_status)
+        open_status = _ocsb_head_status(open_base, timeout=15, retries=2)
+        logger.info("OCSB Open Data入口状态码: %s", open_status)
 
-    for spec in OCSB_DATASET_SPECS:
+    for spec in ocsb_specs:
         query = spec["query"]
         api_status, packages = _ckan_search(query, cfg)
         logger.info("CKAN搜索: query=%s status=%s results=%d",
@@ -2575,8 +2604,9 @@ def fetch_thailand_ocsb_production(target_date: str) -> list[dict]:
                 official_level=OL_NOT_PUBLISHED
             ))
 
-    logger.info("Open Data完成: has_fresh=%s has_national_total=%s",
-                has_fresh_data, has_national_total)
+    if ocsb_specs:
+        logger.info("Open Data完成: has_fresh=%s has_national_total=%s",
+                    has_fresh_data, has_national_total)
 
     # ── 第3优先级: 泰国政府PRD ────────────────────────────
     if not has_fresh_data or not has_national_total:
@@ -3918,6 +3948,16 @@ def run(target_date: str | None = None) -> dict:
                     data_type=r.get("data_type", "weather"),
                     season=r.get("season", ""),
                     status=r.get("status", ""),
+                    period_start=r.get("period_start", ""),
+                    period_end=r.get("period_end", ""),
+                    period_type=r.get("period_type", ""),
+                    table_number=r.get("table_number", ""),
+                    attribution=r.get("attribution", ""),
+                    sugar_mix_yoy_change_pp=r.get("sugar_mix_yoy_change_pp", ""),
+                    comparison_date=r.get("comparison_date", ""),
+                    comparison_type=r.get("comparison_type", ""),
+                    previous_value=r.get("previous_value", ""),
+                    current_value=r.get("current_value", ""),
                 ))
             ins, upd, _ = upsert_rows(rows)
             summary["merged"] = ins + upd
