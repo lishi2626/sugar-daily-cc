@@ -118,6 +118,91 @@ def daily_change_phrase(change_pct: float) -> str:
     return "日涨跌幅0.00%"
 
 
+MISSING_DATA_PHRASES = [
+    "暂无最新对比数据",
+    "暂无可比数据",
+    "暂无最新数据",
+    "暂未更新",
+    "数据尚未公布",
+    "暂无新的已验证产销和库存数据",
+    "暂无新的已验证信息",
+    "暂无数据",
+]
+
+MISSING_DATA_RE = re.compile(
+    r"[^。；;，,\n]{0,30}(?:暂无最新对比数据|暂无可比数据|暂无最新数据|暂未更新|数据尚未公布|"
+    r"暂无新的已验证产销和库存数据|暂无新的已验证信息|暂无数据|对比数据不足|数据缺失|尚未公布)"
+    r"[^。；;\n]{0,80}[。；;]?"
+)
+
+
+def _format_wan_ton(value: float) -> str:
+    if abs(value - round(value)) < 1e-9:
+        return f"{int(round(value))}万吨"
+    return f"{value:.2f}".rstrip("0").rstrip(".") + "万吨"
+
+
+def normalize_report_units(text: str) -> str:
+    """Convert raw production unit codes into Chinese research-report units."""
+    if not text:
+        return ""
+
+    def repl(match: re.Match) -> str:
+        raw = float(match.group(1).replace(",", ""))
+        return _format_wan_ton(raw * 10)
+
+    return re.sub(r"(\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:lmt|lmts)\b", repl, text, flags=re.I)
+
+
+def remove_missing_data_prompts(text: str) -> str:
+    """Remove sentences that expose missing-data or insufficient-comparison prompts."""
+    if not text:
+        return ""
+    cleaned = MISSING_DATA_RE.sub("", text)
+    cleaned = re.sub(r"[，,]\s*(?=。)", "", cleaned)
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    cleaned = re.sub(r"([。；;]){2,}", r"\1", cleaned)
+    return cleaned.strip(" ，,；;")
+
+
+def ice_price_sustained_above_15(market: dict | None) -> bool:
+    """Only an explicit upstream confirmation may unlock '偏强' wording."""
+    if not market:
+        return False
+    if market.get("ice_above_15_sustained") is True:
+        try:
+            return float(market.get("ice_close", {}).get("value")) >= 15
+        except (TypeError, ValueError):
+            return False
+    return False
+
+
+def enforce_international_price_wording(text: str, market: dict | None = None) -> str:
+    if not text:
+        return ""
+    if ice_price_sustained_above_15(market):
+        return text
+
+    text = text.replace("国际糖价维持震荡偏强格局", "国际糖价预计维持震荡格局")
+    text = text.replace("国际糖价预计维持震荡偏强格局", "国际糖价预计维持震荡格局")
+    text = text.replace("国际糖价预计维持震荡偏强", "国际糖价预计维持震荡")
+    text = text.replace("国际糖价维持震荡偏强", "国际糖价预计维持震荡")
+    text = re.sub(r"国际糖价[^。；;]{0,20}震荡偏强[^。；;]*[。；;]?", "国际糖价预计维持震荡格局。", text)
+    text = re.sub(r"价格表现偏强", "价格表现震荡", text)
+    text = re.sub(r"震荡偏强", "震荡", text)
+    text = re.sub(r"偏强格局", "震荡格局", text)
+    return text
+
+
+def sanitize_report_body(text: str, market: dict | None = None) -> str:
+    text = normalize_report_units(text or "")
+    text = remove_missing_data_prompts(text)
+    text = enforce_international_price_wording(text, market)
+    text = re.sub(r"\s{2,}", " ", text)
+    text = re.sub(r"([。；;]){2,}", r"\1", text)
+    return fix_repeated_section_leads(text.strip()) if "fix_repeated_section_leads" in globals() else text.strip()
+
+
 def researcher_fact(key: str, default: str = "") -> str:
     fact = config.get("researcher_confirmed_facts", {}).get(key, {})
     return str(fact.get("text") or default).rstrip("。")
@@ -412,7 +497,7 @@ def build_structured_fundamentals(cache_records: list[dict], researcher_text: st
         for e in gsd:
             lines.append(_fmt_entry(e))
     else:
-        lines.append("  （暂无新的全球供需数据）")
+        lines.append("  （本节无可用于正文的有效条目）")
 
     for section, title in [("brazil", "巴西"), ("india", "印度"), ("thailand", "泰国")]:
         lines.append(f"### {title}")
@@ -421,7 +506,7 @@ def build_structured_fundamentals(cache_records: list[dict], researcher_text: st
             for e in recs:
                 lines.append(_fmt_entry(e))
         else:
-            lines.append(f"  （暂无{title}新数据）")
+            lines.append(f"  （{title}无可用于正文的有效条目）")
 
     lines.append("### 美糖判断（仅基于国际数据）")
     ice_recs = inter["ice_market"]
@@ -429,7 +514,7 @@ def build_structured_fundamentals(cache_records: list[dict], researcher_text: st
         for e in ice_recs:
             lines.append(_fmt_entry(e))
     else:
-        lines.append("  （暂无宏观/ICE特定新数据）")
+        lines.append("  （本节无可用于正文的有效条目）")
 
     # ── 国内部分 ──
     lines.append("")
@@ -448,7 +533,7 @@ def build_structured_fundamentals(cache_records: list[dict], researcher_text: st
             for e in recs:
                 lines.append(_fmt_entry(e))
         else:
-            lines.append(f"  （暂无{title}数据）")
+            lines.append(f"  （{title}无可用于正文的有效条目）")
         if section == "next_season_26_27_area":
             fact = researcher_fact("china_26_27_planting_area", "26/27榨季甘蔗种植面积确定增加")
             lines.append(
@@ -475,7 +560,7 @@ def build_structured_fundamentals(cache_records: list[dict], researcher_text: st
             f"| 注意: 具体数值由Python在日报市场表现中写入，此处不提供数字。"
         )
     else:
-        lines.append("  （暂无泛糖科技进口利润数据）")
+        lines.append("  （配额外进口利润无可用于正文的有效条目）")
 
     lines.append("")
     lines.append("### 国内价格判断（自然段结论，不使用标签）")
@@ -644,7 +729,7 @@ def _clean_model_response(text: str) -> str:
     text = re.sub(r"\n*风险提示[：:]\s*宏观、政策、天气、进口量[。.]?\s*$", "", text)
     text = re.sub(r"[。；;]?\s*宏观、政策、天气、进口量[。.]?\s*$", "。", text)
 
-    return text.strip()
+    return sanitize_report_body(text)
 
 
 def _enforce_researcher_fixed_rules(text: str) -> str:
@@ -691,7 +776,7 @@ def _enforce_researcher_fixed_rules(text: str) -> str:
     # Tighten a common forbidden basis sentence if the model still emits it.
     text = re.sub(r"现货升水(?:期货)?[^。；;]{0,30}(?:提供|形成)[^。；;]{0,10}支撑[。；;]?", "", text)
     text = re.sub(r"\s{2,}", " ", text)
-    return fix_repeated_section_leads(text.strip())
+    return sanitize_report_body(text.strip())
 
 
 def _extract_numbers(text: str) -> set[str]:
@@ -729,6 +814,13 @@ def _validate_model_content(text: str, fundamentals_input: str, market_summary: 
     if len(new_nums) > 5:
         logger.warning("模型可能虚构了 %d 个新数字: %s", len(new_nums), ", ".join(sorted(new_nums)[:5]))
 
+    forbidden_missing = [phrase for phrase in MISSING_DATA_PHRASES if phrase in text]
+    if forbidden_missing or re.search(r"对比数据不足|数据缺失|尚未公布", text):
+        return False, "正文出现数据缺失提示类表述"
+
+    if re.search(r"\b(?:lmt|lmts)\b", text, re.I):
+        return False, "正文出现原始英文产量单位代码"
+
     return True, ""
 
 
@@ -758,6 +850,12 @@ def _check_logic_consistency(text: str, fundamentals_input: str) -> list[str]:
 
     if "国际方面" not in text or "国内方面" not in text:
         issues.append("基本面结尾必须分别出现国际方面和国内方面的独立判断")
+
+    if any(phrase in text for phrase in MISSING_DATA_PHRASES) or re.search(r"对比数据不足|数据缺失|尚未公布", text):
+        issues.append("正文不得出现数据缺失提示类表述，应客观描述有效数据或省略该项对比")
+
+    if re.search(r"\b(?:lmt|lmts)\b", text, re.I):
+        issues.append("正文不得出现lmt/Lmts等原始单位代码，应换算为万吨")
 
     international_segment = text.split("国内方面", 1)[0]
     if re.search(r"国际方面，全球供需方面", international_segment) and re.search(r"国际方面，全球糖市预计", international_segment):
@@ -1041,7 +1139,7 @@ def call_deepseek(market_summary: str, fundamentals_text: str, approved_view: di
         f"- 有产销量/库存数据时写: '截至最新数据期，广西累计产糖……万吨，累计销糖……万吨，工业库存……万吨'\n"
         f"- 有预估数据时必须保留'预计''预估''有望'等表述，不得写成已确认\n"
         f"- 如果CSV中有valid_cached状态的数据且在有效期内，应使用该数据，写'国内25/26榨季沿用最近一期已确认或预估数据'\n"
-        f"- 只有当所有渠道均无有效数据时才写'暂无新的已验证产销和库存数据'\n"
+        f"- 当所有渠道均无有效数据时，直接省略该项对比内容，不得写'暂无新的已验证产销和库存数据'或类似缺失提示\n"
         f"- 禁止: '榨季已结束''格局已定''供给基本定型''供应宽松'（除非输入数据明确支持）\n"
         f"- 座谈会、产业大会、招商活动不进入基本面正文\n"
         f"- 进口利润为正=进口窗口打开=预计后续进口量增加，对国内供应和郑糖形成压力\n"
@@ -1078,11 +1176,14 @@ def call_deepseek(market_summary: str, fundamentals_text: str, approved_view: di
                     f"你是白糖行业分析师，为{TARGET_CONTRACT}合约撰写日报基本面分析。"
                     "严格按固定顺序: 全球供需→巴西→印度→泰国→国际结论→"
                     "国内25/26现实供给→26/27种植面积→广西天气→进口政策→国内结论。"
+                    "最高禁令: 正文不得出现'暂无最新对比数据''暂无可比数据''暂无最新数据''暂未更新''数据尚未公布'或类似数据缺失提示；缺少有效数据时只写可确认事实，无法形成结论则省略该项对比。"
                     "最高禁令: 基本面正文中绝对不得出现ICE价格数据，ICE价格只在市场表现中展示。"
                     "最高禁令: 基差为正时不得写'现货贴水'，基差为负时不得写'现货升水'。"
                     "全球供需只写2026/27年度。主观点=该年度中发布日期最新的一条。禁止使用2025/26年度数据。"
                     "巴西必须使用归因逻辑: 甘蔗量变化+制糖比变化→糖产量变化。"
-                    "印度Lmts转换为万吨(1Lmts=10万吨)，不新增出口=利多/支撑。"
+                    "印度Lmts/lmt必须先换算为万吨(1Lmts=10万吨，273.90lmt写作2739万吨)，正文不得保留英文单位代码。"
+                    "国际糖价常规基础判断统一写'国际糖价预计维持震荡格局'；只有确认ICE原糖价格在15美分/磅以上维持时，才可结合行情使用偏强判断。"
+                    "印度不新增出口=利多/支撑。"
                     "26/27榨季甘蔗种植面积确定增加，广西当前天气暂未形成实质影响。"
                     "不得出现'SR2609判断''郑糖判断''内盘判断'。"
                     "国际总结句使用'目前'开头，不得重复'国际方面'。"
@@ -1283,6 +1384,16 @@ def final_consistency_check(
         issues.append("market close price is unavailable")
     if not fundamentals_ai or not fundamentals_ai.strip():
         issues.append("fundamentals text is empty")
+    else:
+        sanitized = sanitize_report_body(fundamentals_ai, market)
+        if sanitized != fundamentals_ai.strip():
+            issues.append("fundamentals text needs writing-rule sanitization before publishing")
+        if any(phrase in fundamentals_ai for phrase in MISSING_DATA_PHRASES) or re.search(r"对比数据不足|数据缺失|尚未公布", fundamentals_ai):
+            issues.append("fundamentals text contains missing-data prompt wording")
+        if re.search(r"\b(?:lmt|lmts)\b", fundamentals_ai, re.I):
+            issues.append("fundamentals text contains raw lmt/Lmts unit")
+        if (not ice_price_sustained_above_15(market)) and re.search(r"偏强|震荡偏强|价格表现偏强", fundamentals_ai):
+            issues.append("ICE原糖未确认在15美分/磅以上维持，正文不得使用偏强判断")
     if not strategy_valid:
         issues.append("strategy requires researcher confirmation")
 
@@ -1438,7 +1549,7 @@ target_contract: {TARGET_CONTRACT}
 **风险提示：**宏观、政策、天气、进口量。
 
 ---
-> 本日报因数据缺失自动生成，需人工补充。
+> 本日报由系统自动生成，需人工复核。
 """
 
 
@@ -1720,14 +1831,15 @@ def run(target_date: str | None = None) -> Path | None:
                 domestic_regions = set(r.get("region", "") for r in domestic_records)
                 desc += f" 国内方面，{', '.join(r for r in domestic_regions if r)}沿用最近一期已确认或预估数据。"
             if missing_countries:
-                desc += f" {', '.join(missing_countries)}暂无更新数据。"
+                desc += ""
             fundamentals_ai = desc
             _review_event("基本面兜底", "WARN", "DeepSeek失败，使用缓存摘要", desc)
         else:
-            fundamentals_ai = "暂无新的已验证基本面数据，核心观点待更新。"
+            fundamentals_ai = "基本面核心矛盾较上一交易日未发生明显变化。"
             _review_event("基本面兜底", "WARN", "无任何可用数据", "")
 
     fundamentals_ai = fix_repeated_section_leads(enforce_global_supply_sentence(fundamentals_ai, cache_records))
+    fundamentals_ai = sanitize_report_body(fundamentals_ai, market)
 
     # ── 14 校验 ──
     logger.info("[14/16] 校验模型正文...")

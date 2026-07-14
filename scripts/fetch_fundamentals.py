@@ -2036,7 +2036,7 @@ def _ocsb_record(spec: dict, value: str, status: str, data_date: str, published_
         "notes": "",
     }
     if status == ST_NOT_PUBLISHED:
-        rec["notes"] = f"OCSB Open Data最新可识别榨季尚未公布{season}可验证数据。"
+        rec["notes"] = f"OCSB Open Data最新可识别榨季不匹配{season}。"
     elif status == ST_SOURCE_503:
         rec["notes"] = "OCSB主站返回503。"
     elif status == ST_SOURCE_UNAVAILABLE:
@@ -2044,7 +2044,7 @@ def _ocsb_record(spec: dict, value: str, status: str, data_date: str, published_
     elif status == ST_CACHED:
         rec["notes"] = "使用CSV中未过期OCSB官方缓存。"
     elif status == ST_NO_NEW_DATA:
-        rec["notes"] = "OCSB官方来源暂无新数据。"
+        rec["notes"] = "OCSB官方来源未识别到可入正文的新增条目。"
     elif status == ST_NEEDS_VER:
         rec["notes"] = text or "数据需人工核验。"
     return rec
@@ -2592,7 +2592,7 @@ def fetch_thailand_ocsb_production(target_date: str) -> list[dict]:
                 spec, "", ST_NOT_PUBLISHED, res_date, res_date, res_url,
                 target_season, SC_OPEN_DATA,
                 f"OCSB Open Data最新可识别榨季为{latest_season or '未知'}，"
-                f"尚未公布{target_season}可验证数据。",
+                f"与{target_season}不匹配。",
                 official_level=OL_NOT_PUBLISHED
             )
             all_results.append(rec)
