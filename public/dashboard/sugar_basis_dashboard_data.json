@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13 18:09:46",
+  "generated_at": "2026-07-14 10:30:56",
   "source_excel": "C:\\Users\\zsqh\\Nutstore\\1\\白糖数据-李依穗\\白糖期货基差价差.xlsx",
   "sheets": [
     "南宁白糖现货",
@@ -12,13 +12,13 @@
     "15价差"
   ],
   "marketPerformance": {
-    "fetchTime": "2026-07-13 18:09:46",
+    "fetchTime": "2026-07-14 10:30:56",
     "dataDate": "2026-07-13",
     "databaseLatestTradeDate": "2026-07-13",
     "tradeDate": "2026-07-13",
     "ruleSource": "same_as_sugar_daily_market_performance",
     "trigger": "手动构建",
-    "rawText": "郑糖主力合约收5255元/吨，日跌幅0.55%。 ICE原糖主力合约收14.68美分/磅，日跌幅1.21%。 广西白糖现货与郑糖主力合约基差为122元/吨。 配额外巴西糖加工完税估算利润为741元/吨。",
+    "rawText": "郑糖主力合约收5255元/吨，日跌幅0.55%。 ICE原糖主力合约收14.76美分/磅，日跌幅0.67%。 广西白糖现货与郑糖主力合约基差为122元/吨。 配额外巴西糖加工完税估算利润为766元/吨。",
     "items": [
       {
         "name": "郑糖主力合约",
@@ -37,11 +37,11 @@
       },
       {
         "name": "ICE原糖主力合约",
-        "value": 14.68,
+        "value": 14.76,
         "unit": "美分/磅",
-        "changePct": -1.21,
-        "displayValue": "14.68美分/磅",
-        "displayChange": "日跌幅1.21%",
+        "changePct": -0.67,
+        "displayValue": "14.76美分/磅",
+        "displayChange": "日跌幅0.67%",
         "dataDate": "2026-07-13",
         "source": "新浪财经",
         "sourceUrl": "https://finance.sina.com.cn/futures/quotes/RS.shtml",
@@ -52,15 +52,15 @@
       },
       {
         "name": "配额外巴西糖加工完税估算利润",
-        "value": 741.0,
+        "value": 766.0,
         "unit": "元/吨",
-        "displayValue": "741元/吨",
+        "displayValue": "766元/吨",
         "displayChange": "",
-        "dataDate": "2026-07-10",
-        "articleTitleDate": "2026-07-10",
-        "iceReferenceDate": "2026-07-10",
+        "dataDate": "2026-07-13",
+        "articleTitleDate": "2026-07-13",
+        "iceReferenceDate": "2026-07-13",
         "source": "泛糖科技",
-        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026071315255835340546",
+        "sourceUrl": "https://www.hisugar.com/home/articleContent?id=2026071408432471379932",
         "fallbackUsed": false,
         "fallbackReason": ""
       }
