@@ -1,6 +1,6 @@
 {
   "newsDate": "2026-07-19",
-  "updatedAt": "2026-07-20T14:41:42+08:00",
+  "updatedAt": "2026-07-20T15:14:11+08:00",
   "timezone": "Asia/Shanghai",
   "excelFile": "Sugar News/reports/2026/07/Sugar News 2026-07-19.xlsx",
   "countries": [
@@ -41,8 +41,8 @@
       "items": [
         {
           "news": "北方邦首席部长表示当地运行122家糖厂，累计支付甘蔗款约3.23万亿卢比，甘蔗收购价格提高至400卢比/公担，北方邦居印度糖、甘蔗和乙醇生产首位。",
-          "impactType": "中性",
-          "impact": "该信息反映北方邦糖业运行和付款能力，短期不直接改变当期糖产量或出口量。",
+          "impactType": "偏空糖价",
+          "impact": "甘蔗收购价格提高有利于增加农户种植收益，可能刺激甘蔗种植面积扩张并增加未来糖产量，从供应端对糖价形成压力。",
           "sourceName": "Hindustan Times",
           "sourceUrl": "https://www.hindustantimes.com/cities/lucknow-news/previous-govts-would-have-shut-down-up-s-sugar-industry-by-now-yogi-adityanath-101784399223370.html",
           "publishedDateLocal": "2026-07-19",
