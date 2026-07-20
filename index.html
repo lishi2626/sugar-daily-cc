@@ -142,6 +142,27 @@
     }
     .about h2{font-size:22px;margin:0 0 18px}
     .about p{font-size:15px;line-height:1.9;color:#41464f;margin:0 0 16px;text-align:justify}
+    .about-link{
+      display:block;
+      margin:18px 0;
+      padding:14px 15px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:var(--brand-soft);
+      color:var(--brand);
+      text-decoration:none;
+      font-size:15px;
+      font-weight:600;
+      line-height:1.5;
+    }
+    .about-link span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:400;
+      word-break:break-all;
+    }
     .bottom-nav{
       position:fixed;
       left:50%;
@@ -241,6 +262,10 @@
           <h2>说明</h2>
           <p>本页面用于查看每日白糖日报。</p>
           <p>日报于每个工作日早上06:00前生成，内容包括市场表现、基本面、交易策略和风险提示。</p>
+          <a class="about-link" href="/sugar-news">
+            Sugar News
+            <span>https://sugar-daily-cc.vercel.app/sugar-news</span>
+          </a>
           <p>市场及基本面数据来自公开数据源，自动生成内容仍需研究员复核。</p>
           <p>底部可在"今日、历史、说明"之间切换。历史记录可按日期或关键词搜索，点击后可直接查看对应日报。</p>
         </div>
