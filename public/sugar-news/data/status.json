@@ -1,6 +1,6 @@
 {
   "latestNewsDate": "2026-07-19",
-  "lastRunAt": "2026-07-20T14:14:39+08:00",
+  "lastRunAt": "2026-07-20T14:37:54+08:00",
   "lastRunStatus": "success",
   "timezone": "Asia/Shanghai",
   "details": {
@@ -19,6 +19,7 @@
       "菲律宾": 1,
       "巴基斯坦": 1
     },
+    "china_count": 0,
     "other_country_count": 3
   }
 }

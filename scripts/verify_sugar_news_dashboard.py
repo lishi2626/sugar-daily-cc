@@ -48,8 +48,10 @@ def verify_payload(payload: dict, expected_date: str) -> dict:
             positions.append(1)
         elif name == "泰国":
             positions.append(2)
-        else:
+        elif name == "中国":
             positions.append(3)
+        else:
+            positions.append(4)
         for item in country.get("items", []):
             count += 1
             for field in ("news", "impactType", "impact", "sourceName", "sourceUrl"):

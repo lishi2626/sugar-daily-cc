@@ -29,7 +29,7 @@ try:
     SHANGHAI = ZoneInfo("Asia/Shanghai")
 except Exception:
     SHANGHAI = timezone(timedelta(hours=8), name="Asia/Shanghai")
-GROUP_ORDER = {"巴西": 0, "印度": 1, "泰国": 2, "其他国家": 3}
+GROUP_ORDER = {"巴西": 0, "印度": 1, "泰国": 2, "中国": 3, "其他国家": 4}
 IMPACT_PREFIXES = ("偏多糖价：", "偏空糖价：", "中性：", "影响有限：")
 PLACEHOLDERS = (
     "暂无新闻",
@@ -87,6 +87,29 @@ COUNTRY_SEARCH_TEMPLATES = {
         ("th", "ข่าวอ้อย น้ำตาล {day} กรกฎาคม {buddhist_year}"),
         ("th", "อุตสาหกรรมอ้อยและน้ำตาล {day} กรกฎาคม {buddhist_year}"),
         ("th", "โรงงานน้ำตาล เอทานอล {day} กรกฎาคม {buddhist_year}"),
+    ),
+    "中国": (
+        ("zh-CN", "中国糖业新闻 {year}年{month}月{day}日"),
+        ("zh-CN", "中国食糖 {year}年{month}月{day}日"),
+        ("zh-CN", "中国白糖 {year}年{month}月{day}日"),
+        ("zh-CN", "中国甘蔗 {year}年{month}月{day}日"),
+        ("zh-CN", "中国甜菜糖 {year}年{month}月{day}日"),
+        ("zh-CN", "食糖产销数据 {year}年{month}月{day}日"),
+        ("zh-CN", "食糖进口 {year}年{month}月{day}日"),
+        ("zh-CN", "食糖进口配额 {year}年{month}月{day}日"),
+        ("zh-CN", "糖浆预混粉进口 {year}年{month}月{day}日"),
+        ("zh-CN", "广西糖业 {year}年{month}月{day}日"),
+        ("zh-CN", "云南糖业 {year}年{month}月{day}日"),
+        ("zh-CN", "郑州白糖期货 {year}年{month}月{day}日"),
+        ("zh-CN", "郑糖主力合约 {year}年{month}月{day}日"),
+        ("zh-CN", "白糖现货价格 {year}年{month}月{day}日"),
+        ("zh-CN", "制糖集团公告 {year}年{month}月{day}日"),
+        ("en", "China sugar industry {readable}"),
+        ("en", "China sugar production {readable}"),
+        ("en", "China sugar imports {readable}"),
+        ("en", "China sugarcane beet sugar {readable}"),
+        ("en", "China white sugar futures {readable}"),
+        ("en", "China sugar syrup imports {readable}"),
     ),
     "巴基斯坦": (
         ("en", "Pakistan sugar industry {readable}"),
@@ -257,6 +280,7 @@ def fallback_discovery(date_text: str, task_root: Path) -> None:
         "readable": readable,
         "day": dt.day,
         "month_name": dt.strftime("%B"),
+        "month": dt.month,
         "year": dt.year,
         "date_slash": dt.strftime("%d/%m/%Y"),
         "buddhist_year": buddhist_year,
@@ -365,6 +389,10 @@ def normalize_items(data: dict) -> list[dict]:
             raise ValueError(f"Verified item {idx} missing B-column source link")
         if item["country_group"] == "其他国家" and item["country"] == "其他":
             raise ValueError("Other-country rows must use the concrete country/region name, not 其他")
+        if item["country"] == "中国" and item["country_group"] != "中国":
+            raise ValueError("China news must use country_group=中国 and must not be stored as other-country news")
+        if item["country_group"] == "中国" and item["country"] != "中国":
+            raise ValueError("country_group=中国 rows must use country=中国")
         if item["published_date_local"] != data["target_date"] and item.get("date_status") != "continuing_impact":
             raise ValueError(f"Verified item {idx} date is not target date or continuing impact")
         dedupe_key = item.get("dedupe_key") or re.sub(r"\s+", "", item["news"][:100])
@@ -523,6 +551,12 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
     with index_path.open("r", encoding="utf-8") as f:
         index = json.load(f)
     dashboard_count = sum(len(c.get("items", [])) for c in report.get("countries", []))
+    expected_china = sum(1 for item in items if item["country_group"] == "中国" or item["country"] == "中国")
+    actual_china = sum(
+        len(c.get("items", []))
+        for c in report.get("countries", [])
+        if c.get("country") == "中国"
+    )
     if dashboard_count != len(items):
         raise ValueError(f"Dashboard count mismatch: {dashboard_count} != {len(items)}")
     if report.get("newsDate") != date_text:
@@ -533,6 +567,8 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
         raise ValueError("Dashboard contains empty country section")
     if any(c.get("country") == "其他" for c in report.get("countries", [])):
         raise ValueError("Dashboard must not collapse other countries into a single 其他 section")
+    if actual_china != expected_china:
+        raise ValueError(f"China dashboard count mismatch: {actual_china} != {expected_china}")
 
     group_positions = []
     for row in excel_rows:
@@ -542,8 +578,10 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
             group_positions.append(1)
         elif row["country"] == "泰国":
             group_positions.append(2)
-        else:
+        elif row["country"] == "中国":
             group_positions.append(3)
+        else:
+            group_positions.append(4)
     checks = {
         "verified_count": len(items),
         "excel_count": len(excel_rows),
@@ -553,6 +591,7 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
         "country_order_ok": group_positions == sorted(group_positions),
         "no_empty_country_sections": True,
         "counts_by_country": dict(Counter(item["country"] for item in items)),
+        "china_count": expected_china,
         "other_country_count": sum(1 for item in items if item["country_group"] == "其他国家"),
     }
     return checks
