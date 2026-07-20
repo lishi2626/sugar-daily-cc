@@ -40,6 +40,104 @@ PLACEHOLDERS = (
     "暂未更新",
     "数据尚未公布",
 )
+DATE_FORMAT_EXAMPLES = (
+    "July 19, 2026",
+    "19 July 2026",
+    "19/07/2026",
+    "2026-07-19",
+    "19 de julho de 2026",
+    "19 जुलाई 2026",
+    "19 กรกฎาคม 2569",
+    "19 جولائی 2026",
+    "Hulyo 19 2026",
+    "ngày 19 tháng 7 năm 2026",
+    "19 июля 2026",
+    "19 Juli 2026",
+)
+GLOBAL_SEARCH_TEMPLATES = (
+    "global sugar industry news {readable}",
+    "sugar production export policy {readable}",
+    "sugarcane ethanol mills {readable}",
+    "sugar import export tariff quota {readable}",
+    "sugar price government policy {readable}",
+    "sugar industry news {day} {month_name} {year}",
+    "sugarcane news {day} {month_name} {year}",
+    "ethanol sugar mills {day} {month_name} {year}",
+)
+COUNTRY_SEARCH_TEMPLATES = {
+    "巴西": (
+        ("en", "Brazil sugar industry news {readable}"),
+        ("en", "Brazil sugarcane ethanol export {readable}"),
+        ("pt-BR", "Brasil açúcar etanol {day} julho {year}"),
+        ("pt-BR", "Brasil setor sucroenergético {day} de julho de {year}"),
+        ("pt-BR", "usinas cana açúcar etanol {date_slash}"),
+    ),
+    "印度": (
+        ("en", "India sugar industry news {readable}"),
+        ("en", "India sugarcane ethanol mills {readable}"),
+        ("en", "India sugar news {day} {month_name} {year}"),
+        ("hi", "भारत चीनी उद्योग {day} जुलाई {year}"),
+        ("hi", "गन्ना चीनी मिल इथेनॉल {day} जुलाई {year}"),
+    ),
+    "泰国": (
+        ("en", "Thailand sugar industry news {readable}"),
+        ("en", "Thailand sugarcane mills ethanol {readable}"),
+        ("en", "Thailand sugar news {day} {month_name} {year}"),
+        ("th", "ประเทศไทย น้ำตาล อ้อย {day} กรกฎาคม {buddhist_year}"),
+        ("th", "ข่าวอ้อย น้ำตาล {day} กรกฎาคม {buddhist_year}"),
+        ("th", "อุตสาหกรรมอ้อยและน้ำตาล {day} กรกฎาคม {buddhist_year}"),
+        ("th", "โรงงานน้ำตาล เอทานอล {day} กรกฎาคม {buddhist_year}"),
+    ),
+    "巴基斯坦": (
+        ("en", "Pakistan sugar industry {readable}"),
+        ("en", "Pakistan sugarcane sugar mills {readable}"),
+        ("en", "Pakistan sugar export import price {readable}"),
+        ("en", "Pakistan sugar policy {day} {month_name} {year}"),
+        ("ur", "پاکستان چینی صنعت {day} جولائی {year}"),
+        ("ur", "گنا چینی ملز {day} جولائی {year}"),
+        ("ur", "چینی برآمد درآمد {day} جولائی {year}"),
+    ),
+    "菲律宾": (
+        ("en", "Philippines sugar industry {readable}"),
+        ("en", "Philippines sugar production import {readable}"),
+        ("en", "Philippines Sugar Regulatory Administration {readable}"),
+        ("en", "Philippines sugarcane mills {day} {month_name} {year}"),
+        ("fil", "industriya ng asukal Hulyo {day} {year}"),
+        ("fil", "produksyon ng tubo at asukal Hulyo {day} {year}"),
+        ("fil", "importasyon ng asukal Hulyo {day} {year}"),
+    ),
+    "越南": (
+        ("en", "Vietnam sugar industry {readable}"),
+        ("en", "Vietnam sugar import tariff {readable}"),
+        ("en", "Vietnam sugarcane production {readable}"),
+        ("en", "Vietnam sugar anti-dumping {day} {month_name} {year}"),
+        ("vi", "ngành đường Việt Nam ngày {day} tháng 7 năm {year}"),
+        ("vi", "mía đường Việt Nam {date_slash}"),
+        ("vi", "nhập khẩu đường {date_slash}"),
+        ("vi", "thuế chống bán phá giá đường {date_slash}"),
+    ),
+    "俄罗斯": (
+        ("en", "Russia sugar industry {readable}"),
+        ("en", "Russia sugar beet production {readable}"),
+        ("en", "Russia sugar export price {readable}"),
+        ("en", "Russian sugar market {day} {month_name} {year}"),
+        ("ru", "сахарная промышленность России {day} июля {year}"),
+        ("ru", "сахарная свекла {day} июля {year}"),
+        ("ru", "производство сахара Россия {day} июля {year}"),
+        ("ru", "экспорт сахара Россия {day} июля {year}"),
+    ),
+    "印度尼西亚": (
+        ("en", "Indonesia sugar industry {readable}"),
+        ("en", "Indonesia sugar import production {readable}"),
+        ("en", "Indonesia sugar self-sufficiency {readable}"),
+        ("en", "Indonesia sugarcane mills {day} {month_name} {year}"),
+        ("id", "industri gula Indonesia {day} Juli {year}"),
+        ("id", "produksi gula dan tebu {day} Juli {year}"),
+        ("id", "impor gula Indonesia {day} Juli {year}"),
+        ("id", "swasembada gula {day} Juli {year}"),
+        ("id", "pabrik gula {day} Juli {year}"),
+    ),
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -152,36 +250,44 @@ def fallback_discovery(date_text: str, task_root: Path) -> None:
     dataset cannot be produced automatically. This fallback intentionally does
     not publish unverified RSS items as facts.
     """
-    yyyy, mm = date_parts(date_text)
     dt = datetime.strptime(date_text, "%Y-%m-%d")
     buddhist_year = dt.year + 543
     readable = dt.strftime("%B %-d %Y") if os.name != "nt" else dt.strftime("%B %#d %Y")
-    searches = [
-        ("巴西", "en", f"Brazil sugar industry news {readable}"),
-        ("巴西", "en", f"Brazil sugarcane ethanol export {readable}"),
-        ("巴西", "pt-BR", f"Brasil açúcar etanol {dt.day} julho {dt.year}"),
-        ("巴西", "pt-BR", f"Brasil setor sucroenergético {dt.day} de julho de {dt.year}"),
-        ("印度", "en", f"India sugar industry news {readable}"),
-        ("印度", "hi", f"भारत चीनी उद्योग {dt.day} जुलाई {dt.year}"),
-        ("泰国", "en", f"Thailand sugar industry news {readable}"),
-        ("泰国", "th", f"ประเทศไทย น้ำตาล อ้อย {dt.day} กรกฎาคม {buddhist_year}"),
-        ("其他国家", "en", f"ICE sugar futures {readable}"),
-    ]
+    context = {
+        "readable": readable,
+        "day": dt.day,
+        "month_name": dt.strftime("%B"),
+        "year": dt.year,
+        "date_slash": dt.strftime("%d/%m/%Y"),
+        "buddhist_year": buddhist_year,
+    }
+    searches = []
+    searches.extend(("全球", "en", template.format(**context)) for template in GLOBAL_SEARCH_TEMPLATES)
+    for country, templates in COUNTRY_SEARCH_TEMPLATES.items():
+        searches.extend((country, language, template.format(**context)) for language, template in templates)
     log = {
         "target_date": date_text,
         "run_date": beijing_now().date().isoformat(),
         "search_tool": "Google News RSS fallback via urllib",
         "note": "RSS search results are logged for audit. Items are not published unless a verified JSON is created.",
+        "date_format_examples": DATE_FORMAT_EXAMPLES,
+        "other_country_rule": "Other-country news is unlimited; each concrete country keeps an independent object/list and must never be collapsed into a single 其他 key.",
         "searches": [],
         "pipeline_counts": {
+            "global_initial_candidates": 0,
+            "country_supplement_candidates": 0,
             "candidate_news_after_search": 0,
             "date_verified_or_continuing_impact": 0,
             "relevance_passed": 0,
+            "importance_passed": 0,
             "deduped": 0,
+            "structured_data_count": 0,
             "passed_to_excel": 0,
         },
     }
     total = 0
+    global_total = 0
+    country_total = 0
     for country, language, query in searches:
         entry = {
             "country": country,
@@ -197,12 +303,27 @@ def fallback_discovery(date_text: str, task_root: Path) -> None:
             entry["request_status"] = "executed"
             entry["returned_count"] = len(items)
             total += len(items)
+            if country == "全球":
+                global_total += len(items)
+            else:
+                country_total += len(items)
             entry["sample_results"] = items[:5]
-            entry["filtered"].append({"reason": "RSS result requires source-page date/body verification before publication."})
+            for result in items[:5]:
+                entry["filtered"].append({
+                    "country": country,
+                    "title": result.get("title"),
+                    "news_date": result.get("published"),
+                    "source": "Google News RSS",
+                    "url": result.get("link"),
+                    "stage": "source_page_verification",
+                    "reason": "RSS result requires source-page date/body verification before publication.",
+                })
         except Exception as exc:
             entry["request_status"] = "failed"
             entry["error"] = str(exc)[:500]
         log["searches"].append(entry)
+    log["pipeline_counts"]["global_initial_candidates"] = global_total
+    log["pipeline_counts"]["country_supplement_candidates"] = country_total
     log["pipeline_counts"]["candidate_news_after_search"] = total
     path = search_log_path(task_root, date_text)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -242,6 +363,8 @@ def normalize_items(data: dict) -> list[dict]:
             raise ValueError(f"Verified item {idx} contains raw LMT/lmt unit")
         if "来源：" not in item["news"] or item["source_url"] not in item["news"]:
             raise ValueError(f"Verified item {idx} missing B-column source link")
+        if item["country_group"] == "其他国家" and item["country"] == "其他":
+            raise ValueError("Other-country rows must use the concrete country/region name, not 其他")
         if item["published_date_local"] != data["target_date"] and item.get("date_status") != "continuing_impact":
             raise ValueError(f"Verified item {idx} date is not target date or continuing impact")
         dedupe_key = item.get("dedupe_key") or re.sub(r"\s+", "", item["news"][:100])
@@ -323,7 +446,7 @@ def split_impact(value: str) -> tuple[str, str]:
 
 def build_dashboard_payload(date_text: str, items: list[dict], excel_file: Path) -> dict:
     grouped: dict[str, list[dict]] = defaultdict(list)
-    country_order: list[tuple[int, str]] = []
+    country_order: list[tuple[int, int, str]] = []
     for item in items:
         impact_type, impact_text = split_impact(item["impact"])
         grouped[item["country"]].append({
@@ -335,11 +458,11 @@ def build_dashboard_payload(date_text: str, items: list[dict], excel_file: Path)
             "publishedDateLocal": item["published_date_local"],
             "eventDate": item.get("event_date"),
         })
-        country_order.append((GROUP_ORDER.get(item["country_group"], 3), item["country"]))
+        country_order.append((GROUP_ORDER.get(item["country_group"], 3), -int(item.get("importance", 0)), item["country"]))
 
     countries = []
     seen = set()
-    for _, country in sorted(country_order, key=lambda pair: (pair[0], country_order.index(pair))):
+    for _, _, country in sorted(country_order, key=lambda pair: (pair[0], pair[1], country_order.index(pair))):
         if country in seen:
             continue
         seen.add(country)
@@ -408,6 +531,8 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
         raise ValueError("Dashboard index latest date is older than target date")
     if any(not c.get("items") for c in report.get("countries", [])):
         raise ValueError("Dashboard contains empty country section")
+    if any(c.get("country") == "其他" for c in report.get("countries", [])):
+        raise ValueError("Dashboard must not collapse other countries into a single 其他 section")
 
     group_positions = []
     for row in excel_rows:
@@ -428,6 +553,7 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
         "country_order_ok": group_positions == sorted(group_positions),
         "no_empty_country_sections": True,
         "counts_by_country": dict(Counter(item["country"] for item in items)),
+        "other_country_count": sum(1 for item in items if item["country_group"] == "其他国家"),
     }
     return checks
 
