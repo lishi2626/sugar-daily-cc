@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sugar News</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #20242a;
+      --muted: #667085;
+      --line: #d9dee7;
+      --accent: #2457c5;
+      --bull: #c9342f;
+      --bear: #16845b;
+      --neutral: #5f6673;
+      --limited: #9aa3af;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .wrap {
+      width: min(1120px, calc(100vw - 32px));
+      margin: 0 auto;
+    }
+    .top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      padding: 28px 0 20px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .meta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    select {
+      min-width: 180px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      padding: 9px 34px 9px 12px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    main { padding: 22px 0 36px; }
+    .country {
+      padding: 20px 0 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .country:first-child { padding-top: 0; }
+    .country h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .items {
+      display: grid;
+      gap: 10px;
+    }
+    article {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 0.36fr);
+      gap: 14px;
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .news {
+      margin: 0;
+      font-size: 15px;
+    }
+    .source {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 14px;
+      word-break: break-word;
+    }
+    .source:hover { text-decoration: underline; }
+    .impact {
+      border-left: 3px solid var(--limited);
+      padding-left: 12px;
+      color: #364152;
+      font-size: 14px;
+    }
+    .impact strong {
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+    .impact.bull { border-color: var(--bull); }
+    .impact.bull strong { color: var(--bull); }
+    .impact.bear { border-color: var(--bear); }
+    .impact.bear strong { color: var(--bear); }
+    .impact.neutral { border-color: var(--neutral); }
+    .impact.neutral strong { color: var(--neutral); }
+    .impact.limited { border-color: var(--limited); }
+    .impact.limited strong { color: var(--limited); }
+    .error {
+      display: none;
+      padding: 16px;
+      border: 1px solid #e0a4a4;
+      border-radius: 8px;
+      background: #fff8f8;
+      color: #8a2525;
+    }
+    @media (max-width: 760px) {
+      .wrap { width: min(100vw - 24px, 1120px); }
+      .top { grid-template-columns: 1fr; align-items: start; padding-top: 22px; }
+      article { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+      select { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap top">
+      <div>
+        <h1>Sugar News</h1>
+        <div class="meta">
+          <span id="newsDate"></span>
+          <span id="updatedAt"></span>
+        </div>
+      </div>
+      <label>
+        历史日期
+        <select id="dateSelect" aria-label="选择历史日期"></select>
+      </label>
+    </div>
+  </header>
+  <main class="wrap">
+    <div id="error" class="error"></div>
+    <div id="content"></div>
+  </main>
+  <script>
+    const indexUrl = "/public/sugar-news/data/index.json";
+    const contentEl = document.getElementById("content");
+    const selectEl = document.getElementById("dateSelect");
+    const dateEl = document.getElementById("newsDate");
+    const updatedEl = document.getElementById("updatedAt");
+    const errorEl = document.getElementById("error");
+
+    function fresh(url) {
+      return `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`;
+    }
+
+    function cnDate(iso) {
+      const [year, month, day] = iso.split("-");
+      return `${year}年${month}月${day}日`;
+    }
+
+    function cnTime(iso) {
+      if (!iso) return "";
+      const date = new Date(iso);
+      return new Intl.DateTimeFormat("zh-CN", {
+        timeZone: "Asia/Shanghai",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      }).format(date);
+    }
+
+    function impactClass(type) {
+      if (type === "偏多糖价") return "bull";
+      if (type === "偏空糖价") return "bear";
+      if (type === "中性") return "neutral";
+      return "limited";
+    }
+
+    function showError(message) {
+      errorEl.textContent = message;
+      errorEl.style.display = "block";
+    }
+
+    async function loadJson(url) {
+      const response = await fetch(fresh(url), { cache: "no-store" });
+      if (!response.ok) throw new Error(`${url} ${response.status}`);
+      return response.json();
+    }
+
+    async function renderReport(path) {
+      const payload = await loadJson(path);
+      dateEl.textContent = `新闻日期：${cnDate(payload.newsDate)}`;
+      updatedEl.textContent = `最后更新时间：${cnTime(payload.updatedAt)}（北京时间）`;
+      contentEl.innerHTML = "";
+      payload.countries
+        .filter(country => country.items && country.items.length)
+        .forEach(country => {
+          const section = document.createElement("section");
+          section.className = "country";
+          const heading = document.createElement("h2");
+          heading.textContent = country.country;
+          const items = document.createElement("div");
+          items.className = "items";
+          country.items.forEach(item => {
+            const article = document.createElement("article");
+            const newsBox = document.createElement("div");
+            const news = document.createElement("p");
+            news.className = "news";
+            news.textContent = item.news;
+            const source = document.createElement("a");
+            source.className = "source";
+            source.href = item.sourceUrl;
+            source.target = "_blank";
+            source.rel = "noopener noreferrer";
+            source.textContent = `来源：${item.sourceName}`;
+            newsBox.append(news, source);
+            const impact = document.createElement("div");
+            impact.className = `impact ${impactClass(item.impactType)}`;
+            const type = document.createElement("strong");
+            type.textContent = item.impactType;
+            const text = document.createElement("div");
+            text.textContent = item.impact;
+            impact.append(type, text);
+            article.append(newsBox, impact);
+            items.appendChild(article);
+          });
+          section.append(heading, items);
+          contentEl.appendChild(section);
+        });
+    }
+
+    async function init() {
+      try {
+        const index = await loadJson(indexUrl);
+        selectEl.innerHTML = "";
+        index.reports.forEach(report => {
+          const option = document.createElement("option");
+          option.value = report.path;
+          option.textContent = cnDate(report.newsDate);
+          option.dataset.date = report.newsDate;
+          selectEl.appendChild(option);
+        });
+        selectEl.addEventListener("change", () => renderReport(selectEl.value).catch(err => showError(err.message)));
+        if (index.reports.length) {
+          selectEl.value = index.reports[0].path;
+          await renderReport(index.reports[0].path);
+        }
+      } catch (error) {
+        showError(`Sugar News 数据加载失败：${error.message}`);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -12,6 +12,10 @@
       "dest": "/index.html"
     },
     {
+      "src": "/sugar-news/?",
+      "dest": "/public/sugar-news/index.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
@@ -28,6 +32,15 @@
     },
     {
       "source": "/public/dashboard/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/public/sugar-news/data/(.*).json",
       "headers": [
         {
           "key": "Cache-Control",

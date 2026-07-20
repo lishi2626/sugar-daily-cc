@@ -1,0 +1,21 @@
+{
+  "latestNewsDate": "2026-07-19",
+  "lastRunAt": "2026-07-20T13:13:53+08:00",
+  "lastRunStatus": "success",
+  "timezone": "Asia/Shanghai",
+  "details": {
+    "verified_count": 8,
+    "excel_count": 8,
+    "dashboard_count": 8,
+    "excel_matches_verified": true,
+    "dashboard_matches_verified": true,
+    "country_order_ok": true,
+    "no_empty_country_sections": true,
+    "counts_by_country": {
+      "巴西": 3,
+      "印度": 2,
+      "泰国": 2,
+      "英国": 1
+    }
+  }
+}

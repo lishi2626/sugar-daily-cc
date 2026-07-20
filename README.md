@@ -90,6 +90,50 @@ git push
 4. 前端只读取已经生成的 JSON
 5. 每次 GitHub 有新提交后，Vercel 自动重新部署
 
+## Sugar News 看板
+
+Sugar News 使用现有 Vercel 项目发布，不新建项目或域名。看板路由：
+
+```text
+https://sugar-daily-cc.vercel.app/sugar-news
+```
+
+Excel 和网页 JSON 共用同一份已核验新闻清单：
+
+```text
+../Sugar News/data/verified_news/YYYY/MM/sugar_news_YYYY-MM-DD.json
+```
+
+生成后的网页数据保存到：
+
+```text
+public/sugar-news/data/reports/YYYY/MM/YYYY-MM-DD.json
+public/sugar-news/data/index.json
+public/sugar-news/data/status.json
+```
+
+手动运行一次完整 Sugar News 更新：
+
+```powershell
+PowerShell -NoProfile -ExecutionPolicy Bypass -File scripts\Run-Sugar-News.ps1 -Date 2026-07-19
+```
+
+只生成并本地校验，不推送时可直接运行：
+
+```powershell
+.venv\Scripts\python.exe scripts\sugar_news_pipeline.py --date 2026-07-19 --task-root "..\Sugar News" --offline-only
+.venv\Scripts\python.exe scripts\verify_sugar_news_dashboard.py --date 2026-07-19
+```
+
+GitHub Actions 自动任务：
+
+- 北京时间 06:00 执行；
+- 北京时间 06:10 和 06:30 重试；
+- GitHub Actions cron 使用 UTC，配置为 `0 22 * * *`、`10 22 * * *`、`30 22 * * *`；
+- 日期计算固定使用 `Asia/Shanghai`，目标日期为北京时间上一自然日。
+
+如果没有已核验新闻清单，云端任务会记录检索尝试日志并失败退出，不覆盖上一期正常页面，避免发布空白或未经核验的数据。
+
 ## 安装定时任务（可选）
 
 ```powershell

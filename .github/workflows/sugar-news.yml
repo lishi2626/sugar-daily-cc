@@ -1,0 +1,104 @@
+name: Sugar News
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Target news date YYYY-MM-DD. Leave blank for Beijing yesterday."
+        required: false
+        type: string
+  schedule:
+    # Beijing 06:00, 06:10 and 06:30. GitHub Actions cron uses UTC.
+    - cron: "0 22 * * *"
+    - cron: "10 22 * * *"
+    - cron: "30 22 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sugar-news-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-sugar-news:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+      SUGAR_NEWS_ROOT: ${{ runner.temp }}/Sugar News
+      VERCEL_BASE_URL: https://sugar-daily-cc.vercel.app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Prepare Sugar News task directory
+        run: |
+          mkdir -p "$SUGAR_NEWS_ROOT/templates"
+          if [ -f "public/sugar-news/templates/新闻格式.xlsx" ]; then
+            cp "public/sugar-news/templates/新闻格式.xlsx" "$SUGAR_NEWS_ROOT/templates/新闻格式.xlsx"
+          fi
+
+      - name: Build Sugar News Excel and dashboard data
+        id: build
+        run: |
+          if [ -n "${{ inputs.date }}" ]; then
+            TARGET_DATE="${{ inputs.date }}"
+          else
+            TARGET_DATE="$(python - <<'PY'
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+print((datetime.now(ZoneInfo("Asia/Shanghai")).date() - timedelta(days=1)).isoformat())
+PY
+)"
+          fi
+          echo "target_date=$TARGET_DATE" >> "$GITHUB_OUTPUT"
+          python scripts/sugar_news_pipeline.py --date "$TARGET_DATE" --skip-if-success
+
+      - name: Verify local dashboard data
+        run: python scripts/verify_sugar_news_dashboard.py --date "${{ steps.build.outputs.target_date }}"
+
+      - name: Commit and push Sugar News update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/sugar-news
+          if git diff --cached --quiet; then
+            echo "No Sugar News changes to commit."
+          else
+            git commit -m "Update Sugar News ${{ steps.build.outputs.target_date }}"
+            git push
+          fi
+
+      - name: Verify Vercel Sugar News page
+        run: |
+          python - <<'PY'
+import os
+import subprocess
+import sys
+import time
+
+date = os.environ["TARGET_DATE"]
+base = os.environ["VERCEL_BASE_URL"]
+for attempt in range(1, 19):
+    result = subprocess.run(
+        [sys.executable, "scripts/verify_sugar_news_dashboard.py", "--date", date, "--base-url", base],
+        text=True,
+        capture_output=True,
+    )
+    if result.returncode == 0:
+        print(result.stdout)
+        raise SystemExit(0)
+    print(f"Vercel not ready attempt {attempt}/18: {result.stderr or result.stdout}")
+    time.sleep(20)
+raise SystemExit("Vercel Sugar News verification failed after retry window")
+PY
+        env:
+          TARGET_DATE: ${{ steps.build.outputs.target_date }}
