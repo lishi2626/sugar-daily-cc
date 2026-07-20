@@ -1,6 +1,6 @@
 {
   "newsDate": "2026-07-19",
-  "updatedAt": "2026-07-20T14:11:27+08:00",
+  "updatedAt": "2026-07-20T14:14:39+08:00",
   "timezone": "Asia/Shanghai",
   "excelFile": "Sugar News/reports/2026/07/Sugar News 2026-07-19.xlsx",
   "countries": [
@@ -114,11 +114,11 @@
       "country": "巴基斯坦",
       "items": [
         {
-          "news": "延续性影响（7月17日发布）：巴基斯坦政府拒绝糖厂协会提出的额外50万吨食糖出口申请，理由是优先保障国内市场供应和价格稳定。",
+          "news": "延续性影响（7月17日发布）：巴基斯坦政府拒绝糖厂协会提出的约60万吨剩余精制糖出口申请，并称将在新榨季开始后再作决定，以优先保障国内供应和价格稳定。",
           "impactType": "偏空糖价",
           "impact": "出口申请被拒意味着潜在国际供应释放减少，但主要影响巴基斯坦国内市场，全球影响有限。",
           "sourceName": "Business Recorder",
-          "sourceUrl": "https://www.brecorder.com/news/40430179",
+          "sourceUrl": "https://www.brecorder.com/news/40430457",
           "publishedDateLocal": "2026-07-17",
           "eventDate": "2026-07-19"
         }
