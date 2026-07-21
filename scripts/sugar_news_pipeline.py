@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict
 from copy import copy
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
@@ -255,6 +256,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--task-root", help="Existing Sugar News task root. Defaults to ../Sugar News.")
     parser.add_argument("--skip-if-success", action="store_true", help="Skip if public status already marks target date successful.")
     parser.add_argument("--offline-only", action="store_true", help="Do not attempt fallback online discovery; require verified JSON.")
+    parser.add_argument("--allow-rss-autogen", action="store_true", help="Generate a conservative verified JSON from RSS if no curated verified JSON exists.")
     return parser.parse_args()
 
 
@@ -441,10 +443,164 @@ def fallback_discovery(date_text: str, task_root: Path) -> None:
         json.dump(log, f, ensure_ascii=False, indent=2)
 
 
-def load_verified_or_fail(task_root: Path, date_text: str, offline_only: bool) -> dict:
+def rss_source_from_title(title: str) -> tuple[str, str]:
+    parts = title.rsplit(" - ", 1)
+    if len(parts) == 2:
+        return parts[0].strip(), parts[1].strip()
+    return title.strip(), "Google News RSS"
+
+
+def rss_item_date(item: dict) -> str | None:
+    try:
+        value = parsedate_to_datetime(item.get("published", ""))
+    except Exception:
+        return None
+    return value.astimezone(SHANGHAI).date().isoformat()
+
+
+def impact_for_rss(country: str, title: str) -> str:
+    text = title.lower()
+    if country in {"印度", "泰国"} and any(term in text for term in ("rain", "rainfall", "monsoon", "heavy rain", "weather")):
+        if any(term in text for term in ("damage", "flood damage", "crop loss", "drought", "deficit")):
+            return "偏多糖价：天气不利可能削弱甘蔗生长、运输或糖料供应。"
+        return "偏空糖价：生长阶段降雨增加有利于改善甘蔗水分条件和单产，可能增加未来糖料供应。"
+    if any(term in text for term in ("ethanol", "blend", "biofuel")):
+        return "偏多糖价：乙醇需求或政策推进可能增加糖料制醇吸引力，减少部分制糖供应。"
+    if any(term in text for term in ("record output", "surplus", "higher production", "import")):
+        return "偏空糖价：供应或进口增加可能提高市场可用糖源。"
+    if any(term in text for term in ("export ban", "quota", "tariff", "shortage")):
+        return "偏多糖价：贸易限制或供应扰动可能减少国际市场可用糖源。"
+    return "中性：该信息需要继续跟踪，短期对当期糖产量和出口量的直接影响有限。"
+
+
+def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
+    dt = datetime.strptime(date_text, "%Y-%m-%d")
+    readable = dt.strftime("%B %-d %Y") if os.name != "nt" else dt.strftime("%B %#d %Y")
+    context = {
+        "readable": readable,
+        "day": dt.day,
+        "month_name": dt.strftime("%B"),
+        "month": dt.month,
+        "year": dt.year,
+        "date_slash": dt.strftime("%d/%m/%Y"),
+        "buddhist_year": dt.year + 543,
+    }
+    country_templates = {
+        country: templates
+        for country, templates in COUNTRY_SEARCH_TEMPLATES.items()
+        if country in {"巴西", "印度", "泰国", "中国"}
+    }
+    country_templates["其他国家"] = tuple(("en", template) for template in GLOBAL_SEARCH_TEMPLATES)
+    relevance = (
+        "sugar", "sugarcane", "cane", "ethanol", "biofuel", "molasses", "raw sugar",
+        "white sugar", "rain", "rainfall", "monsoon", "drought", "flood", "tariff",
+        "quota", "export", "import", "mill", "crushing",
+    )
+    concrete_other = ("Indonesia", "Pakistan", "Philippines", "Vietnam", "Russia", "EU", "United States", "Mexico")
+    items = []
+    seen = set()
+    search_log = {
+        "target_date": date_text,
+        "run_date": beijing_now().date().isoformat(),
+        "search_tool": "Google News RSS autogeneration",
+        "note": "Generated automatically because curated verified JSON was missing. Each item keeps RSS source, publication date, and source link.",
+        "searches": [],
+    }
+    for country, templates in country_templates.items():
+        retained_for_country = 0
+        for language, template in templates:
+            query = template.format(**context)
+            entry = {"country": country, "language": language, "keywords": query, "request_status": "pending", "returned_count": 0, "retained_count": 0, "filtered": []}
+            try:
+                rss_items = fetch_rss(query, timeout=20)
+                entry["request_status"] = "executed"
+                entry["returned_count"] = len(rss_items)
+            except Exception as exc:
+                entry["request_status"] = "failed"
+                entry["error"] = str(exc)[:500]
+                search_log["searches"].append(entry)
+                continue
+            for rss in rss_items[:10]:
+                item_date = rss_item_date(rss)
+                title_raw = rss.get("title", "").strip()
+                if item_date != date_text:
+                    entry["filtered"].append({"title": title_raw, "reason": "publication date is not target date", "published": rss.get("published")})
+                    continue
+                title_clean, source = rss_source_from_title(title_raw)
+                haystack = f"{title_clean} {rss.get('description', '')}".lower()
+                if not any(term in haystack for term in relevance):
+                    entry["filtered"].append({"title": title_raw, "reason": "not sugar/rainfall/ethanol relevant"})
+                    continue
+                concrete_country = country
+                country_group = country
+                if country == "其他国家":
+                    found = next((name for name in concrete_other if name.lower() in haystack), None)
+                    if not found:
+                        entry["filtered"].append({"title": title_raw, "reason": "other-country item lacks concrete priority country"})
+                        continue
+                    concrete_country = {
+                        "Indonesia": "印度尼西亚",
+                        "Pakistan": "巴基斯坦",
+                        "Philippines": "菲律宾",
+                        "Vietnam": "越南",
+                        "Russia": "俄罗斯",
+                        "EU": "欧盟",
+                        "United States": "美国",
+                        "Mexico": "墨西哥",
+                    }[found]
+                key = re.sub(r"\W+", "", title_clean.lower())[:120]
+                if key in seen:
+                    continue
+                seen.add(key)
+                link = rss.get("link", "").strip()
+                impact = impact_for_rss(country_group, title_clean)
+                news = f"{item_date} {source}报道：{title_clean}。来源：{source}（{link}）"
+                items.append({
+                    "country_group": country_group,
+                    "country": concrete_country,
+                    "title": title_clean[:80],
+                    "news": news,
+                    "impact": impact,
+                    "source_name": source,
+                    "source_url": link,
+                    "published_date_local": date_text,
+                    "event_date": date_text,
+                    "date_status": "verified",
+                    "dedupe_key": f"rss_{key}",
+                    "importance": max(50, 90 - retained_for_country * 5),
+                })
+                retained_for_country += 1
+                entry["retained_count"] += 1
+                if retained_for_country >= 2:
+                    break
+            search_log["searches"].append(entry)
+            if retained_for_country >= 2:
+                break
+    if not items:
+        raise FileNotFoundError("RSS autogeneration found no publishable Sugar News items")
+    path = verified_json_path(task_root, date_text)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as f:
+        json.dump({
+            "target_date": date_text,
+            "run_date": beijing_now().date().isoformat(),
+            "search_tool": "Google News RSS autogeneration",
+            "items": items,
+        }, f, ensure_ascii=False, indent=2)
+    log_path = search_log_path(task_root, date_text)
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    search_log["pipeline_counts"] = {"structured_data_count": len(items), "passed_to_excel": len(items)}
+    with log_path.open("w", encoding="utf-8") as f:
+        json.dump(search_log, f, ensure_ascii=False, indent=2)
+    return path
+
+
+def load_verified_or_fail(task_root: Path, date_text: str, offline_only: bool, allow_rss_autogen: bool = False) -> dict:
     path = verified_json_path(task_root, date_text)
     if not path.exists() and not offline_only:
         fallback_discovery(date_text, task_root)
+        if allow_rss_autogen:
+            path = autogenerate_verified_from_rss(task_root, date_text)
     if not path.exists():
         raise FileNotFoundError(
             f"Missing verified Sugar News data: {path}. "
@@ -803,7 +959,7 @@ def main() -> int:
         return 0
 
     try:
-        data = load_verified_or_fail(task_root, date_text, offline_only=args.offline_only)
+        data = load_verified_or_fail(task_root, date_text, offline_only=args.offline_only, allow_rss_autogen=args.allow_rss_autogen)
         items = normalize_items(data)
         excel_file = write_excel(task_root, date_text, items)
         payload = build_dashboard_payload(date_text, items, excel_file)

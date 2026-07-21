@@ -67,7 +67,7 @@ PY
             echo "target_date=$TARGET_DATE"
             echo "timezone=Asia/Shanghai"
           } > "$SUGAR_NEWS_LOG_DIR/run.env"
-          python scripts/sugar_news_pipeline.py --date "$TARGET_DATE" --skip-if-success 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/pipeline.log"
+          python scripts/sugar_news_pipeline.py --date "$TARGET_DATE" --skip-if-success --allow-rss-autogen 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/pipeline.log"
 
       - name: Verify local dashboard data
         run: python scripts/verify_sugar_news_dashboard.py --date "${{ steps.build.outputs.target_date }}" 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/local-verify.log"
