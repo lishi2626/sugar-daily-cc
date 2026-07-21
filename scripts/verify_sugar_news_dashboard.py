@@ -63,6 +63,20 @@ def verify_payload(payload: dict, expected_date: str) -> dict:
                 raise AssertionError("Placeholder wording found")
     if positions != sorted(positions):
         raise AssertionError("Country order mismatch")
+    india_metrics = payload.get("indiaMetrics")
+    if not isinstance(india_metrics, dict):
+        raise AssertionError("Dashboard payload missing indiaMetrics")
+    for field in ("domesticSugarPrice", "upExMillPrice", "carryoverStock"):
+        metric = india_metrics.get(field)
+        if not isinstance(metric, dict):
+            raise AssertionError(f"indiaMetrics missing {field}")
+        if metric.get("status") not in {"ok", "pending", "stale"}:
+            raise AssertionError(f"Invalid {field} status: {metric.get('status')}")
+        if metric.get("status") == "ok":
+            if field == "carryoverStock" and metric.get("stockWanTonnes") is None:
+                raise AssertionError("carryoverStock requires stockWanTonnes")
+            if field != "carryoverStock" and metric.get("priceInrPerQuintal") is None and not metric.get("rangeInrPerQuintal"):
+                raise AssertionError(f"{field} requires price or range")
     return {"newsDate": expected_date, "countryCount": len(countries), "itemCount": count}
 
 

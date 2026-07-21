@@ -70,6 +70,28 @@ INDIA_DAMAGE_TERMS = (
     "受灾", "损失", "flood damage", "crop damage", "waterlogging", "lodging", "road disruption",
 )
 INDIA_HARVEST_TERMS = ("收割", "压榨", "运输", "入榨", "开榨", "砍蔗", "harvest", "crushing", "transport")
+INDIA_PRICE_INVENTORY_SEARCH_TEMPLATES = (
+    ("en", "India sugar S-grade M-grade domestic price {readable}"),
+    ("en", "India sugar prices today S grade M grade {readable}"),
+    ("en", "Maharashtra Uttar Pradesh Karnataka sugar price {readable}"),
+    ("en", "Uttar Pradesh sugar ex-mill price {readable}"),
+    ("en", "UP sugar ex-mill rate {readable}"),
+    ("en", "Uttar Pradesh mill sugar price {readable}"),
+    ("en", "M-grade sugar ex-mill Uttar Pradesh {readable}"),
+    ("en", "North India sugar ex-mill price {readable}"),
+    ("hi", "मुजफ्फरनगर चीनी मिल भाव {day} जुलाई {year}"),
+    ("hi", "उत्तर प्रदेश चीनी एक्स मिल कीमत {day} जुलाई {year}"),
+    ("en", "India sugar carryover stock ending stock {readable}"),
+    ("en", "India sugar closing stock ISMA NFCSF {readable}"),
+    ("en", "India sugar ending stocks consumption ratio {readable}"),
+)
+INDIA_PRICE_INVENTORY_SOURCE_GUIDE = (
+    "ChiniMandi domestic sugar prices",
+    "ISMA / Indian Sugar & Bio-energy Manufacturers Association",
+    "NFCSF / National Federation of Cooperative Sugar Factories",
+    "Department of Food and Public Distribution, Government of India",
+    "reliable commodity and agriculture media with dated market quotes",
+)
 DATE_FORMAT_EXAMPLES = (
     "July 19, 2026",
     "19 July 2026",
@@ -377,12 +399,14 @@ def fallback_discovery(date_text: str, task_root: Path) -> None:
     searches.extend(("全球", "en", template.format(**context)) for template in GLOBAL_SEARCH_TEMPLATES)
     for country, templates in COUNTRY_SEARCH_TEMPLATES.items():
         searches.extend((country, language, template.format(**context)) for language, template in templates)
+    searches.extend(("印度指标", language, template.format(**context)) for language, template in INDIA_PRICE_INVENTORY_SEARCH_TEMPLATES)
     log = {
         "target_date": date_text,
         "run_date": beijing_now().date().isoformat(),
         "search_tool": "Google News RSS fallback via urllib",
         "note": "RSS search results are logged for audit. Items are not published unless a verified JSON is created.",
         "date_format_examples": DATE_FORMAT_EXAMPLES,
+        "india_price_inventory_sources": INDIA_PRICE_INVENTORY_SOURCE_GUIDE,
         "other_country_rule": "Other-country news is unlimited; each concrete country keeps an independent object/list and must never be collapsed into a single 其他 key.",
         "searches": [],
         "pipeline_counts": {
@@ -490,6 +514,7 @@ def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
         for country, templates in COUNTRY_SEARCH_TEMPLATES.items()
         if country in {"巴西", "印度", "泰国", "中国"}
     }
+    country_templates["印度指标"] = INDIA_PRICE_INVENTORY_SEARCH_TEMPLATES
     country_templates["其他国家"] = tuple(("en", template) for template in GLOBAL_SEARCH_TEMPLATES)
     relevance = (
         "sugar", "sugarcane", "cane", "ethanol", "biofuel", "molasses", "raw sugar",
@@ -504,6 +529,7 @@ def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
         "run_date": beijing_now().date().isoformat(),
         "search_tool": "Google News RSS autogeneration",
         "note": "Generated automatically because curated verified JSON was missing. Each item keeps RSS source, publication date, and source link.",
+        "india_price_inventory_sources": INDIA_PRICE_INVENTORY_SOURCE_GUIDE,
         "searches": [],
     }
     for country, templates in country_templates.items():
@@ -518,6 +544,19 @@ def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
             except Exception as exc:
                 entry["request_status"] = "failed"
                 entry["error"] = str(exc)[:500]
+                search_log["searches"].append(entry)
+                continue
+            if country == "印度指标":
+                entry["sample_results"] = rss_items[:5]
+                for result in rss_items[:5]:
+                    entry["filtered"].append({
+                        "title": result.get("title"),
+                        "news_date": result.get("published"),
+                        "source": "Google News RSS",
+                        "url": result.get("link"),
+                        "stage": "price_inventory_verification",
+                        "reason": "Price and stock indicators require source-page date, quote type, unit, and comparable-date verification before dashboard publication.",
+                    })
                 search_log["searches"].append(entry)
                 continue
             for rss in rss_items[:10]:
@@ -796,7 +835,188 @@ def split_impact(value: str) -> tuple[str, str]:
     raise ValueError(f"Invalid impact value: {value}")
 
 
-def build_dashboard_payload(date_text: str, items: list[dict], excel_file: Path) -> dict:
+def _number(value):
+    if value is None or value == "":
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    text = str(value).replace(",", "").strip()
+    match = re.search(r"-?\d+(?:\.\d+)?", text)
+    return float(match.group(0)) if match else None
+
+
+def _round(value, digits: int = 2):
+    return None if value is None else round(float(value), digits)
+
+
+def price_from_quintal(value) -> float | None:
+    number = _number(value)
+    return _round(number / 100, 4) if number is not None else None
+
+
+def lakh_tonnes_to_wan_tonnes(value) -> float | None:
+    number = _number(value)
+    return _round(number * 10, 2) if number is not None else None
+
+
+def million_tonnes_to_wan_tonnes(value) -> float | None:
+    number = _number(value)
+    return _round(number * 100, 2) if number is not None else None
+
+
+def normalize_price_metric(metric: dict | None, metric_type: str) -> dict:
+    metric = dict(metric or {})
+    status = metric.get("status") or ("ok" if metric.get("priceInrPerQuintal") or metric.get("rangeInrPerQuintal") else "pending")
+    result = {
+        "metricType": metric_type,
+        "status": status,
+        "statusText": metric.get("statusText") or ("数据待更新" if status != "ok" else ""),
+        "priceDate": metric.get("priceDate") or metric.get("dataDate"),
+        "grade": metric.get("grade"),
+        "market": metric.get("market"),
+        "quoteType": metric.get("quoteType"),
+        "originalUnit": metric.get("originalUnit") or "₹/quintal",
+        "sourceName": metric.get("sourceName"),
+        "sourceUrl": metric.get("sourceUrl"),
+        "publishedDate": metric.get("publishedDate"),
+        "fetchedAt": metric.get("fetchedAt") or beijing_now().isoformat(timespec="seconds"),
+        "note": metric.get("note"),
+    }
+    price_q = _number(metric.get("priceInrPerQuintal"))
+    price_kg = _number(metric.get("priceInrPerKg"))
+    if price_q is None and price_kg is not None:
+        price_q = price_kg * 100
+    if price_kg is None and price_q is not None:
+        price_kg = price_from_quintal(price_q)
+    result["priceInrPerQuintal"] = _round(price_q, 2)
+    result["priceInrPerKg"] = _round(price_kg, 4)
+
+    range_q = metric.get("rangeInrPerQuintal") or {}
+    low_q = _number(range_q.get("low") if isinstance(range_q, dict) else None)
+    high_q = _number(range_q.get("high") if isinstance(range_q, dict) else None)
+    if low_q is not None or high_q is not None:
+        result["rangeInrPerQuintal"] = {"low": _round(low_q, 2), "high": _round(high_q, 2)}
+        result["rangeInrPerKg"] = {"low": price_from_quintal(low_q), "high": price_from_quintal(high_q)}
+
+    previous_q = _number(metric.get("previousInrPerQuintal"))
+    if previous_q is not None:
+        result["previousInrPerQuintal"] = _round(previous_q, 2)
+        result["previousInrPerKg"] = price_from_quintal(previous_q)
+    change_q = _number(metric.get("changeInrPerQuintal"))
+    if change_q is None and price_q is not None and previous_q is not None:
+        change_q = price_q - previous_q
+    result["changeInrPerQuintal"] = _round(change_q, 2)
+    result["changeInrPerKg"] = price_from_quintal(change_q)
+    change_pct = _number(metric.get("changePct"))
+    if change_pct is None and change_q is not None and previous_q:
+        change_pct = change_q / previous_q * 100
+    result["changePct"] = _round(change_pct, 2)
+    result["direction"] = metric.get("direction") or ("up" if change_q and change_q > 0 else "down" if change_q and change_q < 0 else "flat" if change_q == 0 else "unknown")
+    return result
+
+
+def normalize_stock_metric(metric: dict | None) -> dict:
+    metric = dict(metric or {})
+    status = metric.get("status") or ("ok" if any(metric.get(k) is not None for k in ("stockWanTonnes", "stockLakhTonnes", "stockMillionTonnes")) else "pending")
+    stock_wan = _number(metric.get("stockWanTonnes"))
+    if stock_wan is None and metric.get("stockLakhTonnes") is not None:
+        stock_wan = lakh_tonnes_to_wan_tonnes(metric.get("stockLakhTonnes"))
+    if stock_wan is None and metric.get("stockMillionTonnes") is not None:
+        stock_wan = million_tonnes_to_wan_tonnes(metric.get("stockMillionTonnes"))
+    previous_wan = _number(metric.get("previousForecastWanTonnes"))
+    if previous_wan is None and metric.get("previousForecastLakhTonnes") is not None:
+        previous_wan = lakh_tonnes_to_wan_tonnes(metric.get("previousForecastLakhTonnes"))
+    yoy_wan = _number(metric.get("yoyChangeWanTonnes"))
+    if yoy_wan is None and metric.get("yoyChangeLakhTonnes") is not None:
+        yoy_wan = lakh_tonnes_to_wan_tonnes(metric.get("yoyChangeLakhTonnes"))
+    revision_wan = _number(metric.get("revisionWanTonnes"))
+    if revision_wan is None and stock_wan is not None and previous_wan is not None:
+        revision_wan = stock_wan - previous_wan
+    return {
+        "metricType": "carryoverStock",
+        "status": status,
+        "statusText": metric.get("statusText") or ("数据待更新" if status != "ok" else ""),
+        "dataDate": metric.get("dataDate"),
+        "season": metric.get("season"),
+        "stockWanTonnes": _round(stock_wan, 2),
+        "stockLakhTonnes": _round(stock_wan / 10, 2) if stock_wan is not None else _round(_number(metric.get("stockLakhTonnes")), 2),
+        "stockMillionTonnes": _round(stock_wan / 100, 2) if stock_wan is not None else _round(_number(metric.get("stockMillionTonnes")), 2),
+        "previousForecastWanTonnes": _round(previous_wan, 2),
+        "revisionWanTonnes": _round(revision_wan, 2),
+        "yoyChangeWanTonnes": _round(yoy_wan, 2),
+        "stockUseRatio": _round(_number(metric.get("stockUseRatio")), 2),
+        "consumptionMonths": _round(_number(metric.get("consumptionMonths")), 2),
+        "reason": metric.get("reason"),
+        "sourceName": metric.get("sourceName"),
+        "sourceUrl": metric.get("sourceUrl"),
+        "publishedDate": metric.get("publishedDate"),
+        "fetchedAt": metric.get("fetchedAt") or beijing_now().isoformat(timespec="seconds"),
+        "note": metric.get("note"),
+    }
+
+
+def pending_metric(metric_type: str) -> dict:
+    base = {
+        "metricType": metric_type,
+        "status": "pending",
+        "statusText": "数据待更新",
+        "fetchedAt": beijing_now().isoformat(timespec="seconds"),
+        "note": "未获取到已完成日期、口径和来源核验的可靠数据；不编造价格或库存。",
+    }
+    if metric_type == "carryoverStock":
+        base.update({"dataDate": None, "stockWanTonnes": None})
+    else:
+        base.update({"priceDate": None, "priceInrPerQuintal": None, "priceInrPerKg": None})
+    return base
+
+
+def latest_previous_india_metrics(date_text: str) -> dict | None:
+    reports_root = PUBLIC_DATA_ROOT / "reports"
+    if not reports_root.exists():
+        return None
+    candidates = []
+    for path in reports_root.rglob("*.json"):
+        try:
+            with path.open("r", encoding="utf-8") as f:
+                payload = json.load(f)
+        except Exception:
+            continue
+        if payload.get("newsDate", "") >= date_text:
+            continue
+        metrics = payload.get("indiaMetrics")
+        if metrics:
+            candidates.append((payload.get("newsDate"), metrics))
+    if not candidates:
+        return None
+    return sorted(candidates, key=lambda pair: pair[0], reverse=True)[0][1]
+
+
+def normalize_india_metrics(data: dict, date_text: str) -> dict:
+    raw = data.get("indiaMetrics") or data.get("india_metrics")
+    previous = latest_previous_india_metrics(date_text) or {}
+    source = raw if isinstance(raw, dict) else previous if isinstance(previous, dict) else {}
+    domestic = source.get("domesticSugarPrice") if isinstance(source, dict) else None
+    up_ex_mill = source.get("upExMillPrice") if isinstance(source, dict) else None
+    stock = source.get("carryoverStock") if isinstance(source, dict) else None
+    payload = {
+        "title": "印度糖价与库存",
+        "dataDate": (source.get("dataDate") if isinstance(source, dict) else None) or date_text,
+        "updatedAt": beijing_now().isoformat(timespec="seconds"),
+        "sourceStatus": "verified" if raw else "carried_forward" if previous else "pending",
+        "domesticSugarPrice": normalize_price_metric(domestic, "domesticSugarPrice") if domestic else pending_metric("domesticSugarPrice"),
+        "upExMillPrice": normalize_price_metric(up_ex_mill, "upExMillPrice") if up_ex_mill else pending_metric("upExMillPrice"),
+        "carryoverStock": normalize_stock_metric(stock) if stock else pending_metric("carryoverStock"),
+    }
+    if not raw and previous:
+        payload["note"] = "本期未发现新的已核验印度糖价或结转库存数据，沿用最近一期有效数据并保留原始数据日期。"
+    elif not raw:
+        payload["note"] = "本期未获取到已完成日期、口径和来源核验的印度糖价与结转库存数据。"
+    else:
+        payload["note"] = source.get("note")
+    return payload
+
+
+def build_dashboard_payload(date_text: str, items: list[dict], excel_file: Path, verified_data: dict | None = None) -> dict:
     grouped: dict[str, list[dict]] = defaultdict(list)
     country_order: list[tuple[int, int, str]] = []
     for item in items:
@@ -826,6 +1046,7 @@ def build_dashboard_payload(date_text: str, items: list[dict], excel_file: Path)
         "updatedAt": beijing_now().isoformat(timespec="seconds"),
         "timezone": "Asia/Shanghai",
         "excelFile": str(excel_file.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
+        "indiaMetrics": normalize_india_metrics(verified_data or {}, date_text),
         "countries": countries,
     }
 
@@ -893,6 +1114,20 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
         raise ValueError("Dashboard must not collapse other countries into a single 其他 section")
     if actual_china != expected_china:
         raise ValueError(f"China dashboard count mismatch: {actual_china} != {expected_china}")
+    india_metrics = report.get("indiaMetrics")
+    if not isinstance(india_metrics, dict):
+        raise ValueError("Dashboard missing indiaMetrics")
+    for field in ("domesticSugarPrice", "upExMillPrice", "carryoverStock"):
+        metric = india_metrics.get(field)
+        if not isinstance(metric, dict):
+            raise ValueError(f"indiaMetrics missing {field}")
+        if metric.get("status") not in {"ok", "pending", "stale"}:
+            raise ValueError(f"indiaMetrics {field} has invalid status")
+        if metric.get("status") == "ok":
+            if field == "carryoverStock" and metric.get("stockWanTonnes") is None:
+                raise ValueError("carryoverStock ok status requires stockWanTonnes")
+            if field != "carryoverStock" and metric.get("priceInrPerQuintal") is None and not metric.get("rangeInrPerQuintal"):
+                raise ValueError(f"{field} ok status requires price or range")
 
     group_positions = []
     for row in excel_rows:
@@ -962,7 +1197,7 @@ def main() -> int:
         data = load_verified_or_fail(task_root, date_text, offline_only=args.offline_only, allow_rss_autogen=args.allow_rss_autogen)
         items = normalize_items(data)
         excel_file = write_excel(task_root, date_text, items)
-        payload = build_dashboard_payload(date_text, items, excel_file)
+        payload = build_dashboard_payload(date_text, items, excel_file, data)
         report_path, index_path = write_dashboard_data(date_text, payload)
         checks = validate_all(date_text, items, excel_file, report_path, index_path)
         log_payload = {

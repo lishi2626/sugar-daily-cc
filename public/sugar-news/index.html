@@ -123,6 +123,71 @@
       display: grid;
       gap: 10px;
     }
+    .metric-card {
+      margin: 0 0 12px;
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .metric-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .metric-head h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .metric-note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .metric-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-width: 0;
+    }
+    .metric-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .metric-value {
+      font-size: 17px;
+      font-weight: 700;
+      word-break: break-word;
+    }
+    .metric-sub {
+      margin-top: 6px;
+      color: #364152;
+      font-size: 13px;
+    }
+    .metric-change.up { color: var(--bull); }
+    .metric-change.down { color: var(--bear); }
+    .metric-change.flat, .metric-change.unknown { color: var(--neutral); }
+    .metric-source {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .metric-source a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .metric-source a:hover { text-decoration: underline; }
     article {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(220px, 0.36fr);
@@ -204,6 +269,8 @@
       .actions label { flex: 1 1 100%; }
       .download-btn { width: 100%; justify-content: center; }
       article { grid-template-columns: 1fr; }
+      .metric-head { display: grid; }
+      .metric-grid { grid-template-columns: 1fr; }
       h1 { font-size: 24px; }
       select { width: 100%; }
     }
@@ -282,6 +349,129 @@
       return "limited";
     }
 
+    function valueText(value, suffix = "") {
+      if (value === null || value === undefined || value === "") return "数据待更新";
+      return `${value}${suffix}`;
+    }
+
+    function signedText(value, suffix = "") {
+      if (value === null || value === undefined || value === "") return "数据待更新";
+      const number = Number(value);
+      if (Number.isNaN(number)) return `${value}${suffix}`;
+      return `${number > 0 ? "+" : ""}${value}${suffix}`;
+    }
+
+    function directionClass(metric) {
+      return metric && metric.direction ? metric.direction : "unknown";
+    }
+
+    function priceDisplay(metric) {
+      if (!metric || metric.status !== "ok") return "数据待更新";
+      if (metric.rangeInrPerQuintal) {
+        const low = metric.rangeInrPerQuintal.low;
+        const high = metric.rangeInrPerQuintal.high;
+        return `${valueText(low)}-${valueText(high)} ₹/公担`;
+      }
+      return `${valueText(metric.priceInrPerQuintal)} ₹/公担`;
+    }
+
+    function priceSub(metric) {
+      if (!metric || metric.status !== "ok") return metric && metric.note ? metric.note : "等待完成日期、口径和来源核验。";
+      const kgText = metric.rangeInrPerKg
+        ? `${valueText(metric.rangeInrPerKg.low)}-${valueText(metric.rangeInrPerKg.high)} ₹/kg`
+        : `${valueText(metric.priceInrPerKg)} ₹/kg`;
+      const change = metric.changeInrPerQuintal === null || metric.changeInrPerQuintal === undefined
+        ? "涨跌待更新"
+        : `${signedText(metric.changeInrPerQuintal, " ₹/公担")}（${signedText(metric.changePct, "%")}）`;
+      return `${kgText}；${change}`;
+    }
+
+    function stockDisplay(metric) {
+      if (!metric || metric.status !== "ok") return "数据待更新";
+      return `${valueText(metric.stockWanTonnes, "万吨")}`;
+    }
+
+    function stockSub(metric) {
+      if (!metric || metric.status !== "ok") return metric && metric.note ? metric.note : "等待新的官方、协会或可信机构库存数据。";
+      const revision = metric.revisionWanTonnes === null || metric.revisionWanTonnes === undefined
+        ? "环比修正待更新"
+        : `环比修正${signedText(metric.revisionWanTonnes, "万吨")}`;
+      const yoy = metric.yoyChangeWanTonnes === null || metric.yoyChangeWanTonnes === undefined
+        ? "同比变化待更新"
+        : `同比${signedText(metric.yoyChangeWanTonnes, "万吨")}`;
+      const months = metric.consumptionMonths ? `；约${metric.consumptionMonths}个月消费量` : "";
+      return `${revision}；${yoy}${months}`;
+    }
+
+    function appendMetricSource(container, label, metric) {
+      const item = document.createElement("span");
+      const date = metric && (metric.priceDate || metric.dataDate || metric.publishedDate);
+      if (metric && metric.sourceUrl && metric.sourceName) {
+        const link = document.createElement("a");
+        link.href = metric.sourceUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = `${label}：${metric.sourceName}`;
+        item.appendChild(link);
+      } else {
+        item.textContent = `${label}：数据待更新`;
+      }
+      if (date) item.append(`（${date}）`);
+      container.appendChild(item);
+    }
+
+    function buildIndiaMetricsCard(metrics) {
+      if (!metrics) return null;
+      const card = document.createElement("div");
+      card.className = "metric-card";
+      const head = document.createElement("div");
+      head.className = "metric-head";
+      const title = document.createElement("h3");
+      title.textContent = "印度糖价与库存";
+      const note = document.createElement("div");
+      note.className = "metric-note";
+      note.textContent = `数据日期：${metrics.dataDate || "数据待更新"}`;
+      head.append(title, note);
+
+      const grid = document.createElement("div");
+      grid.className = "metric-grid";
+      const entries = [
+        ["印度国内代表糖价", metrics.domesticSugarPrice, priceDisplay, priceSub],
+        ["北方邦糖厂出厂价", metrics.upExMillPrice, priceDisplay, priceSub],
+        ["印度食糖结转库存", metrics.carryoverStock, stockDisplay, stockSub],
+      ];
+      entries.forEach(([label, metric, display, sub]) => {
+        const box = document.createElement("div");
+        box.className = "metric-item";
+        const labelEl = document.createElement("div");
+        labelEl.className = "metric-label";
+        labelEl.textContent = label;
+        const value = document.createElement("div");
+        value.className = "metric-value";
+        value.textContent = display(metric);
+        const detail = document.createElement("div");
+        detail.className = `metric-sub metric-change ${directionClass(metric)}`;
+        detail.textContent = sub(metric);
+        box.append(labelEl, value, detail);
+        grid.appendChild(box);
+      });
+
+      const source = document.createElement("div");
+      source.className = "metric-source";
+      appendMetricSource(source, "国内糖价", metrics.domesticSugarPrice);
+      appendMetricSource(source, "北方邦出厂价", metrics.upExMillPrice);
+      appendMetricSource(source, "结转库存", metrics.carryoverStock);
+      card.append(head, grid, source);
+      if (metrics.note) {
+        const memo = document.createElement("div");
+        memo.className = "metric-note";
+        memo.style.marginTop = "8px";
+        memo.textContent = metrics.note;
+        card.appendChild(memo);
+      }
+      return card;
+    }
+
     function showError(message) {
       errorEl.textContent = message;
       errorEl.style.display = "block";
@@ -305,15 +495,26 @@
       dateEl.textContent = `新闻日期：${cnDate(payload.newsDate)}`;
       updatedEl.textContent = `最后更新时间：${cnTime(payload.updatedAt)}（北京时间）`;
       contentEl.innerHTML = "";
-      payload.countries
-        .filter(country => country.items && country.items.length)
-        .forEach(country => {
+      const displayCountries = (payload.countries || [])
+        .filter(country => country.items && country.items.length);
+      if (payload.indiaMetrics && !displayCountries.some(country => country.country === "印度")) {
+        const insertAt = displayCountries.findIndex(country => country.country === "泰国" || country.country === "中国");
+        const indiaSection = { country: "印度", items: [], metricsOnly: true };
+        if (insertAt === -1) displayCountries.push(indiaSection);
+        else displayCountries.splice(insertAt, 0, indiaSection);
+      }
+      displayCountries.forEach(country => {
           const section = document.createElement("section");
           section.className = "country";
           const heading = document.createElement("h2");
           heading.textContent = country.country;
           const items = document.createElement("div");
           items.className = "items";
+          section.appendChild(heading);
+          if (country.country === "印度") {
+            const metricsCard = buildIndiaMetricsCard(payload.indiaMetrics);
+            if (metricsCard) section.appendChild(metricsCard);
+          }
           country.items.forEach(item => {
             const article = document.createElement("article");
             const newsBox = document.createElement("div");
@@ -337,7 +538,7 @@
             article.append(newsBox, impact);
             items.appendChild(article);
           });
-          section.append(heading, items);
+          section.appendChild(items);
           contentEl.appendChild(section);
         });
     }

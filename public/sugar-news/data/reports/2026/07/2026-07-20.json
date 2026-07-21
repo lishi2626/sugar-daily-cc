@@ -1,8 +1,44 @@
 {
   "newsDate": "2026-07-20",
-  "updatedAt": "2026-07-21T11:03:53+08:00",
+  "updatedAt": "2026-07-21T12:32:41+08:00",
   "timezone": "Asia/Shanghai",
   "excelFile": "Sugar News/reports/2026/07/Sugar News 2026-07-20.xlsx",
+  "indiaMetrics": {
+    "title": "印度糖价与库存",
+    "dataDate": "2026-07-20",
+    "updatedAt": "2026-07-21T12:32:41+08:00",
+    "sourceStatus": "pending",
+    "domesticSugarPrice": {
+      "metricType": "domesticSugarPrice",
+      "status": "pending",
+      "statusText": "数据待更新",
+      "fetchedAt": "2026-07-21T12:32:41+08:00",
+      "note": "未获取到已完成日期、口径和来源核验的可靠数据；不编造价格或库存。",
+      "priceDate": null,
+      "priceInrPerQuintal": null,
+      "priceInrPerKg": null
+    },
+    "upExMillPrice": {
+      "metricType": "upExMillPrice",
+      "status": "pending",
+      "statusText": "数据待更新",
+      "fetchedAt": "2026-07-21T12:32:41+08:00",
+      "note": "未获取到已完成日期、口径和来源核验的可靠数据；不编造价格或库存。",
+      "priceDate": null,
+      "priceInrPerQuintal": null,
+      "priceInrPerKg": null
+    },
+    "carryoverStock": {
+      "metricType": "carryoverStock",
+      "status": "pending",
+      "statusText": "数据待更新",
+      "fetchedAt": "2026-07-21T12:32:41+08:00",
+      "note": "未获取到已完成日期、口径和来源核验的可靠数据；不编造价格或库存。",
+      "dataDate": null,
+      "stockWanTonnes": null
+    },
+    "note": "本期未获取到已完成日期、口径和来源核验的印度糖价与结转库存数据。"
+  },
   "countries": [
     {
       "country": "巴西",
