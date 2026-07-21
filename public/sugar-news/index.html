@@ -456,15 +456,28 @@
         return `${label} ${absValue} ${metric.unit || "美分/磅"}`;
       }
       if (metric.metricType === "sugarStock") {
-        return `${valueText(metric.stockValue)}${metric.stockUnit ? " " + metric.stockUnit : ""}`;
+        return `${valueText(formatNumber(metric.stockValue, 4))}${metric.stockUnit ? " " + metric.stockUnit : ""}`;
       }
       const total = metric.totalEthanolStock;
       if (total !== null && total !== undefined) return `${valueText(total)}${metric.stockUnit ? " " + metric.stockUnit : ""}`;
       return metric.statusText || "数据待更新";
     }
 
+    function formatNumber(value, digits = 2) {
+      if (value === null || value === undefined || value === "") return "数据待更新";
+      const number = Number(value);
+      if (!Number.isFinite(number)) return String(value);
+      return number.toFixed(digits);
+    }
+
     function brazilYoyText(metric) {
       if (!metric || metric.status !== "ok") return metric && metric.statusText ? metric.statusText : "等待完成来源、口径和字段核验。";
+      if (metric.metricType === "sugarStock") {
+        const change = metric.halfMonthChange;
+        const pct = metric.halfMonthChangePercent;
+        if (change === null || change === undefined || pct === null || pct === undefined) return "半月变化：数据待更新";
+        return `半月变化：${signedText(formatNumber(change, 4), "万吨")}（${signedText(formatNumber(pct, 2), "%")}）`;
+      }
       const change = metric.yearOnYearChange;
       const pct = metric.yearOnYearChangePercent;
       if (metric.yoyStatus !== "ok" || pct === null || pct === undefined) {
@@ -473,8 +486,32 @@
       return `同比 ${signedText(pct, "%")}；变化 ${signedText(change)}`;
     }
 
+    function brazilExtraText(metric) {
+      if (!metric || metric.status !== "ok") return "";
+      if (metric.metricType === "sugarStock") {
+        const yoyChange = metric.yearOnYearChange;
+        const yoyPct = metric.yearOnYearChangePercent;
+        const yoy = yoyChange === null || yoyChange === undefined || yoyPct === null || yoyPct === undefined
+          ? "同比变化：同比数据不足"
+          : `同比变化：${signedText(formatNumber(yoyChange, 4), "万吨")}（${signedText(formatNumber(yoyPct, 2), "%")}）`;
+        const previous = metric.previousPeriodDate && metric.previousPeriodStock !== null && metric.previousPeriodStock !== undefined
+          ? `上一期：${metric.previousPeriodDate} ${formatNumber(metric.previousPeriodStock, 4)}万吨`
+          : "上一期：数据待更新";
+        const prevYear = metric.previousYearDate && metric.previousYearStock !== null && metric.previousYearStock !== undefined
+          ? `上年同期：${metric.previousYearDate} ${formatNumber(metric.previousYearStock, 4)}万吨`
+          : "上年同期：缺少上年同期可比数据";
+        return `统计日期：${metric.referenceDate || metric.dataDate || "数据待更新"}；榨季：${metric.season || "数据待更新"}；${previous}；${prevYear}；${yoy}`;
+      }
+      return metric.dataDate ? `数据日期：${metric.dataDate}` : "";
+    }
+
     function brazilDirectionClass(metric) {
       if (!metric || metric.status !== "ok") return "unknown";
+      if (metric.metricType === "sugarStock") {
+        const change = Number(metric.halfMonthChange);
+        if (!Number.isFinite(change) || change === 0) return "flat";
+        return change > 0 ? "up" : "down";
+      }
       const pct = Number(metric.yearOnYearChangePercent);
       if (!Number.isFinite(pct) || pct === 0) return "flat";
       if (metric.metricType === "sugarPremium") return pct > 0 ? "up" : "down";
@@ -513,10 +550,15 @@
         const detail = document.createElement("div");
         detail.className = `metric-sub metric-change ${brazilDirectionClass(metric)}`;
         detail.textContent = brazilYoyText(metric);
+        const extra = document.createElement("div");
+        extra.className = "metric-sub";
+        extra.textContent = brazilExtraText(metric);
         const meta = document.createElement("div");
         meta.className = "metric-sub";
         meta.textContent = `抓取时间：${cnTime(metric && metric.fetchedAt ? metric.fetchedAt : metrics.updatedAt)}`;
-        box.append(labelEl, value, detail, meta);
+        box.append(labelEl, value, detail);
+        if (extra.textContent) box.appendChild(extra);
+        box.appendChild(meta);
         grid.appendChild(box);
       });
 

@@ -1,5 +1,50 @@
 {
   "version": 1,
-  "records": [],
-  "lastUpdatedAt": null
+  "records": [
+    {
+      "season": "2026/2027",
+      "reference_period": "2026-06-30",
+      "reference_date": "2026-06-30",
+      "stock_total_tonnes": 3450164,
+      "stock_total_ten_thousand_tonnes": 345.0164,
+      "sugar_stock_value": 345.0164,
+      "stock_unit": "万吨",
+      "stock_by_type_tonnes": {
+        "raw_numeric_columns": [
+          10320,
+          1251200,
+          129240,
+          15968,
+          13118,
+          73943,
+          1956374,
+          3450164
+        ],
+        "note": "MAPA PDF text extraction preserves numeric columns; the final BRASIL numeric value is used as TOTAL stock."
+      },
+      "product": "食糖",
+      "document_number": "009",
+      "document_title": "ESTOQUES DE AÇÚCAR POR TIPO - SAFRA 2026-27",
+      "source_url": "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/agroenergia/arquivos-producao/009ESTOQUESDEACARPORTIPOSAFRA20262027_20072026.pdf",
+      "published_at": "2026-07-20",
+      "file_hash": "e8b9ae2de1c6c7c9184ca5af968eceb331ce0104e9f14758d315a09a87e1379f",
+      "indicator": "brazil_sugar_stock",
+      "status": "ok",
+      "source_name": "巴西农业和畜牧业部（MAPA）",
+      "dataset_name": "MAPA Agroenergia - Estoques de Açúcar por Tipo",
+      "fetched_at": "2026-07-21T14:18:50+08:00",
+      "original_unit": "tonnes",
+      "previous_period_date": "2026-06-15",
+      "previous_period_stock": 364.5203,
+      "half_month_change": -19.503900000000044,
+      "half_month_change_percent": -5.3505662098928495,
+      "previous_year_date": "2025-06-30",
+      "previous_year_stock": 401.6657,
+      "previous_year_value": 401.6657,
+      "year_on_year_change": -56.64930000000004,
+      "year_on_year_change_percent": -14.103594108234793,
+      "yoy_status": "ok"
+    }
+  ],
+  "lastUpdatedAt": "2026-07-21T14:19:26+08:00"
 }

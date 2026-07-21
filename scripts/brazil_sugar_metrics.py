@@ -1,15 +1,20 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import html
+import io
 import json
 import os
 import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, urljoin
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
+
+from PyPDF2 import PdfReader
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -21,7 +26,8 @@ try:
 except Exception:
     SHANGHAI = timezone(timedelta(hours=8), name="Asia/Shanghai")
 
-ANP_OPEN_DATA_URL = "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos"
+MAPA_PRODUCTION_URL = "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/agroenergia/producao"
+MAPA_PREVIOUS_SEASONS_URL = "https://www.gov.br/agricultura/pt-br/assuntos/sustentabilidade/agroenergia/producao-e-estoques-de-acucar-por-tipo-safras-anteriores"
 ANP_DYNAMIC_PANELS_URL = "https://www.gov.br/anp/pt-br/centrais-de-conteudo/paineis-dinamicos-da-anp/paineis-dinamicos-sobre-combustiveis"
 ANP_ETHANOL_PRODUCTION_CSV_VIEW = "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/arquivos-painel-de-produtores-de-derivados-producao-de-biocombustiveis/f-etanol-producao.csv/view"
 
@@ -36,11 +42,6 @@ PREMIUM_QUERIES = (
     "premio acucar VHP Brasil",
     "premio acucar Santos",
     "acucar VHP FOB Santos premio",
-)
-ANP_SUGAR_STOCK_QUERIES = (
-    "site:gov.br/anp estoque acucar",
-    "site:gov.br/anp acucar estoque dados abertos ANP",
-    "site:gov.br/anp estoque de acucar Brasil ANP",
 )
 ANP_ETHANOL_STOCK_QUERIES = (
     "estoque de etanol ANP",
@@ -64,6 +65,12 @@ def fetch_url(url: str, timeout: int = 8) -> tuple[str, int]:
     req = Request(url, headers={"User-Agent": "Mozilla/5.0 SugarNewsBot/1.0"})
     with urlopen(req, timeout=timeout) as resp:
         return resp.read().decode("utf-8", "ignore"), resp.status
+
+
+def fetch_bytes(url: str, timeout: int = 20) -> tuple[bytes, int]:
+    req = Request(url, headers={"User-Agent": "Mozilla/5.0 SugarNewsBot/1.0"})
+    with urlopen(req, timeout=timeout) as resp:
+        return resp.read(), resp.status
 
 
 def google_news_rss(query: str) -> str:
@@ -143,6 +150,15 @@ def record_key(record: dict) -> tuple:
 def upsert_records(history: dict, records: list[dict]) -> dict:
     existing = {record_key(r): r for r in history.get("records", [])}
     for record in records:
+        old = existing.get(record_key(record))
+        if old and old.get("file_hash") and old.get("file_hash") != record.get("file_hash"):
+            revisions = old.get("revisions") or []
+            archived = {k: old.get(k) for k in (
+                "stock_total_tonnes", "stock_total_ten_thousand_tonnes", "file_hash",
+                "published_at", "fetched_at", "source_url"
+            )}
+            revisions.append(archived)
+            record["revisions"] = revisions
         existing[record_key(record)] = record
     history["records"] = sorted(
         existing.values(),
@@ -177,46 +193,228 @@ def discover_premium(target_date: str) -> tuple[dict | None, list[dict]]:
     return None, logs
 
 
-def inspect_anp_sugar_stock() -> tuple[dict | None, list[dict]]:
+def parse_page_links(body: str, base_url: str) -> list[dict]:
+    links = []
+    for href, text in re.findall(r'<a[^>]+href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', body, re.I | re.S):
+        label = html.unescape(re.sub(r"\s+", " ", re.sub("<.*?>", " ", text))).strip()
+        links.append({"title": label, "url": urljoin(base_url, html.unescape(href))})
+    return links
+
+
+def parse_season(text: str) -> str | None:
+    match = re.search(r"SAFRA\s*(\d{4})\s*[-/]\s*(\d{2,4})", text, re.I)
+    if not match:
+        match = re.search(r"SAFRA(\d{4})(\d{4})", text, re.I)
+    if not match:
+        return None
+    first = int(match.group(1))
+    second_raw = match.group(2)
+    second = int(second_raw) if len(second_raw) == 4 else int(str(first)[:2] + second_raw)
+    return f"{first}/{second}"
+
+
+def previous_season(season: str) -> str:
+    start, end = [int(part) for part in season.split("/")]
+    return f"{start - 1}/{end - 1}"
+
+
+def parse_pt_date(value: str) -> str:
+    day, month, year = [int(part) for part in value.split("/")]
+    return f"{year:04d}-{month:02d}-{day:02d}"
+
+
+def date_to_pt(value: str) -> str:
+    year, month, day = value.split("-")
+    return f"{day}/{month}/{year}"
+
+
+def published_from_url(url: str) -> str | None:
+    match = re.search(r"_(\d{2})(\d{2})(\d{4})\.(?:pdf|xlsx|csv|ods)$", url, re.I)
+    if not match:
+        return None
+    day, month, year = match.groups()
+    return f"{year}-{month}-{day}"
+
+
+def pdf_text(pdf_bytes: bytes) -> str:
+    reader = PdfReader(io.BytesIO(pdf_bytes))
+    return "\n".join((page.extract_text() or "") for page in reader.pages)
+
+
+def parse_brazil_number(value: str) -> int:
+    return int(value.replace(".", ""))
+
+
+def stock_rows_from_pdf(text: str, season: str, doc: dict, file_hash: str) -> list[dict]:
+    rows = []
+    pattern = re.compile(r"BRASIL\s+(.{0,420}?)(?:Resumo|Acumulado)", re.I | re.S)
+    for match in pattern.finditer(text):
+        chunk = re.sub(r"\s+", " ", match.group(0))
+        tail = text[match.end():match.end() + 180]
+        date_match = re.search(r"Acumulado até:\s*(\d{2}/\d{2}/\d{4})", chunk + tail, re.I)
+        if not date_match:
+            continue
+        numbers = re.findall(r"\d{1,3}(?:\.\d{3})+", chunk)
+        if not numbers:
+            continue
+        total_tonnes = parse_brazil_number(numbers[-1])
+        reference_date = parse_pt_date(date_match.group(1))
+        type_values = {
+            "raw_numeric_columns": [parse_brazil_number(item) for item in numbers],
+            "note": "MAPA PDF text extraction preserves numeric columns; the final BRASIL numeric value is used as TOTAL stock.",
+        }
+        rows.append({
+            "season": season,
+            "reference_period": reference_date,
+            "reference_date": reference_date,
+            "stock_total_tonnes": total_tonnes,
+            "stock_total_ten_thousand_tonnes": total_tonnes / 10000,
+            "sugar_stock_value": total_tonnes / 10000,
+            "stock_unit": "万吨",
+            "stock_by_type_tonnes": type_values,
+            "product": "食糖",
+            "document_number": doc.get("document_number"),
+            "document_title": doc.get("title"),
+            "source_url": doc.get("url"),
+            "published_at": doc.get("published_at"),
+            "file_hash": file_hash,
+        })
+    return rows
+
+
+def stock_docs_from_page(url: str, source: str) -> tuple[list[dict], list[dict]]:
     logs = []
-    for url in (ANP_OPEN_DATA_URL, ANP_DYNAMIC_PANELS_URL):
-        log = {
-            "source": "ANP official site sugar-stock inspection",
-            "url": url,
-            "requestedAt": beijing_now().isoformat(timespec="seconds"),
-        }
-        try:
-            body, status = fetch_url(url)
-            log["httpStatus"] = status
-            lower = body.lower()
-            log["containsSugarTerms"] = len(re.findall(r"acucar|açúcar|sugar", lower))
-            log["containsStockTerms"] = len(re.findall(r"estoque|stock", lower))
-            log["parsed"] = False
-            log["reason"] = (
-                "ANP page did not expose a verifiable food-sugar stock dataset; "
-                "ethanol, syrup, cane, production and sales data must not be relabeled as sugar stock."
-            )
-        except Exception as exc:
-            log["error"] = str(exc)
-        logs.append(log)
-    for query in ANP_SUGAR_STOCK_QUERIES:
-        url = google_news_rss(query)
-        log = {
-            "source": "ANP sugar-stock search",
-            "query": query,
-            "url": url,
-            "requestedAt": beijing_now().isoformat(timespec="seconds"),
-        }
-        try:
-            body, status = fetch_url(url)
-            log["httpStatus"] = status
-            log["candidateCount"] = len(re.findall(r"<item>", body))
-            log["parsed"] = False
-            log["reason"] = "No candidate is published as sugar stock without ANP field and dataset confirmation."
-        except Exception as exc:
-            log["error"] = str(exc)
-        logs.append(log)
-    return None, logs
+    docs = []
+    log = {"source": source, "url": url, "requestedAt": beijing_now().isoformat(timespec="seconds")}
+    try:
+        body, status = fetch_url(url, timeout=15)
+        log["httpStatus"] = status
+        for link in parse_page_links(body, url):
+            title_norm = re.sub(r"\s+", " ", link["title"]).strip()
+            haystack = f"{title_norm} {link['url']}"
+            if "ESTOQUES" not in title_norm.upper() and "ESTOQUES" not in link["url"].upper():
+                continue
+            if "ACAR" not in link["url"].upper() and "AÇÚCAR" not in title_norm.upper() and "ACUCAR" not in title_norm.upper():
+                continue
+            season = parse_season(haystack)
+            if not season:
+                continue
+            number = None
+            number_match = re.search(r"/(\d{3}(?:\.\d+)?)", link["url"])
+            if number_match:
+                number = number_match.group(1)
+            docs.append({
+                "title": title_norm,
+                "url": link["url"],
+                "season": season,
+                "document_number": number,
+                "published_at": published_from_url(link["url"]),
+            })
+        log["candidateCount"] = len(docs)
+        log["parsed"] = True
+    except Exception as exc:
+        log["error"] = str(exc)
+    logs.append(log)
+    return docs, logs
+
+
+def fetch_stock_doc_rows(doc: dict) -> tuple[list[dict], list[dict]]:
+    logs = []
+    log = {
+        "source": "MAPA sugar-stock PDF",
+        "url": doc.get("url"),
+        "season": doc.get("season"),
+        "requestedAt": beijing_now().isoformat(timespec="seconds"),
+    }
+    try:
+        pdf, status = fetch_bytes(doc["url"], timeout=25)
+        file_hash = hashlib.sha256(pdf).hexdigest()
+        text = pdf_text(pdf)
+        rows = stock_rows_from_pdf(text, doc["season"], doc, file_hash)
+        log["httpStatus"] = status
+        log["fileHash"] = file_hash
+        log["rowsParsed"] = len(rows)
+        log["parsedDates"] = [row["reference_date"] for row in rows]
+        log["parsed"] = bool(rows)
+    except Exception as exc:
+        log["error"] = str(exc)
+        rows = []
+    logs.append(log)
+    return rows, logs
+
+
+def find_mapa_sugar_stock() -> tuple[dict | None, list[dict]]:
+    logs: list[dict] = []
+    current_docs, doc_logs = stock_docs_from_page(MAPA_PRODUCTION_URL, "MAPA Agroenergia production page")
+    logs.extend(doc_logs)
+    all_current_rows = []
+    for doc in current_docs:
+        rows, row_logs = fetch_stock_doc_rows(doc)
+        logs.extend(row_logs)
+        all_current_rows.extend(rows)
+    if not all_current_rows:
+        return None, logs
+
+    latest = sorted(all_current_rows, key=lambda row: row["reference_date"], reverse=True)[0]
+    same_season = sorted(
+        [row for row in all_current_rows if row["season"] == latest["season"] and row["reference_date"] < latest["reference_date"]],
+        key=lambda row: row["reference_date"],
+        reverse=True,
+    )
+    previous_period = same_season[0] if same_season else None
+
+    hist_docs, hist_doc_logs = stock_docs_from_page(MAPA_PREVIOUS_SEASONS_URL, "MAPA previous sugar-stock seasons page")
+    logs.extend(hist_doc_logs)
+    prior_season = previous_season(latest["season"])
+    prior_docs = [doc for doc in hist_docs if doc.get("season") == prior_season]
+    prior_rows = []
+    for doc in prior_docs:
+        rows, row_logs = fetch_stock_doc_rows(doc)
+        logs.extend(row_logs)
+        prior_rows.extend(rows)
+    target_yoy = f"{int(latest['reference_date'][:4]) - 1}{latest['reference_date'][4:]}"
+    previous_year = next((row for row in prior_rows if row["reference_date"] == target_yoy), None)
+    if not previous_year:
+        logs.append({
+            "source": "MAPA previous-year stock matcher",
+            "targetDate": target_yoy,
+            "season": prior_season,
+            "parsedDates": [row["reference_date"] for row in prior_rows],
+            "parsed": False,
+            "reason": "Missing exact same month-day comparable stock date.",
+        })
+
+    current = latest["stock_total_ten_thousand_tonnes"]
+    record = dict(latest)
+    record.update({
+        "indicator": "brazil_sugar_stock",
+        "status": "ok",
+        "source_name": "巴西农业和畜牧业部（MAPA）",
+        "dataset_name": "MAPA Agroenergia - Estoques de Açúcar por Tipo",
+        "fetched_at": beijing_now().isoformat(timespec="seconds"),
+        "original_unit": "tonnes",
+    })
+    if previous_period:
+        previous_value = previous_period["stock_total_ten_thousand_tonnes"]
+        record.update({
+            "previous_period_date": previous_period["reference_date"],
+            "previous_period_stock": previous_value,
+            "half_month_change": current - previous_value,
+            "half_month_change_percent": None if previous_value == 0 else (current - previous_value) / previous_value * 100,
+        })
+    if previous_year:
+        previous_yoy = previous_year["stock_total_ten_thousand_tonnes"]
+        record.update({
+            "previous_year_date": previous_year["reference_date"],
+            "previous_year_stock": previous_yoy,
+            "previous_year_value": previous_yoy,
+            "year_on_year_change": current - previous_yoy,
+            "year_on_year_change_percent": None if previous_yoy == 0 else (current - previous_yoy) / previous_yoy * 100,
+            "yoy_status": "ok" if previous_yoy != 0 else "no_percent_zero_base",
+        })
+    else:
+        record.update(yoy_fields(current, None))
+    return record, logs
 
 
 def inspect_anp_ethanol_stock() -> tuple[dict | None, list[dict]]:
@@ -289,8 +487,8 @@ def build_snapshot(history: dict, target_date: str, logs: list[dict]) -> dict:
         "sugarStock": sugar_stock
         or pending(
             "brazil_sugar_stock",
-            "ANP暂未检索到可核实的食糖库存数据。",
-            [l for l in logs if "sugar-stock" in l.get("source", "")],
+            "MAPA暂未解析到可核实的巴西食糖库存数据。",
+            [l for l in logs if "MAPA" in l.get("source", "")],
         ),
         "ethanolStock": ethanol_stock
         or pending(
@@ -312,7 +510,7 @@ def collect(target_date: str) -> dict:
     if premium:
         records.append(premium)
 
-    sugar_stock, sugar_logs = inspect_anp_sugar_stock()
+    sugar_stock, sugar_logs = find_mapa_sugar_stock()
     logs.extend(sugar_logs)
     if sugar_stock:
         records.append(sugar_stock)

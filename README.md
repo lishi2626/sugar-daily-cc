@@ -20,11 +20,11 @@ It is populated by the daily Sugar News workflow and contains three dynamic card
 Brazil VHP raw sugar FOB premium/discount, Brazil sugar stock, and Brazil ethanol stock.
 
 These values, data dates and YoY calculations must come from fetched sources and
-historical records. They must not be hardcoded in production code. ANP is the
-priority source for Brazil sugar and ethanol stock. If ANP does not expose a
-verifiable standalone food-sugar stock field, the dashboard must show
-`ANP暂未检索到可核实的食糖库存数据` and must not relabel ethanol, syrup, cane,
-production, sales or derived balance data as sugar stock.
+historical records. They must not be hardcoded in production code. Brazil sugar
+stock is sourced from MAPA Agroenergia official sugar-stock files; ANP is used
+only for Brazil ethanol stock. The sugar-stock parser must identify the newest
+`Acumulado até` date, compare it with the previous period in the same season,
+and match the previous season's same month-day for YoY comparison.
 
 ### 2. 配置 DeepSeek
 

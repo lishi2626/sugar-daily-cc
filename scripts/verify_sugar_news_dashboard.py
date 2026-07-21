@@ -77,6 +77,8 @@ def verify_payload(payload: dict, expected_date: str) -> dict:
                 raise AssertionError("sugarPremium requires premiumDiscountCentsPerLb")
             if field == "sugarStock" and metric.get("stockValue") is None:
                 raise AssertionError("sugarStock requires stockValue")
+            if field == "sugarStock" and "MAPA" not in str(metric.get("sourceName")):
+                raise AssertionError("sugarStock must use MAPA, not ANP")
             if field == "ethanolStock" and metric.get("totalEthanolStock") is None:
                 raise AssertionError("ethanolStock requires totalEthanolStock")
     india_metrics = payload.get("indiaMetrics")

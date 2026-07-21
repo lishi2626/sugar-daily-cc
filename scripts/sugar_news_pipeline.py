@@ -1162,6 +1162,19 @@ def normalize_brazil_metric(metric: dict | None, metric_type: str) -> dict:
             "stockValue": metric.get("sugar_stock_value"),
             "stockUnit": metric.get("stock_unit"),
             "datasetName": metric.get("dataset_name"),
+            "season": metric.get("season"),
+            "referenceDate": metric.get("reference_date") or metric.get("reference_period"),
+            "stockTotalTonnes": metric.get("stock_total_tonnes"),
+            "stockTotalTenThousandTonnes": metric.get("stock_total_ten_thousand_tonnes"),
+            "previousPeriodDate": metric.get("previous_period_date"),
+            "previousPeriodStock": metric.get("previous_period_stock"),
+            "halfMonthChange": metric.get("half_month_change"),
+            "halfMonthChangePercent": metric.get("half_month_change_percent"),
+            "previousYearDate": metric.get("previous_year_date"),
+            "previousYearStock": metric.get("previous_year_stock"),
+            "documentNumber": metric.get("document_number"),
+            "documentTitle": metric.get("document_title"),
+            "fileHash": metric.get("file_hash"),
         })
     else:
         base.update({
@@ -1303,6 +1316,8 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
                 raise ValueError("sugarPremium ok status requires premiumDiscountCentsPerLb")
             if field == "sugarStock" and metric.get("stockValue") is None:
                 raise ValueError("sugarStock ok status requires stockValue")
+            if field == "sugarStock" and "MAPA" not in str(metric.get("sourceName")):
+                raise ValueError("sugarStock must use MAPA, not ANP")
             if field == "ethanolStock" and metric.get("totalEthanolStock") is None:
                 raise ValueError("ethanolStock ok status requires totalEthanolStock")
     india_metrics = report.get("indiaMetrics")
