@@ -151,6 +151,9 @@
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
     }
+    .metric-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
     .metric-item {
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -437,6 +440,102 @@
       container.appendChild(item);
     }
 
+    function isBrazilCountry(name) {
+      return name === "巴西" || name === "\uFFFD\uFFFD\uFFFD\uFFFD";
+    }
+
+    function isIndiaCountry(name) {
+      return name === "印度" || name === "ӡ��";
+    }
+
+    function brazilMetricValue(metric) {
+      if (!metric || metric.status !== "ok") return metric && metric.statusText ? metric.statusText : "数据待更新";
+      if (metric.metricType === "sugarPremium") {
+        const label = metric.premiumLabel || (Number(metric.premiumDiscountCentsPerLb) >= 0 ? "升水" : "贴水");
+        const absValue = Math.abs(Number(metric.premiumDiscountCentsPerLb));
+        return `${label} ${absValue} ${metric.unit || "美分/磅"}`;
+      }
+      if (metric.metricType === "sugarStock") {
+        return `${valueText(metric.stockValue)}${metric.stockUnit ? " " + metric.stockUnit : ""}`;
+      }
+      const total = metric.totalEthanolStock;
+      if (total !== null && total !== undefined) return `${valueText(total)}${metric.stockUnit ? " " + metric.stockUnit : ""}`;
+      return metric.statusText || "数据待更新";
+    }
+
+    function brazilYoyText(metric) {
+      if (!metric || metric.status !== "ok") return metric && metric.statusText ? metric.statusText : "等待完成来源、口径和字段核验。";
+      const change = metric.yearOnYearChange;
+      const pct = metric.yearOnYearChangePercent;
+      if (metric.yoyStatus !== "ok" || pct === null || pct === undefined) {
+        return change === null || change === undefined ? "同比数据不足" : `同比变化 ${signedText(change)}`;
+      }
+      return `同比 ${signedText(pct, "%")}；变化 ${signedText(change)}`;
+    }
+
+    function brazilDirectionClass(metric) {
+      if (!metric || metric.status !== "ok") return "unknown";
+      const pct = Number(metric.yearOnYearChangePercent);
+      if (!Number.isFinite(pct) || pct === 0) return "flat";
+      if (metric.metricType === "sugarPremium") return pct > 0 ? "up" : "down";
+      return pct > 0 ? "down" : "up";
+    }
+
+    function buildBrazilMetricsCard(metrics) {
+      if (!metrics) return null;
+      const card = document.createElement("div");
+      card.className = "metric-card";
+      const head = document.createElement("div");
+      head.className = "metric-head";
+      const title = document.createElement("h3");
+      title.textContent = "巴西糖价与库存";
+      const note = document.createElement("div");
+      note.className = "metric-note";
+      note.textContent = `数据日期：${metrics.dataDate || "数据待更新"}`;
+      head.append(title, note);
+
+      const grid = document.createElement("div");
+      grid.className = "metric-grid three";
+      const entries = [
+        ["巴西糖升贴水", metrics.sugarPremium],
+        ["巴西糖库存", metrics.sugarStock],
+        ["巴西乙醇库存", metrics.ethanolStock],
+      ];
+      entries.forEach(([label, metric]) => {
+        const box = document.createElement("div");
+        box.className = "metric-item";
+        const labelEl = document.createElement("div");
+        labelEl.className = "metric-label";
+        labelEl.textContent = label;
+        const value = document.createElement("div");
+        value.className = "metric-value";
+        value.textContent = brazilMetricValue(metric);
+        const detail = document.createElement("div");
+        detail.className = `metric-sub metric-change ${brazilDirectionClass(metric)}`;
+        detail.textContent = brazilYoyText(metric);
+        const meta = document.createElement("div");
+        meta.className = "metric-sub";
+        meta.textContent = `抓取时间：${cnTime(metric && metric.fetchedAt ? metric.fetchedAt : metrics.updatedAt)}`;
+        box.append(labelEl, value, detail, meta);
+        grid.appendChild(box);
+      });
+
+      const source = document.createElement("div");
+      source.className = "metric-source";
+      appendMetricSource(source, "升贴水", metrics.sugarPremium);
+      appendMetricSource(source, "食糖库存", metrics.sugarStock);
+      appendMetricSource(source, "乙醇库存", metrics.ethanolStock);
+      card.append(head, grid, source);
+      if (metrics.note) {
+        const memo = document.createElement("div");
+        memo.className = "metric-note";
+        memo.style.marginTop = "8px";
+        memo.textContent = metrics.note;
+        card.appendChild(memo);
+      }
+      return card;
+    }
+
     function buildIndiaMetricsCard(metrics) {
       if (!metrics) return null;
       const card = document.createElement("div");
@@ -516,6 +615,9 @@
       contentEl.innerHTML = "";
       const displayCountries = (payload.countries || [])
         .filter(country => country.items && country.items.length);
+      if (payload.brazilMetrics && !displayCountries.some(country => isBrazilCountry(country.country))) {
+        displayCountries.unshift({ country: "巴西", items: [], metricsOnly: true });
+      }
       if (payload.indiaMetrics && !displayCountries.some(country => country.country === "印度")) {
         const insertAt = displayCountries.findIndex(country => country.country === "泰国" || country.country === "中国");
         const indiaSection = { country: "印度", items: [], metricsOnly: true };
@@ -530,6 +632,10 @@
           const items = document.createElement("div");
           items.className = "items";
           section.appendChild(heading);
+          if (isBrazilCountry(country.country)) {
+            const metricsCard = buildBrazilMetricsCard(payload.brazilMetrics);
+            if (metricsCard) section.appendChild(metricsCard);
+          }
           if (country.country === "印度") {
             const metricsCard = buildIndiaMetricsCard(payload.indiaMetrics);
             if (metricsCard) section.appendChild(metricsCard);

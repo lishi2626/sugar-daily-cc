@@ -1110,6 +1110,86 @@ def normalize_india_metrics(data: dict, date_text: str) -> dict:
     return payload
 
 
+def latest_brazil_metrics_snapshot() -> dict | None:
+    path = PUBLIC_DATA_ROOT / "brazil_metrics" / "latest.json"
+    if not path.exists():
+        return None
+    with path.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def first_log_url(metric: dict | None) -> tuple[str | None, str | None]:
+    if not isinstance(metric, dict):
+        return None, None
+    for entry in metric.get("fetchLog") or []:
+        if entry.get("url"):
+            return entry.get("source"), entry.get("url")
+    return metric.get("source_name") or metric.get("dataset_name"), metric.get("source_url")
+
+
+def normalize_brazil_metric(metric: dict | None, metric_type: str) -> dict:
+    metric = metric if isinstance(metric, dict) else {}
+    status = metric.get("status") or "pending"
+    source_name, source_url = first_log_url(metric)
+    base = {
+        "metricType": metric_type,
+        "status": status if status in {"ok", "pending", "stale"} else "pending",
+        "statusText": metric.get("statusText") or ("数据待更新" if status != "ok" else ""),
+        "dataDate": metric.get("data_date") or metric.get("reference_period") or metric.get("published_at"),
+        "fetchedAt": metric.get("fetched_at") or beijing_now().isoformat(timespec="seconds"),
+        "sourceName": metric.get("source_name") or metric.get("dataset_name") or source_name,
+        "sourceUrl": metric.get("source_url") or source_url,
+        "previousYearValue": metric.get("previous_year_value"),
+        "yearOnYearChange": metric.get("year_on_year_change"),
+        "yearOnYearChangePercent": metric.get("year_on_year_change_percent"),
+        "yoyStatus": metric.get("yoy_status") or ("ok" if metric.get("year_on_year_change_percent") is not None else "insufficient"),
+        "note": metric.get("note"),
+    }
+    if metric_type == "sugarPremium":
+        value = metric.get("premium_discount_cents_per_lb")
+        base.update({
+            "product": metric.get("product"),
+            "port": metric.get("port"),
+            "pricingBasis": metric.get("pricing_basis"),
+            "futuresContract": metric.get("futures_contract"),
+            "premiumDiscountCentsPerLb": value,
+            "premiumLabel": "升水" if isinstance(value, (int, float)) and value >= 0 else "贴水" if isinstance(value, (int, float)) else None,
+            "unit": "美分/磅",
+        })
+    elif metric_type == "sugarStock":
+        base.update({
+            "product": metric.get("product") or "食糖",
+            "stockValue": metric.get("sugar_stock_value"),
+            "stockUnit": metric.get("stock_unit"),
+            "datasetName": metric.get("dataset_name"),
+        })
+    else:
+        base.update({
+            "ethanolType": metric.get("ethanol_type"),
+            "hydrousEthanolStock": metric.get("hydrous_ethanol_stock"),
+            "anhydrousEthanolStock": metric.get("anhydrous_ethanol_stock"),
+            "totalEthanolStock": metric.get("total_ethanol_stock"),
+            "stockUnit": metric.get("stock_unit"),
+            "datasetName": metric.get("dataset_name"),
+        })
+    return base
+
+
+def normalize_brazil_metrics(date_text: str) -> dict:
+    snapshot = latest_brazil_metrics_snapshot() or {}
+    return {
+        "title": "巴西糖价与库存",
+        "dataDate": snapshot.get("targetDate") or date_text,
+        "updatedAt": snapshot.get("updatedAt") or beijing_now().isoformat(timespec="seconds"),
+        "sourceStatus": "dynamic_fetch" if snapshot else "pending",
+        "sugarPremium": normalize_brazil_metric(snapshot.get("sugarPremium"), "sugarPremium"),
+        "sugarStock": normalize_brazil_metric(snapshot.get("sugarStock"), "sugarStock"),
+        "ethanolStock": normalize_brazil_metric(snapshot.get("ethanolStock"), "ethanolStock"),
+        "note": "巴西糖价与库存指标来自动态检索；未完成来源、口径和字段核验的数据不发布数值。",
+        "fetchLog": snapshot.get("fetchLog", []),
+    }
+
+
 def build_dashboard_payload(date_text: str, items: list[dict], excel_file: Path, verified_data: dict | None = None) -> dict:
     grouped: dict[str, list[dict]] = defaultdict(list)
     country_order: list[tuple[int, int, str]] = []
@@ -1140,6 +1220,7 @@ def build_dashboard_payload(date_text: str, items: list[dict], excel_file: Path,
         "updatedAt": beijing_now().isoformat(timespec="seconds"),
         "timezone": "Asia/Shanghai",
         "excelFile": str(excel_file.relative_to(WORKSPACE_ROOT)).replace("\\", "/"),
+        "brazilMetrics": normalize_brazil_metrics(date_text),
         "indiaMetrics": normalize_india_metrics(verified_data or {}, date_text),
         "countries": countries,
     }
@@ -1208,6 +1289,22 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
         raise ValueError("Dashboard must not collapse other countries into a single 其他 section")
     if actual_china != expected_china:
         raise ValueError(f"China dashboard count mismatch: {actual_china} != {expected_china}")
+    brazil_metrics = report.get("brazilMetrics")
+    if not isinstance(brazil_metrics, dict):
+        raise ValueError("Dashboard missing brazilMetrics")
+    for field in ("sugarPremium", "sugarStock", "ethanolStock"):
+        metric = brazil_metrics.get(field)
+        if not isinstance(metric, dict):
+            raise ValueError(f"brazilMetrics missing {field}")
+        if metric.get("status") not in {"ok", "pending", "stale"}:
+            raise ValueError(f"brazilMetrics {field} has invalid status")
+        if metric.get("status") == "ok":
+            if field == "sugarPremium" and metric.get("premiumDiscountCentsPerLb") is None:
+                raise ValueError("sugarPremium ok status requires premiumDiscountCentsPerLb")
+            if field == "sugarStock" and metric.get("stockValue") is None:
+                raise ValueError("sugarStock ok status requires stockValue")
+            if field == "ethanolStock" and metric.get("totalEthanolStock") is None:
+                raise ValueError("ethanolStock ok status requires totalEthanolStock")
     india_metrics = report.get("indiaMetrics")
     if not isinstance(india_metrics, dict):
         raise ValueError("Dashboard missing indiaMetrics")
@@ -1286,6 +1383,15 @@ def refresh_india_metrics(date_text: str) -> dict:
         return {"status": "failed", "error": str(exc)[:1000]}
 
 
+def refresh_brazil_metrics(date_text: str) -> dict:
+    try:
+        from brazil_sugar_metrics import collect
+        snapshot = collect(date_text)
+        return {"status": "success", "snapshotUpdatedAt": snapshot.get("updatedAt")}
+    except Exception as exc:
+        return {"status": "failed", "error": str(exc)[:1000]}
+
+
 def main() -> int:
     args = parse_args()
     date_text = target_date(args.date)
@@ -1297,6 +1403,7 @@ def main() -> int:
         return 0
 
     try:
+        brazil_metrics_refresh = refresh_brazil_metrics(date_text)
         india_metrics_refresh = refresh_india_metrics(date_text)
         data = load_verified_or_fail(task_root, date_text, offline_only=args.offline_only, allow_rss_autogen=args.allow_rss_autogen)
         items = normalize_items(data)
@@ -1312,6 +1419,7 @@ def main() -> int:
             "excel_file": str(excel_file),
             "dashboard_report": str(report_path),
             "dashboard_index": str(index_path),
+            "brazil_metrics_refresh": brazil_metrics_refresh,
             "india_metrics_refresh": india_metrics_refresh,
             "checks": checks,
         }

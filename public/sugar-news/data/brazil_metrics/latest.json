@@ -1,0 +1,518 @@
+{
+  "targetDate": "2026-07-20",
+  "updatedAt": "2026-07-21T13:58:57+08:00",
+  "sugarPremium": {
+    "indicator": "brazil_sugar_premium",
+    "status": "pending",
+    "statusText": "未检索到公开可核验的巴西VHP原糖FOB升贴水数据。",
+    "fetched_at": "2026-07-21T13:58:57+08:00",
+    "fetchLog": [
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "Brazil VHP sugar premium latest",
+        "url": "https://news.google.com/rss/search?q=Brazil+VHP+sugar+premium+latest+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:37+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "Brazil raw sugar premium FOB Santos",
+        "url": "https://news.google.com/rss/search?q=Brazil+raw+sugar+premium+FOB+Santos+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:40+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "Brazil sugar basis ICE No.11",
+        "url": "https://news.google.com/rss/search?q=Brazil+sugar+basis+ICE+No.11+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:43+08:00",
+        "httpStatus": 200,
+        "candidateCount": 2,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "Brazil VHP sugar discount",
+        "url": "https://news.google.com/rss/search?q=Brazil+VHP+sugar+discount+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:46+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "Santos sugar premium",
+        "url": "https://news.google.com/rss/search?q=Santos+sugar+premium+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:49+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "Paranagua sugar premium",
+        "url": "https://news.google.com/rss/search?q=Paranagua+sugar+premium+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:52+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "Brazilian sugar physical premium",
+        "url": "https://news.google.com/rss/search?q=Brazilian+sugar+physical+premium+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:56+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "premio acucar VHP Brasil",
+        "url": "https://news.google.com/rss/search?q=premio+acucar+VHP+Brasil+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:57:59+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "premio acucar Santos",
+        "url": "https://news.google.com/rss/search?q=premio+acucar+Santos+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:03+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      },
+      {
+        "source": "Google News RSS premium discovery",
+        "query": "acucar VHP FOB Santos premio",
+        "url": "https://news.google.com/rss/search?q=acucar+VHP+FOB+Santos+premio+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:06+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+      }
+    ]
+  },
+  "sugarStock": {
+    "indicator": "brazil_sugar_stock",
+    "status": "pending",
+    "statusText": "ANP暂未检索到可核实的食糖库存数据。",
+    "fetched_at": "2026-07-21T13:58:57+08:00",
+    "fetchLog": [
+      {
+        "source": "ANP official site sugar-stock inspection",
+        "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos",
+        "requestedAt": "2026-07-21T13:58:09+08:00",
+        "httpStatus": 200,
+        "containsSugarTerms": 0,
+        "containsStockTerms": 8,
+        "parsed": false,
+        "reason": "ANP page did not expose a verifiable food-sugar stock dataset; ethanol, syrup, cane, production and sales data must not be relabeled as sugar stock."
+      },
+      {
+        "source": "ANP official site sugar-stock inspection",
+        "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/paineis-dinamicos-da-anp/paineis-dinamicos-sobre-combustiveis",
+        "requestedAt": "2026-07-21T13:58:13+08:00",
+        "httpStatus": 200,
+        "containsSugarTerms": 0,
+        "containsStockTerms": 8,
+        "parsed": false,
+        "reason": "ANP page did not expose a verifiable food-sugar stock dataset; ethanol, syrup, cane, production and sales data must not be relabeled as sugar stock."
+      },
+      {
+        "source": "ANP sugar-stock search",
+        "query": "site:gov.br/anp estoque acucar",
+        "url": "https://news.google.com/rss/search?q=site%3Agov.br%2Fanp+estoque+acucar&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:17+08:00",
+        "httpStatus": 200,
+        "candidateCount": 5,
+        "parsed": false,
+        "reason": "No candidate is published as sugar stock without ANP field and dataset confirmation."
+      },
+      {
+        "source": "ANP sugar-stock search",
+        "query": "site:gov.br/anp acucar estoque dados abertos ANP",
+        "url": "https://news.google.com/rss/search?q=site%3Agov.br%2Fanp+acucar+estoque+dados+abertos+ANP&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:20+08:00",
+        "httpStatus": 200,
+        "candidateCount": 2,
+        "parsed": false,
+        "reason": "No candidate is published as sugar stock without ANP field and dataset confirmation."
+      },
+      {
+        "source": "ANP sugar-stock search",
+        "query": "site:gov.br/anp estoque de acucar Brasil ANP",
+        "url": "https://news.google.com/rss/search?q=site%3Agov.br%2Fanp+estoque+de+acucar+Brasil+ANP&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:24+08:00",
+        "httpStatus": 200,
+        "candidateCount": 7,
+        "parsed": false,
+        "reason": "No candidate is published as sugar stock without ANP field and dataset confirmation."
+      }
+    ]
+  },
+  "ethanolStock": {
+    "indicator": "brazil_ethanol_stock",
+    "status": "pending",
+    "statusText": "ANP暂未解析到字段确认的含水/无水乙醇库存数值。",
+    "fetched_at": "2026-07-21T13:58:57+08:00",
+    "fetchLog": [
+      {
+        "source": "ANP ethanol-stock inspection",
+        "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/paineis-dinamicos-da-anp/paineis-dinamicos-sobre-combustiveis",
+        "requestedAt": "2026-07-21T13:58:27+08:00",
+        "httpStatus": 200,
+        "containsEthanol": true,
+        "containsStock": true,
+        "containsTankage": true,
+        "containsProduction": true,
+        "parsed": false,
+        "reason": "ANP source was checked for hydrous/anhydrous stock fields; production, sales, tankage and shipment values are not published as stock."
+      },
+      {
+        "source": "ANP ethanol-stock inspection",
+        "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/arquivos-painel-de-produtores-de-derivados-producao-de-biocombustiveis/f-etanol-producao.csv/view",
+        "requestedAt": "2026-07-21T13:58:31+08:00",
+        "httpStatus": 200,
+        "containsEthanol": true,
+        "containsStock": true,
+        "containsTankage": true,
+        "containsProduction": true,
+        "parsed": false,
+        "reason": "ANP source was checked for hydrous/anhydrous stock fields; production, sales, tankage and shipment values are not published as stock."
+      },
+      {
+        "source": "ANP ethanol-stock search",
+        "query": "estoque de etanol ANP",
+        "url": "https://news.google.com/rss/search?q=estoque+de+etanol+ANP&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:35+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+      },
+      {
+        "source": "ANP ethanol-stock search",
+        "query": "estoque de etanol hidratado",
+        "url": "https://news.google.com/rss/search?q=estoque+de+etanol+hidratado&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:38+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+      },
+      {
+        "source": "ANP ethanol-stock search",
+        "query": "estoque de etanol anidro",
+        "url": "https://news.google.com/rss/search?q=estoque+de+etanol+anidro&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:42+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+      },
+      {
+        "source": "ANP ethanol-stock search",
+        "query": "dados abertos ANP etanol estoque",
+        "url": "https://news.google.com/rss/search?q=dados+abertos+ANP+etanol+estoque&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:45+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+      },
+      {
+        "source": "ANP ethanol-stock search",
+        "query": "armazenamento de etanol Brasil ANP",
+        "url": "https://news.google.com/rss/search?q=armazenamento+de+etanol+Brasil+ANP&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:48+08:00",
+        "httpStatus": 200,
+        "candidateCount": 6,
+        "parsed": false,
+        "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+      },
+      {
+        "source": "ANP ethanol-stock search",
+        "query": "estoque mensal etanol ANP",
+        "url": "https://news.google.com/rss/search?q=estoque+mensal+etanol+ANP&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:51+08:00",
+        "httpStatus": 200,
+        "candidateCount": 0,
+        "parsed": false,
+        "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+      },
+      {
+        "source": "ANP ethanol-stock search",
+        "query": "painel dinamico etanol ANP estoque",
+        "url": "https://news.google.com/rss/search?q=painel+dinamico+etanol+ANP+estoque&hl=en-US&gl=US&ceid=US:en",
+        "requestedAt": "2026-07-21T13:58:54+08:00",
+        "httpStatus": 200,
+        "candidateCount": 3,
+        "parsed": false,
+        "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+      }
+    ]
+  },
+  "fetchLog": [
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "Brazil VHP sugar premium latest",
+      "url": "https://news.google.com/rss/search?q=Brazil+VHP+sugar+premium+latest+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:37+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "Brazil raw sugar premium FOB Santos",
+      "url": "https://news.google.com/rss/search?q=Brazil+raw+sugar+premium+FOB+Santos+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:40+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "Brazil sugar basis ICE No.11",
+      "url": "https://news.google.com/rss/search?q=Brazil+sugar+basis+ICE+No.11+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:43+08:00",
+      "httpStatus": 200,
+      "candidateCount": 2,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "Brazil VHP sugar discount",
+      "url": "https://news.google.com/rss/search?q=Brazil+VHP+sugar+discount+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:46+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "Santos sugar premium",
+      "url": "https://news.google.com/rss/search?q=Santos+sugar+premium+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:49+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "Paranagua sugar premium",
+      "url": "https://news.google.com/rss/search?q=Paranagua+sugar+premium+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:52+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "Brazilian sugar physical premium",
+      "url": "https://news.google.com/rss/search?q=Brazilian+sugar+physical+premium+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:56+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "premio acucar VHP Brasil",
+      "url": "https://news.google.com/rss/search?q=premio+acucar+VHP+Brasil+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:57:59+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "premio acucar Santos",
+      "url": "https://news.google.com/rss/search?q=premio+acucar+Santos+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:03+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "Google News RSS premium discovery",
+      "query": "acucar VHP FOB Santos premio",
+      "url": "https://news.google.com/rss/search?q=acucar+VHP+FOB+Santos+premio+2026-07-20&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:06+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Brazil VHP premium requires verifiable source-page product, port, FOB basis, ICE No.11 contract and cents/lb unit before publication."
+    },
+    {
+      "source": "ANP official site sugar-stock inspection",
+      "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos",
+      "requestedAt": "2026-07-21T13:58:09+08:00",
+      "httpStatus": 200,
+      "containsSugarTerms": 0,
+      "containsStockTerms": 8,
+      "parsed": false,
+      "reason": "ANP page did not expose a verifiable food-sugar stock dataset; ethanol, syrup, cane, production and sales data must not be relabeled as sugar stock."
+    },
+    {
+      "source": "ANP official site sugar-stock inspection",
+      "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/paineis-dinamicos-da-anp/paineis-dinamicos-sobre-combustiveis",
+      "requestedAt": "2026-07-21T13:58:13+08:00",
+      "httpStatus": 200,
+      "containsSugarTerms": 0,
+      "containsStockTerms": 8,
+      "parsed": false,
+      "reason": "ANP page did not expose a verifiable food-sugar stock dataset; ethanol, syrup, cane, production and sales data must not be relabeled as sugar stock."
+    },
+    {
+      "source": "ANP sugar-stock search",
+      "query": "site:gov.br/anp estoque acucar",
+      "url": "https://news.google.com/rss/search?q=site%3Agov.br%2Fanp+estoque+acucar&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:17+08:00",
+      "httpStatus": 200,
+      "candidateCount": 5,
+      "parsed": false,
+      "reason": "No candidate is published as sugar stock without ANP field and dataset confirmation."
+    },
+    {
+      "source": "ANP sugar-stock search",
+      "query": "site:gov.br/anp acucar estoque dados abertos ANP",
+      "url": "https://news.google.com/rss/search?q=site%3Agov.br%2Fanp+acucar+estoque+dados+abertos+ANP&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:20+08:00",
+      "httpStatus": 200,
+      "candidateCount": 2,
+      "parsed": false,
+      "reason": "No candidate is published as sugar stock without ANP field and dataset confirmation."
+    },
+    {
+      "source": "ANP sugar-stock search",
+      "query": "site:gov.br/anp estoque de acucar Brasil ANP",
+      "url": "https://news.google.com/rss/search?q=site%3Agov.br%2Fanp+estoque+de+acucar+Brasil+ANP&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:24+08:00",
+      "httpStatus": 200,
+      "candidateCount": 7,
+      "parsed": false,
+      "reason": "No candidate is published as sugar stock without ANP field and dataset confirmation."
+    },
+    {
+      "source": "ANP ethanol-stock inspection",
+      "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/paineis-dinamicos-da-anp/paineis-dinamicos-sobre-combustiveis",
+      "requestedAt": "2026-07-21T13:58:27+08:00",
+      "httpStatus": 200,
+      "containsEthanol": true,
+      "containsStock": true,
+      "containsTankage": true,
+      "containsProduction": true,
+      "parsed": false,
+      "reason": "ANP source was checked for hydrous/anhydrous stock fields; production, sales, tankage and shipment values are not published as stock."
+    },
+    {
+      "source": "ANP ethanol-stock inspection",
+      "url": "https://www.gov.br/anp/pt-br/centrais-de-conteudo/dados-abertos/arquivos/arquivos-painel-de-produtores-de-derivados-producao-de-biocombustiveis/f-etanol-producao.csv/view",
+      "requestedAt": "2026-07-21T13:58:31+08:00",
+      "httpStatus": 200,
+      "containsEthanol": true,
+      "containsStock": true,
+      "containsTankage": true,
+      "containsProduction": true,
+      "parsed": false,
+      "reason": "ANP source was checked for hydrous/anhydrous stock fields; production, sales, tankage and shipment values are not published as stock."
+    },
+    {
+      "source": "ANP ethanol-stock search",
+      "query": "estoque de etanol ANP",
+      "url": "https://news.google.com/rss/search?q=estoque+de+etanol+ANP&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:35+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+    },
+    {
+      "source": "ANP ethanol-stock search",
+      "query": "estoque de etanol hidratado",
+      "url": "https://news.google.com/rss/search?q=estoque+de+etanol+hidratado&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:38+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+    },
+    {
+      "source": "ANP ethanol-stock search",
+      "query": "estoque de etanol anidro",
+      "url": "https://news.google.com/rss/search?q=estoque+de+etanol+anidro&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:42+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+    },
+    {
+      "source": "ANP ethanol-stock search",
+      "query": "dados abertos ANP etanol estoque",
+      "url": "https://news.google.com/rss/search?q=dados+abertos+ANP+etanol+estoque&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:45+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+    },
+    {
+      "source": "ANP ethanol-stock search",
+      "query": "armazenamento de etanol Brasil ANP",
+      "url": "https://news.google.com/rss/search?q=armazenamento+de+etanol+Brasil+ANP&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:48+08:00",
+      "httpStatus": 200,
+      "candidateCount": 6,
+      "parsed": false,
+      "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+    },
+    {
+      "source": "ANP ethanol-stock search",
+      "query": "estoque mensal etanol ANP",
+      "url": "https://news.google.com/rss/search?q=estoque+mensal+etanol+ANP&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:51+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+    },
+    {
+      "source": "ANP ethanol-stock search",
+      "query": "painel dinamico etanol ANP estoque",
+      "url": "https://news.google.com/rss/search?q=painel+dinamico+etanol+ANP+estoque&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-21T13:58:54+08:00",
+      "httpStatus": 200,
+      "candidateCount": 3,
+      "parsed": false,
+      "reason": "Candidate requires ANP dataset and dictionary verification before stock values are published."
+    }
+  ]
+}
