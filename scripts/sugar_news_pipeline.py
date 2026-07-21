@@ -70,6 +70,16 @@ INDIA_DAMAGE_TERMS = (
     "受灾", "损失", "flood damage", "crop damage", "waterlogging", "lodging", "road disruption",
 )
 INDIA_HARVEST_TERMS = ("收割", "压榨", "运输", "入榨", "开榨", "砍蔗", "harvest", "crushing", "transport")
+INDIA_INDIRECT_ETHANOL_POLICY_TERMS = (
+    "e20", "ethanol blend", "ethanol blending", "ethanol mix", "blend in gasoline",
+    "gasoline", "petrol", "biofuel", "oil ministry", "omc", "oil marketing company",
+    "ethanol procurement", "ethanol tender", "distillery",
+)
+INDIA_INDIRECT_FEEDSTOCK_TERMS = (
+    "sugarcane juice", "cane juice", "cane-based", "sugar syrup", "syrup",
+    "molasses", "b-heavy", "c-heavy", "maize", "corn", "grain", "rice",
+    "broken rice", "feedstock", "गन्ना", "शीरा", "मक्का", "इथेनॉल",
+)
 INDIA_PRICE_INVENTORY_SEARCH_TEMPLATES = (
     ("en", "India sugar S-grade M-grade domestic price {readable}"),
     ("en", "India sugar prices today S grade M grade {readable}"),
@@ -172,6 +182,37 @@ COUNTRY_SEARCH_TEMPLATES = {
         ("en", "India sugar industry news {readable}"),
         ("en", "India sugarcane ethanol mills {readable}"),
         ("en", "India sugar news {day} {month_name} {year}"),
+        ("en", "India sugar production {readable}"),
+        ("en", "India sugar stocks {readable}"),
+        ("en", "India sugar prices {readable}"),
+        ("en", "India sugar ex-mill price {readable}"),
+        ("en", "India sugar export policy {readable}"),
+        ("en", "India sugar import {readable}"),
+        ("en", "India sugar sales quota {readable}"),
+        ("en", "India sugar shortage {readable}"),
+        ("en", "India sugar mills {readable}"),
+        ("en", "India sugarcane production {readable}"),
+        ("en", "India sugarcane acreage {readable}"),
+        ("en", "India sugarcane FRP {readable}"),
+        ("en", "India ethanol policy {readable}"),
+        ("en", "India ethanol blending {readable}"),
+        ("en", "India E20 petrol {readable}"),
+        ("en", "India E20 ethanol target {readable}"),
+        ("en", "India ethanol above 20 percent {readable}"),
+        ("en", "India sugarcane ethanol {readable}"),
+        ("en", "India molasses ethanol {readable}"),
+        ("en", "India sugar syrup ethanol {readable}"),
+        ("en", "India grain ethanol {readable}"),
+        ("en", "India maize ethanol {readable}"),
+        ("en", "India ethanol feedstock {readable}"),
+        ("en", "India oil ministry ethanol {readable}"),
+        ("en", "India OMC ethanol tender {readable}"),
+        ("en", "India cane-based distillery {readable}"),
+        ("en", "site:reuters.com India sugar {readable}"),
+        ("en", "site:reuters.com India ethanol {readable}"),
+        ("en", "site:reuters.com India E20 {readable}"),
+        ("en", "site:reuters.com India sugarcane {readable}"),
+        ("en", "site:reuters.com India molasses {readable}"),
         ("en", "India sugarcane rainfall {readable}"),
         ("en", "India sugar belt rainfall forecast {readable}"),
         ("en", "Uttar Pradesh sugarcane rain forecast {readable}"),
@@ -184,6 +225,12 @@ COUNTRY_SEARCH_TEMPLATES = {
         ("en", "deficient rainfall sugarcane India {readable}"),
         ("hi", "भारत चीनी उद्योग {day} जुलाई {year}"),
         ("hi", "गन्ना चीनी मिल इथेनॉल {day} जुलाई {year}"),
+        ("hi", "भारत चीनी उत्पादन {day} जुलाई {year}"),
+        ("hi", "भारत चीनी कीमत {day} जुलाई {year}"),
+        ("hi", "ई20 पेट्रोल {day} जुलाई {year}"),
+        ("hi", "भारत इथेनॉल ब्लेंडिंग {day} जुलाई {year}"),
+        ("hi", "मक्के से इथेनॉल {day} जुलाई {year}"),
+        ("hi", "शीरा इथेनॉल {day} जुलाई {year}"),
         ("hi", "उत्तर प्रदेश गन्ना बारिश {day} जुलाई {year}"),
         ("hi", "महाराष्ट्र गन्ना बारिश {day} जुलाई {year}"),
         ("hi", "कर्नाटक गन्ना बारिश {day} जुलाई {year}"),
@@ -482,6 +529,20 @@ def rss_item_date(item: dict) -> str | None:
     return value.astimezone(SHANGHAI).date().isoformat()
 
 
+def is_india_indirect_sugar_relevant(text: str) -> bool:
+    """Detect India ethanol-policy stories that affect sugar without saying sugar.
+
+    E20, OMC procurement, and ethanol-feedstock policies can change the split
+    between cane-derived ethanol and food sugar. These are high-relevance India
+    sugar stories even when the headline is framed as fuel or energy policy.
+    """
+    lowered = text.lower()
+    has_policy = any(term in lowered for term in INDIA_INDIRECT_ETHANOL_POLICY_TERMS)
+    has_feedstock = any(term in lowered for term in INDIA_INDIRECT_FEEDSTOCK_TERMS)
+    has_above_e20_context = "above 20" in lowered or "beyond e20" in lowered or "over 20" in lowered
+    return has_policy and (has_feedstock or has_above_e20_context)
+
+
 def impact_for_rss(country: str, title: str) -> str:
     text = title.lower()
     if country in {"印度", "泰国"} and any(term in text for term in ("rain", "rainfall", "monsoon", "heavy rain", "weather")):
@@ -519,7 +580,10 @@ def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
     relevance = (
         "sugar", "sugarcane", "cane", "ethanol", "biofuel", "molasses", "raw sugar",
         "white sugar", "rain", "rainfall", "monsoon", "drought", "flood", "tariff",
-        "quota", "export", "import", "mill", "crushing",
+        "quota", "export", "import", "mill", "crushing", "e20", "blending",
+        "gasoline", "petrol", "feedstock", "maize", "corn", "grain", "rice",
+        "syrup", "omc", "oil ministry", "distillery", "frp", "sap", "aista",
+        "isma", "nfcsf", "shortage", "stock", "stocks", "ex-mill", "sales quota",
     )
     concrete_other = ("Indonesia", "Pakistan", "Philippines", "Vietnam", "Russia", "EU", "United States", "Mexico")
     items = []
@@ -530,6 +594,13 @@ def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
         "search_tool": "Google News RSS autogeneration",
         "note": "Generated automatically because curated verified JSON was missing. Each item keeps RSS source, publication date, and source link.",
         "india_price_inventory_sources": INDIA_PRICE_INVENTORY_SOURCE_GUIDE,
+        "india_completeness_requirements": {
+            "sugar_core": "India sugar production/stocks/prices/mills/sales quota/shortage searched",
+            "ethanol_e20": "India ethanol policy/blending/E20/above 20 percent/OMC/feedstock searched",
+            "reuters_site_search": "site:reuters.com India sugar/ethanol/E20/sugarcane/molasses searched",
+            "weather": "India sugarcane rainfall and core cane-state forecasts searched",
+            "no_country_cap": "Autogeneration does not stop after a fixed number of items per country.",
+        },
         "searches": [],
     }
     for country, templates in country_templates.items():
@@ -567,8 +638,11 @@ def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
                     continue
                 title_clean, source = rss_source_from_title(title_raw)
                 haystack = f"{title_clean} {rss.get('description', '')}".lower()
-                if not any(term in haystack for term in relevance):
-                    entry["filtered"].append({"title": title_raw, "reason": "not sugar/rainfall/ethanol relevant"})
+                relevant = any(term in haystack for term in relevance)
+                if country == "印度" and is_india_indirect_sugar_relevant(haystack):
+                    relevant = True
+                if not relevant:
+                    entry["filtered"].append({"title": title_raw, "reason": "not sugar/rainfall/ethanol/indirect-sugar relevant"})
                     continue
                 concrete_country = country
                 country_group = country
@@ -610,11 +684,7 @@ def autogenerate_verified_from_rss(task_root: Path, date_text: str) -> Path:
                 })
                 retained_for_country += 1
                 entry["retained_count"] += 1
-                if retained_for_country >= 2:
-                    break
             search_log["searches"].append(entry)
-            if retained_for_country >= 2:
-                break
     if not items:
         raise FileNotFoundError("RSS autogeneration found no publishable Sugar News items")
     path = verified_json_path(task_root, date_text)
