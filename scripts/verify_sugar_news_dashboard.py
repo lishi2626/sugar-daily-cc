@@ -75,12 +75,18 @@ def verify_payload(payload: dict, expected_date: str) -> dict:
         if metric.get("status") == "ok":
             if field == "sugarPremium" and metric.get("premiumDiscountCentsPerLb") is None:
                 raise AssertionError("sugarPremium requires premiumDiscountCentsPerLb")
+            if field == "sugarPremium" and "HiSugar" not in str(metric.get("datasetName")):
+                raise AssertionError("sugarPremium must use HiSugar import cost estimate")
             if field == "sugarStock" and metric.get("stockValue") is None:
                 raise AssertionError("sugarStock requires stockValue")
             if field == "sugarStock" and "MAPA" not in str(metric.get("sourceName")):
                 raise AssertionError("sugarStock must use MAPA, not ANP")
             if field == "ethanolStock" and metric.get("totalEthanolStock") is None:
                 raise AssertionError("ethanolStock requires totalEthanolStock")
+            if field == "ethanolStock" and "MAPA" not in str(metric.get("sourceName")):
+                raise AssertionError("ethanolStock must use MAPA")
+            if field == "ethanolStock" and metric.get("stockType") != "physical":
+                raise AssertionError("ethanolStock must use physical stock")
     india_metrics = payload.get("indiaMetrics")
     if not isinstance(india_metrics, dict):
         raise AssertionError("Dashboard payload missing indiaMetrics")

@@ -458,8 +458,8 @@
       if (metric.metricType === "sugarStock") {
         return `${valueText(formatNumber(metric.stockValue, 4))}${metric.stockUnit ? " " + metric.stockUnit : ""}`;
       }
-      const total = metric.totalEthanolStock;
-      if (total !== null && total !== undefined) return `${valueText(total)}${metric.stockUnit ? " " + metric.stockUnit : ""}`;
+      const total = metric.stockTenThousandCubicMetres ?? metric.hydrousEthanolStock ?? metric.totalEthanolStock;
+      if (total !== null && total !== undefined) return `${valueText(formatNumber(total, 4))}${metric.stockUnit ? " " + metric.stockUnit : " 万立方米"}`;
       return metric.statusText || "数据待更新";
     }
 
@@ -472,11 +472,27 @@
 
     function brazilYoyText(metric) {
       if (!metric || metric.status !== "ok") return metric && metric.statusText ? metric.statusText : "等待完成来源、口径和字段核验。";
+      if (metric.metricType === "sugarPremium") {
+        const change = metric.dailyChange;
+        if (change === null || change === undefined) return "日变化：数据待更新";
+        const prev = Number(metric.previousValue);
+        const curr = Number(metric.premiumDiscountCentsPerLb);
+        let turn = "";
+        if (Number.isFinite(prev) && Number.isFinite(curr) && prev < 0 && curr > 0) turn = "，由贴水转为升水";
+        if (Number.isFinite(prev) && Number.isFinite(curr) && prev > 0 && curr < 0) turn = "，由升水转为贴水";
+        return `日变化：${signedText(formatNumber(change, 2), "美分/磅")}${turn}`;
+      }
       if (metric.metricType === "sugarStock") {
         const change = metric.halfMonthChange;
         const pct = metric.halfMonthChangePercent;
         if (change === null || change === undefined || pct === null || pct === undefined) return "半月变化：数据待更新";
         return `半月变化：${signedText(formatNumber(change, 4), "万吨")}（${signedText(formatNumber(pct, 2), "%")}）`;
+      }
+      if (metric.metricType === "ethanolStock") {
+        const change = metric.halfMonthChange;
+        const pct = metric.halfMonthChangePercent;
+        if (change === null || change === undefined || pct === null || pct === undefined) return "半月变化：数据待更新";
+        return `半月变化：${signedText(formatNumber(change, 4), "万立方米")}（${signedText(formatNumber(pct, 2), "%")}）`;
       }
       const change = metric.yearOnYearChange;
       const pct = metric.yearOnYearChangePercent;
@@ -488,6 +504,22 @@
 
     function brazilExtraText(metric) {
       if (!metric || metric.status !== "ok") return "";
+      if (metric.metricType === "sugarPremium") {
+        const yoyChange = metric.yearOnYearChange;
+        const yoyPct = metric.yearOnYearChangePercent;
+        let yoy = "同比变化：同比数据不足";
+        if (yoyChange !== null && yoyChange !== undefined) {
+          const pctText = yoyPct === null || yoyPct === undefined ? "不适用" : signedText(formatNumber(yoyPct, 2), "%");
+          yoy = `同比变化：${signedText(formatNumber(yoyChange, 2), "美分/磅")}（${pctText}）`;
+        }
+        const previous = metric.previousDataDate && metric.previousValue !== null && metric.previousValue !== undefined
+          ? `上一有效日：${metric.previousDataDate} ${formatNumber(metric.previousValue, 2)}美分/磅`
+          : "上一有效日：数据待更新";
+        const prevYear = metric.previousYearDate && metric.previousYearValue !== null && metric.previousYearValue !== undefined
+          ? `同比基准：${metric.previousYearDate} ${formatNumber(metric.previousYearValue, 2)}美分/磅`
+          : "同比基准：同比数据不足";
+        return `数据日期：${metric.dataDate || "数据待更新"}；${previous}；${prevYear}；${yoy}；取自广西糖网食糖进口成本及利润估算表`;
+      }
       if (metric.metricType === "sugarStock") {
         const yoyChange = metric.yearOnYearChange;
         const yoyPct = metric.yearOnYearChangePercent;
@@ -502,6 +534,21 @@
           : "上年同期：缺少上年同期可比数据";
         return `统计日期：${metric.referenceDate || metric.dataDate || "数据待更新"}；榨季：${metric.season || "数据待更新"}；${previous}；${prevYear}；${yoy}`;
       }
+      if (metric.metricType === "ethanolStock") {
+        const yoyChange = metric.yearOnYearChange;
+        const yoyPct = metric.yearOnYearChangePercent;
+        const yoy = yoyChange === null || yoyChange === undefined || yoyPct === null || yoyPct === undefined
+          ? "同比变化：缺少上年同期可比数据"
+          : `同比变化：${signedText(formatNumber(yoyChange, 4), "万立方米")}（${signedText(formatNumber(yoyPct, 2), "%")}）`;
+        const previous = metric.previousPeriodDate && metric.previousPeriodStock !== null && metric.previousPeriodStock !== undefined
+          ? `上一期：${metric.previousPeriodDate} ${formatNumber(metric.previousPeriodStock, 4)}万立方米`
+          : "上一期：数据待更新";
+        const prevYear = metric.previousYearDate && metric.previousYearStock !== null && metric.previousYearStock !== undefined
+          ? `上年同期：${metric.previousYearDate} ${formatNumber(metric.previousYearStock, 4)}万立方米`
+          : "上年同期：缺少上年同期可比数据";
+        const report = metric.reportUpdatedAt ? `报告更新：${metric.reportUpdatedAt}` : "报告更新：数据待更新";
+        return `统计日期：${metric.referenceDate || metric.dataDate || "数据待更新"}；榨季：${metric.season || "数据待更新"}；${previous}；${prevYear}；${yoy}；${report}`;
+      }
       return metric.dataDate ? `数据日期：${metric.dataDate}` : "";
     }
 
@@ -512,9 +559,18 @@
         if (!Number.isFinite(change) || change === 0) return "flat";
         return change > 0 ? "up" : "down";
       }
+      if (metric.metricType === "ethanolStock") {
+        const change = Number(metric.halfMonthChange);
+        if (!Number.isFinite(change) || change === 0) return "flat";
+        return change < 0 ? "up" : "down";
+      }
+      if (metric.metricType === "sugarPremium") {
+        const change = Number(metric.dailyChange);
+        if (!Number.isFinite(change) || change === 0) return "flat";
+        return change > 0 ? "up" : "down";
+      }
       const pct = Number(metric.yearOnYearChangePercent);
       if (!Number.isFinite(pct) || pct === 0) return "flat";
-      if (metric.metricType === "sugarPremium") return pct > 0 ? "up" : "down";
       return pct > 0 ? "down" : "up";
     }
 
@@ -534,9 +590,9 @@
       const grid = document.createElement("div");
       grid.className = "metric-grid three";
       const entries = [
-        ["巴西糖升贴水", metrics.sugarPremium],
+        ["巴西糖进口升贴水", metrics.sugarPremium],
         ["巴西糖库存", metrics.sugarStock],
-        ["巴西乙醇库存", metrics.ethanolStock],
+        ["巴西含水乙醇库存", metrics.ethanolStock],
       ];
       entries.forEach(([label, metric]) => {
         const box = document.createElement("div");
@@ -564,9 +620,9 @@
 
       const source = document.createElement("div");
       source.className = "metric-source";
-      appendMetricSource(source, "升贴水", metrics.sugarPremium);
+      appendMetricSource(source, "进口升贴水", metrics.sugarPremium);
       appendMetricSource(source, "食糖库存", metrics.sugarStock);
-      appendMetricSource(source, "乙醇库存", metrics.ethanolStock);
+      appendMetricSource(source, "含水乙醇库存", metrics.ethanolStock);
       card.append(head, grid, source);
       if (metrics.note) {
         const memo = document.createElement("div");

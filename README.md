@@ -17,14 +17,17 @@ py -m pip install -r requirements.txt
 
 Sugar News now maintains a Brazil dashboard area named `巴西糖价与库存`.
 It is populated by the daily Sugar News workflow and contains three dynamic cards:
-Brazil VHP raw sugar FOB premium/discount, Brazil sugar stock, and Brazil ethanol stock.
+Brazil sugar import premium/discount, Brazil sugar stock, and Brazil hydrous ethanol stock.
 
 These values, data dates and YoY calculations must come from fetched sources and
 historical records. They must not be hardcoded in production code. Brazil sugar
-stock is sourced from MAPA Agroenergia official sugar-stock files; ANP is used
-only for Brazil ethanol stock. The sugar-stock parser must identify the newest
-`Acumulado até` date, compare it with the previous period in the same season,
-and match the previous season's same month-day for YoY comparison.
+import premium/discount is sourced from HiSugar `食糖进口成本及利润估算表`
+`进口升贴水` field. Brazil sugar stock is sourced from MAPA Agroenergia official sugar-stock files. Brazil
+hydrous ethanol physical stock is sourced from MAPA `Acompanhamento da Produção
+Sucroalcooleira` reports, using the national `HIDRATADO` `ESTOQUE (m³)`
+`E.Físico` total. The parsers must identify the newest report date from report
+content or report-period metadata, compare it with the previous period in the
+same season, and match the previous season's same month-day for YoY comparison.
 
 ### 2. 配置 DeepSeek
 

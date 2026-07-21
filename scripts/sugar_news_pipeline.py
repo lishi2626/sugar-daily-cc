@@ -1139,6 +1139,7 @@ def normalize_brazil_metric(metric: dict | None, metric_type: str) -> dict:
         "fetchedAt": metric.get("fetched_at") or beijing_now().isoformat(timespec="seconds"),
         "sourceName": metric.get("source_name") or metric.get("dataset_name") or source_name,
         "sourceUrl": metric.get("source_url") or source_url,
+        "datasetName": metric.get("dataset_name"),
         "previousYearValue": metric.get("previous_year_value"),
         "yearOnYearChange": metric.get("year_on_year_change"),
         "yearOnYearChangePercent": metric.get("year_on_year_change_percent"),
@@ -1152,9 +1153,20 @@ def normalize_brazil_metric(metric: dict | None, metric_type: str) -> dict:
             "port": metric.get("port"),
             "pricingBasis": metric.get("pricing_basis"),
             "futuresContract": metric.get("futures_contract"),
+            "importPremiumDiscountCentsPerLb": metric.get("import_premium_discount_cents_per_lb"),
             "premiumDiscountCentsPerLb": value,
             "premiumLabel": "升水" if isinstance(value, (int, float)) and value >= 0 else "贴水" if isinstance(value, (int, float)) else None,
             "unit": "美分/磅",
+            "previousDataDate": metric.get("previous_data_date"),
+            "previousValue": metric.get("previous_value"),
+            "dailyChange": metric.get("daily_change"),
+            "dailyChangePercent": metric.get("daily_change_percent"),
+            "previousYearDate": metric.get("previous_year_date"),
+            "articleId": metric.get("article_id"),
+            "articleTitle": metric.get("article_title"),
+            "articlePublishedAt": metric.get("article_published_at"),
+            "imageUrl": metric.get("image_url"),
+            "ocrBackend": metric.get("ocr_backend"),
         })
     elif metric_type == "sugarStock":
         base.update({
@@ -1179,11 +1191,30 @@ def normalize_brazil_metric(metric: dict | None, metric_type: str) -> dict:
     else:
         base.update({
             "ethanolType": metric.get("ethanol_type"),
+            "stockType": metric.get("stock_type"),
             "hydrousEthanolStock": metric.get("hydrous_ethanol_stock"),
             "anhydrousEthanolStock": metric.get("anhydrous_ethanol_stock"),
             "totalEthanolStock": metric.get("total_ethanol_stock"),
+            "stockCubicMetres": metric.get("stock_cubic_metres"),
+            "stockTenThousandCubicMetres": metric.get("stock_ten_thousand_cubic_metres"),
             "stockUnit": metric.get("stock_unit"),
             "datasetName": metric.get("dataset_name"),
+            "season": metric.get("season"),
+            "referenceDate": metric.get("reference_date") or metric.get("reference_period"),
+            "reportUpdatedAt": metric.get("report_updated_at"),
+            "previousPeriodDate": metric.get("previous_period_date"),
+            "previousPeriodStock": metric.get("previous_period_stock"),
+            "halfMonthChange": metric.get("half_month_change"),
+            "halfMonthChangePercent": metric.get("half_month_change_percent"),
+            "previousYearDate": metric.get("previous_year_date"),
+            "previousYearStock": metric.get("previous_year_stock"),
+            "yearOnYearChange": metric.get("year_on_year_change"),
+            "yearOnYearChangePercent": metric.get("year_on_year_change_percent"),
+            "yoyStatus": metric.get("yoy_status"),
+            "sourcePageUrl": metric.get("source_page_url"),
+            "reportUrl": metric.get("report_url"),
+            "sourceFileName": metric.get("source_file_name"),
+            "fileHash": metric.get("file_hash"),
         })
     return base
 
@@ -1314,12 +1345,18 @@ def validate_all(date_text: str, items: list[dict], excel_file: Path, report_pat
         if metric.get("status") == "ok":
             if field == "sugarPremium" and metric.get("premiumDiscountCentsPerLb") is None:
                 raise ValueError("sugarPremium ok status requires premiumDiscountCentsPerLb")
+            if field == "sugarPremium" and "HiSugar" not in str(metric.get("datasetName")):
+                raise ValueError("sugarPremium must use HiSugar import cost estimate")
             if field == "sugarStock" and metric.get("stockValue") is None:
                 raise ValueError("sugarStock ok status requires stockValue")
             if field == "sugarStock" and "MAPA" not in str(metric.get("sourceName")):
                 raise ValueError("sugarStock must use MAPA, not ANP")
             if field == "ethanolStock" and metric.get("totalEthanolStock") is None:
                 raise ValueError("ethanolStock ok status requires totalEthanolStock")
+            if field == "ethanolStock" and "MAPA" not in str(metric.get("sourceName")):
+                raise ValueError("ethanolStock must use MAPA as the dashboard source")
+            if field == "ethanolStock" and metric.get("stockType") != "physical":
+                raise ValueError("ethanolStock must use physical stock")
     india_metrics = report.get("indiaMetrics")
     if not isinstance(india_metrics, dict):
         raise ValueError("Dashboard missing indiaMetrics")
