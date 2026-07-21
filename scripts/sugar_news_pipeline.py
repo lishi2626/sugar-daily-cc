@@ -40,6 +40,35 @@ PLACEHOLDERS = (
     "暂未更新",
     "数据尚未公布",
 )
+INDIA_MAIN_CANE_REGIONS = (
+    "北方邦", "Uttar Pradesh", "UP",
+    "马哈拉施特拉邦", "Maharashtra",
+    "卡纳塔克邦", "Karnataka",
+    "泰米尔纳德邦", "Tamil Nadu",
+    "古吉拉特邦", "Gujarat",
+    "比哈尔邦", "Bihar",
+    "旁遮普邦", "Punjab",
+    "哈里亚纳邦", "Haryana",
+    "北阿坎德邦", "Uttarakhand",
+)
+INDIA_WEATHER_TERMS = (
+    "降雨", "雨", "季风", "天气", "气象", "预警", "强降雨", "暴雨", "干旱", "洪涝", "积水",
+    "rain", "rainfall", "monsoon", "weather", "alert", "warning", "heavy rain", "flood", "drought",
+)
+INDIA_RAIN_BENEFIT_TERMS = (
+    "适量降雨", "降雨增加", "降雨增多", "未来降雨", "强降雨", "暴雨预报", "墒情改善",
+    "季风活跃", "季风增强", "widespread rainfall", "heavy rainfall", "rainfall forecast",
+    "monsoon revival", "active monsoon",
+)
+INDIA_DROUGHT_TERMS = (
+    "干旱", "降雨不足", "季风偏弱", "降雨减少", "雨量不足", "deficient rainfall",
+    "weak monsoon", "dry spell", "rainfall deficit",
+)
+INDIA_DAMAGE_TERMS = (
+    "已造成", "洪涝", "农田被淹", "甘蔗倒伏", "道路中断", "作物受损", "预计减产",
+    "受灾", "损失", "flood damage", "crop damage", "waterlogging", "lodging", "road disruption",
+)
+INDIA_HARVEST_TERMS = ("收割", "压榨", "运输", "入榨", "开榨", "砍蔗", "harvest", "crushing", "transport")
 DATE_FORMAT_EXAMPLES = (
     "July 19, 2026",
     "19 July 2026",
@@ -53,6 +82,50 @@ DATE_FORMAT_EXAMPLES = (
     "ngày 19 tháng 7 năm 2026",
     "19 июля 2026",
     "19 Juli 2026",
+)
+THAI_MAIN_CANE_PROVINCES = (
+    "\u4e4c\u9686\u4ed6\u5c3c", "Udon Thani",
+    "\u5b54\u656c", "Khon Kaen",
+    "\u5475\u53fb", "\u90a3\u7a7a\u53fb\u5dee\u662f\u739b", "Nakhon Ratchasima",
+    "\u731c\u4e5f\u84ec", "Chaiyaphum",
+    "\u52a0\u62c9\u4fe1", "Kalasin",
+    "\u9ece\u5e9c", "Loei",
+    "\u90a3\u7a7a\u6c99\u65fa", "Nakhon Sawan",
+    "\u7518\u70f9\u78a7", "Kamphaeng Phet",
+    "\u7d20\u53ef\u6cf0", "Sukhothai",
+    "\u5f6d\u4e16\u6d1b", "Phitsanulok",
+    "\u5317\u78a7", "Kanchanaburi",
+    "\u534e\u5bcc\u91cc", "Lopburi",
+    "\u7d20\u6500\u6b66\u91cc", "Suphanburi",
+    "\u731c\u7eb3", "Chai Nat",
+    "\u6c99\u7f34", "Sa Kaeo",
+    "\u6625\u6b66\u91cc", "Chonburi",
+)
+THAI_WEATHER_TERMS = (
+    "\u5929\u6c14", "\u6c14\u8c61", "\u964d\u96e8", "\u96e8", "\u96f7\u9635\u96e8",
+    "\u5e72\u65f1", "\u6d2a\u6d9d", "\u79ef\u6c34", "rain", "rainfall", "thunderstorm", "flood", "drought",
+)
+THAI_RAIN_INCREASE_TERMS = (
+    "\u964d\u96e8\u589e\u52a0", "\u964d\u96e8\u5c06\u589e\u52a0", "\u96e8\u91cf\u589e\u52a0",
+    "\u964d\u96e8\u589e\u591a", "\u964d\u96e8\u660e\u663e\u589e\u591a", "\u964d\u96e8\u6539\u5584",
+    "\u5892\u60c5", "\u6709\u5229\u4e8e\u6539\u5584", "\u5f3a\u964d\u96e8",
+    "\u5f3a\u5230\u5f88\u5f3a\u964d\u96e8", "\u66b4\u96e8\u9884\u8b66", "\u964d\u96e8\u8303\u56f4",
+    "\u964d\u96e8\u5f3a\u5ea6",
+)
+THAI_LOW_COVERAGE_TERMS = (
+    "20%", "\u7ea620%", "\u8f83\u5206\u6563", "\u5206\u6563", "\u8986\u76d6\u7387\u8f83\u4f4e",
+    "\u8986\u76d6\u7387\u4f4e", "\u5c40\u5730", "\u5c11\u91cf",
+)
+THAI_DAMAGE_TERMS = (
+    "\u5df2\u9020\u6210", "\u9020\u6210\u4e25\u91cd\u6d2a\u6d9d", "\u4e25\u91cd\u6d2a\u6d9d",
+    "\u7518\u8517\u5012\u4f0f", "\u519c\u7530\u88ab\u6df9", "\u4f5c\u7269\u53d7\u635f",
+    "\u9884\u8ba1\u51cf\u4ea7", "\u53d7\u707e", "\u635f\u5931", "\u6839\u7cfb\u53d7\u635f",
+)
+THAI_DROUGHT_TERMS = ("\u964d\u96e8\u51cf\u5c11", "\u964d\u96e8\u4e0d\u8db3", "\u6301\u7eed\u5e72\u65f1", "\u5e72\u65f1", "\u504f\u5e72")
+THAI_HARVEST_TERMS = ("\u6536\u5272", "\u538b\u69a8", "\u8fd0\u8f93", "\u5165\u69a8", "\u5f00\u69a8", "\u6536\u69a8")
+THAI_WEATHER_EVENT_TERMS = (
+    "\u964d\u96e8", "\u96e8\u91cf", "\u96f7\u9635\u96e8", "\u5e72\u65f1", "\u6d2a\u6d9d", "\u79ef\u6c34",
+    "rain", "rainfall", "thunderstorm", "flood", "drought",
 )
 GLOBAL_SEARCH_TEMPLATES = (
     "global sugar industry news {readable}",
@@ -76,8 +149,21 @@ COUNTRY_SEARCH_TEMPLATES = {
         ("en", "India sugar industry news {readable}"),
         ("en", "India sugarcane ethanol mills {readable}"),
         ("en", "India sugar news {day} {month_name} {year}"),
+        ("en", "India sugarcane rainfall {readable}"),
+        ("en", "India sugar belt rainfall forecast {readable}"),
+        ("en", "Uttar Pradesh sugarcane rain forecast {readable}"),
+        ("en", "Maharashtra sugarcane rainfall {readable}"),
+        ("en", "Karnataka sugarcane rainfall {readable}"),
+        ("en", "India monsoon sugar production {readable}"),
+        ("en", "IMD rainfall forecast sugarcane states {readable}"),
+        ("en", "heavy rainfall sugarcane India {readable}"),
+        ("en", "excess rainfall cane crop India {readable}"),
+        ("en", "deficient rainfall sugarcane India {readable}"),
         ("hi", "भारत चीनी उद्योग {day} जुलाई {year}"),
         ("hi", "गन्ना चीनी मिल इथेनॉल {day} जुलाई {year}"),
+        ("hi", "उत्तर प्रदेश गन्ना बारिश {day} जुलाई {year}"),
+        ("hi", "महाराष्ट्र गन्ना बारिश {day} जुलाई {year}"),
+        ("hi", "कर्नाटक गन्ना बारिश {day} जुलाई {year}"),
     ),
     "泰国": (
         ("en", "Thailand sugar industry news {readable}"),
@@ -371,6 +457,86 @@ def load_verified_or_fail(task_root: Path, date_text: str, offline_only: bool) -
     return data
 
 
+def _contains_any(text: str, terms: tuple[str, ...]) -> bool:
+    lowered = text.lower()
+    return any(term.lower() in lowered for term in terms)
+
+
+def validate_india_weather_impact(item: dict, idx: int) -> None:
+    if item.get("country_group") != "印度":
+        return
+
+    fact_text = " ".join(str(item.get(field, "")) for field in ("title", "news"))
+    text = f"{fact_text} {item.get('impact', '')}"
+    if not _contains_any(text, INDIA_WEATHER_TERMS):
+        return
+
+    in_main_area = _contains_any(fact_text, INDIA_MAIN_CANE_REGIONS)
+    if not in_main_area:
+        if not item["impact"].startswith("影响有限："):
+            raise ValueError(f"India weather item {idx} is outside main cane regions and should be impact-limited")
+        return
+
+    if _contains_any(fact_text, INDIA_HARVEST_TERMS):
+        if not item["impact"].startswith("偏多糖价："):
+            raise ValueError(f"India weather item {idx} indicates harvest/crushing disruption and should be bullish")
+        return
+
+    if _contains_any(fact_text, INDIA_DAMAGE_TERMS):
+        if not item["impact"].startswith("偏多糖价："):
+            raise ValueError(f"India weather item {idx} indicates confirmed damage and should be bullish")
+        return
+
+    if _contains_any(fact_text, INDIA_DROUGHT_TERMS):
+        if not item["impact"].startswith("偏多糖价："):
+            raise ValueError(f"India weather item {idx} indicates drought/rain shortage and should be bullish")
+        return
+
+    if _contains_any(fact_text, INDIA_RAIN_BENEFIT_TERMS):
+        if not item["impact"].startswith("偏空糖价："):
+            raise ValueError(f"India weather item {idx} indicates growing-season rainfall support and should be bearish")
+
+
+def validate_thai_weather_impact(item: dict, idx: int) -> None:
+    if item.get("country_group") != "泰国":
+        return
+
+    fact_text = " ".join(str(item.get(field, "")) for field in ("title", "news"))
+    text = f"{fact_text} {item.get('impact', '')}"
+    if not _contains_any(text, THAI_WEATHER_TERMS):
+        return
+    if not _contains_any(fact_text, THAI_WEATHER_EVENT_TERMS):
+        return
+
+    in_main_area = (
+        _contains_any(fact_text, THAI_MAIN_CANE_PROVINCES)
+        or "东北部" in fact_text
+        or "中部" in fact_text
+    )
+    if not in_main_area:
+        if not item["impact"].startswith("影响有限："):
+            raise ValueError(f"Thai weather item {idx} is outside main cane areas and should be impact-limited")
+        return
+
+    has_low_coverage = _contains_any(fact_text, THAI_LOW_COVERAGE_TERMS)
+    if _contains_any(fact_text, THAI_HARVEST_TERMS):
+        if not item["impact"].startswith("偏多糖价："):
+            raise ValueError(f"Thai weather item {idx} indicates harvest disruption and should be bullish")
+        return
+
+    if _contains_any(fact_text, THAI_DAMAGE_TERMS):
+        return
+
+    if _contains_any(fact_text, THAI_DROUGHT_TERMS):
+        if not item["impact"].startswith("偏多糖价："):
+            raise ValueError(f"Thai weather item {idx} indicates drought/rain shortage and should be bullish")
+        return
+
+    if _contains_any(fact_text, THAI_RAIN_INCREASE_TERMS) and not has_low_coverage:
+        if not item["impact"].startswith("偏空糖价："):
+            raise ValueError(f"Thai weather item {idx} indicates growing-season rainfall improvement and should be bearish")
+
+
 def normalize_items(data: dict) -> list[dict]:
     items = data.get("items") or []
     seen = set()
@@ -395,6 +561,8 @@ def normalize_items(data: dict) -> list[dict]:
             raise ValueError("country_group=中国 rows must use country=中国")
         if item["published_date_local"] != data["target_date"] and item.get("date_status") != "continuing_impact":
             raise ValueError(f"Verified item {idx} date is not target date or continuing impact")
+        validate_india_weather_impact(item, idx)
+        validate_thai_weather_impact(item, idx)
         dedupe_key = item.get("dedupe_key") or re.sub(r"\s+", "", item["news"][:100])
         if dedupe_key in seen:
             raise ValueError(f"Duplicate verified news: {dedupe_key}")

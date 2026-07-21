@@ -1,0 +1,87 @@
+{
+  "newsDate": "2026-07-20",
+  "updatedAt": "2026-07-21T11:03:53+08:00",
+  "timezone": "Asia/Shanghai",
+  "excelFile": "Sugar News/reports/2026/07/Sugar News 2026-07-20.xlsx",
+  "countries": [
+    {
+      "country": "巴西",
+      "items": [
+        {
+          "news": "Adecoagro 7月20日宣布与Raizen达成协议，拟以约7.6亿雷亚尔收购南马托格罗索州Caarapo糖醇厂，该厂2025/26榨季压榨甘蔗约350万吨，并具备生产糖、水合乙醇、无水乙醇和可再生能源的能力。",
+          "impactType": "中性",
+          "impact": "交易仍需监管批准，主要改变糖醇资产归属和区域产能整合，短期不直接改变巴西当期糖产量和出口量。",
+          "sourceName": "Adecoagro/PR Newswire",
+          "sourceUrl": "https://www.prnewswire.com/news-releases/adecoagro-to-expand-its-se-cluster-in-mato-grosso-do-sul-via-acquisition-of-caarapo-mill-302829547.html",
+          "publishedDateLocal": "2026-07-20",
+          "eventDate": "2026-07-20"
+        }
+      ]
+    },
+    {
+      "country": "印度",
+      "items": [
+        {
+          "news": "印度政府7月20日向联邦院表示，截至7月16日，公共部门油销公司已有501家乙醇供应商登记，过去三个乙醇供应年度累计采购支出超过1.72万亿卢比，其中乙醇原料包括C重糖蜜、B重糖蜜、甘蔗汁和糖浆等。",
+          "impactType": "偏多糖价",
+          "impact": "乙醇采购体系和支出规模扩大，有利于维持甘蔗及糖蜜制醇需求，可能减少部分制糖供应。",
+          "sourceName": "ChiniMandi",
+          "sourceUrl": "https://www.chinimandi.com/501-ethanol-suppliers-registered-with-omcs-over-rs-1-72-lakh-crore-spent-in-three-years-government-tells-in-rajya-sabha/",
+          "publishedDateLocal": "2026-07-20",
+          "eventDate": "2026-07-20"
+        },
+        {
+          "news": "7月20日天气预报显示，印度季风活动增强，马哈拉施特拉邦有强降雨预期，比哈尔邦、卡纳塔克邦和泰米尔纳德邦等甘蔗产区也将出现持续降雨。",
+          "impactType": "偏空糖价",
+          "impact": "生长阶段降雨增加有利于改善甘蔗水分条件和单产，可能增加未来甘蔗及食糖供应。",
+          "sourceName": "Economic Times/IMD",
+          "sourceUrl": "https://m.economictimes.com/news/new-updates/weather-today-july-20-heavy-rain-expected-for-assam-maharashtra-rajasthan-west-bengal-odisha-kerala-active-showers-likely-in-delhi-ncr/articleshow/132504714.cms",
+          "publishedDateLocal": "2026-07-20",
+          "eventDate": "2026-07-20"
+        }
+      ]
+    },
+    {
+      "country": "泰国",
+      "items": [
+        {
+          "news": "泰国气象局7月20日发布7日预报称，7月21日至25日全国降雨增多，北部、上东北部、中部西部和东部可能出现局地强降雨，并提示强到很强降雨和累积雨量可能引发山洪及溢流风险。",
+          "impactType": "偏空糖价",
+          "impact": "降雨增加有助于改善土壤墒情和甘蔗生长，可能提高单产及未来糖料供应。",
+          "sourceName": "泰国气象局",
+          "sourceUrl": "https://www.tmd.go.th/en/weather/weatherthailand",
+          "publishedDateLocal": "2026-07-20",
+          "eventDate": "2026-07-20"
+        }
+      ]
+    },
+    {
+      "country": "中国",
+      "items": [
+        {
+          "news": "7月20日国内糖市信息显示，广西2025/26榨季累计产糖769.74万吨、同比增加123.24万吨，截至6月30日工业库存266.94万吨、同比增加134.50万吨；全国本制糖期产糖1295万吨、同比增16.01%，累计销售847万吨、同比减4.83%，工业库存增至448万吨。",
+          "impactType": "偏空糖价",
+          "impact": "国内产量和工业库存同比增加、销售同比下降，显示供应压力偏高，对国内现货和郑糖形成压力。",
+          "sourceName": "新浪财经",
+          "sourceUrl": "https://finance.sina.com.cn/wm/2026-07-20/doc-iniimeaq8080705.shtml",
+          "publishedDateLocal": "2026-07-20",
+          "eventDate": "2026-07-20"
+        }
+      ]
+    },
+    {
+      "country": "印度尼西亚",
+      "items": [
+        {
+          "news": "印尼能源和矿产资源部7月20日表示，正鼓励私营企业建设乙醇厂，以配合2028年汽油强制掺混20%生物乙醇目标；政府还在修订第40/2023号总统条例，将掺混能力纳入糖业自给和生物乙醇供应框架。",
+          "impactType": "偏多糖价",
+          "impact": "印尼E20推进可能提升区域乙醇原料需求，但项目仍处建设和政策完善阶段，对当期国际糖价影响有限。",
+          "sourceName": "ANTARA",
+          "sourceUrl": "https://en.antaranews.com/news/423297/indonesia-invites-private-firms-to-build-ethanol-plants-for-e20-push",
+          "publishedDateLocal": "2026-07-20",
+          "eventDate": "2026-07-20"
+        }
+      ]
+    }
+  ]
+}

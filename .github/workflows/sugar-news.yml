@@ -17,7 +17,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: sugar-news-${{ github.ref }}
+  group: sugar-news-${{ github.ref }}-${{ github.event.inputs.date || 'scheduled' }}
   cancel-in-progress: false
 
 jobs:
@@ -27,6 +27,7 @@ jobs:
       TZ: Asia/Shanghai
       SUGAR_NEWS_ROOT: ${{ runner.temp }}/Sugar News
       VERCEL_BASE_URL: https://sugar-daily-cc.vercel.app
+      SUGAR_NEWS_LOG_DIR: ${{ github.workspace }}/sugar-news-run-logs
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,6 +42,7 @@ jobs:
 
       - name: Prepare Sugar News task directory
         run: |
+          mkdir -p "$SUGAR_NEWS_LOG_DIR"
           mkdir -p "$SUGAR_NEWS_ROOT/templates"
           if [ -f "public/sugar-news/templates/新闻格式.xlsx" ]; then
             cp "public/sugar-news/templates/新闻格式.xlsx" "$SUGAR_NEWS_ROOT/templates/新闻格式.xlsx"
@@ -60,10 +62,26 @@ PY
 )"
           fi
           echo "target_date=$TARGET_DATE" >> "$GITHUB_OUTPUT"
-          python scripts/sugar_news_pipeline.py --date "$TARGET_DATE" --skip-if-success
+          {
+            echo "run_started_at=$(date -Iseconds)"
+            echo "target_date=$TARGET_DATE"
+            echo "timezone=Asia/Shanghai"
+          } > "$SUGAR_NEWS_LOG_DIR/run.env"
+          python scripts/sugar_news_pipeline.py --date "$TARGET_DATE" --skip-if-success 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/pipeline.log"
 
       - name: Verify local dashboard data
-        run: python scripts/verify_sugar_news_dashboard.py --date "${{ steps.build.outputs.target_date }}"
+        run: python scripts/verify_sugar_news_dashboard.py --date "${{ steps.build.outputs.target_date }}" 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/local-verify.log"
+
+      - name: Record successful local generation
+        run: |
+          cat > public/sugar-news/data/last-success.json <<EOF
+          {
+            "targetDate": "${{ steps.build.outputs.target_date }}",
+            "completedAt": "$(date -Iseconds)",
+            "workflowRunId": "${{ github.run_id }}",
+            "workflowRunAttempt": "${{ github.run_attempt }}"
+          }
+          EOF
 
       - name: Commit and push Sugar News update
         run: |
@@ -71,15 +89,31 @@ PY
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add public/sugar-news
           if git diff --cached --quiet; then
-            echo "No Sugar News changes to commit."
+            echo "No Sugar News changes to commit." | tee "$SUGAR_NEWS_LOG_DIR/git.log"
           else
-            git commit -m "Update Sugar News ${{ steps.build.outputs.target_date }}"
-            git push
+            git commit -m "Update Sugar News ${{ steps.build.outputs.target_date }}" 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/git.log"
+            git push 2>&1 | tee -a "$SUGAR_NEWS_LOG_DIR/git.log"
           fi
+
+      - name: Deploy to Vercel production
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ] || [ -z "$VERCEL_ORG_ID" ] || [ -z "$VERCEL_PROJECT_ID" ]; then
+            echo "Vercel secrets are not configured; relying on Git-linked Vercel deployment after git push." | tee "$SUGAR_NEWS_LOG_DIR/vercel-deploy.log"
+            exit 0
+          fi
+          npm --yes exec vercel@latest -- deploy --prod --yes --token "$VERCEL_TOKEN" 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/vercel-deploy.log" || {
+            echo "First Vercel deploy failed; retrying once..." | tee -a "$SUGAR_NEWS_LOG_DIR/vercel-deploy.log"
+            sleep 20
+            npm --yes exec vercel@latest -- deploy --prod --yes --token "$VERCEL_TOKEN" 2>&1 | tee -a "$SUGAR_NEWS_LOG_DIR/vercel-deploy.log"
+          }
 
       - name: Verify Vercel Sugar News page
         run: |
-          python - <<'PY'
+          python - <<'PY' 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/online-verify.log"
 import os
 import subprocess
 import sys
@@ -102,3 +136,10 @@ raise SystemExit("Vercel Sugar News verification failed after retry window")
 PY
         env:
           TARGET_DATE: ${{ steps.build.outputs.target_date }}
+
+      - name: Upload Sugar News run logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sugar-news-run-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: sugar-news-run-logs/
