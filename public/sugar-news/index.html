@@ -148,7 +148,7 @@
     }
     .metric-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
     }
     .metric-item {
@@ -375,6 +375,11 @@
       return `${valueText(metric.priceInrPerQuintal)} ₹/公担`;
     }
 
+    function retailDisplay(metric) {
+      if (!metric || metric.status !== "ok" || metric.retailPriceInrPerKg === null || metric.retailPriceInrPerKg === undefined) return "数据待更新";
+      return `${valueText(metric.retailPriceInrPerKg)} ₹/kg`;
+    }
+
     function priceSub(metric) {
       if (!metric || metric.status !== "ok") return metric && metric.note ? metric.note : "等待完成日期、口径和来源核验。";
       const kgText = metric.rangeInrPerKg
@@ -401,6 +406,18 @@
         : `同比${signedText(metric.yoyChangeWanTonnes, "万吨")}`;
       const months = metric.consumptionMonths ? `；约${metric.consumptionMonths}个月消费量` : "";
       return `${revision}；${yoy}${months}`;
+    }
+
+    function forecastDisplay(metrics) {
+      const forecasts = metrics && metrics.carryoverStockForecasts ? metrics.carryoverStockForecasts : [];
+      if (!forecasts.length) return "数据待更新";
+      return `${forecasts.length}家机构`;
+    }
+
+    function forecastSub(metrics) {
+      const forecasts = metrics && metrics.carryoverStockForecasts ? metrics.carryoverStockForecasts : [];
+      if (!forecasts.length) return "等待明确榨季和结转库存口径的新预测。";
+      return forecasts.slice(0, 3).map(item => `${item.forecast_organization || item.source_name || "机构"}：${item.closing_stock_ten_thousand_tonnes || "待更新"}万吨`).join("；");
     }
 
     function appendMetricSource(container, label, metric) {
@@ -436,9 +453,11 @@
       const grid = document.createElement("div");
       grid.className = "metric-grid";
       const entries = [
-        ["印度国内代表糖价", metrics.domesticSugarPrice, priceDisplay, priceSub],
+        ["印度国内批发糖价", metrics.domesticSugarPrice, priceDisplay, priceSub],
+        ["印度国内零售糖价", metrics.domesticSugarPrice, retailDisplay, metric => metric && metric.status === "ok" ? `数据日期：${metric.priceDate || "待更新"}` : "等待官方价格监测数据。"],
         ["北方邦糖厂出厂价", metrics.upExMillPrice, priceDisplay, priceSub],
         ["印度食糖结转库存", metrics.carryoverStock, stockDisplay, stockSub],
+        ["机构预测对比", metrics, forecastDisplay, forecastSub],
       ];
       entries.forEach(([label, metric, display, sub]) => {
         const box = document.createElement("div");

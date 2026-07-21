@@ -890,6 +890,7 @@ def normalize_price_metric(metric: dict | None, metric_type: str) -> dict:
         price_kg = price_from_quintal(price_q)
     result["priceInrPerQuintal"] = _round(price_q, 2)
     result["priceInrPerKg"] = _round(price_kg, 4)
+    result["retailPriceInrPerKg"] = _round(_number(metric.get("retailPriceInrPerKg")), 2)
 
     range_q = metric.get("rangeInrPerQuintal") or {}
     low_q = _number(range_q.get("low") if isinstance(range_q, dict) else None)
@@ -897,6 +898,12 @@ def normalize_price_metric(metric: dict | None, metric_type: str) -> dict:
     if low_q is not None or high_q is not None:
         result["rangeInrPerQuintal"] = {"low": _round(low_q, 2), "high": _round(high_q, 2)}
         result["rangeInrPerKg"] = {"low": price_from_quintal(low_q), "high": price_from_quintal(high_q)}
+    previous_range_q = metric.get("previousRangeInrPerQuintal") or {}
+    if isinstance(previous_range_q, dict) and (previous_range_q.get("low") is not None or previous_range_q.get("high") is not None):
+        prev_low = _number(previous_range_q.get("low"))
+        prev_high = _number(previous_range_q.get("high"))
+        result["previousRangeInrPerQuintal"] = {"low": _round(prev_low, 2), "high": _round(prev_high, 2)}
+        result["previousRangeInrPerKg"] = {"low": price_from_quintal(prev_low), "high": price_from_quintal(prev_high)}
 
     previous_q = _number(metric.get("previousInrPerQuintal"))
     if previous_q is not None:
@@ -912,6 +919,8 @@ def normalize_price_metric(metric: dict | None, metric_type: str) -> dict:
         change_pct = change_q / previous_q * 100
     result["changePct"] = _round(change_pct, 2)
     result["direction"] = metric.get("direction") or ("up" if change_q and change_q > 0 else "down" if change_q and change_q < 0 else "flat" if change_q == 0 else "unknown")
+    if metric.get("gstStatus"):
+        result["gstStatus"] = metric.get("gstStatus")
     return result
 
 
@@ -991,10 +1000,89 @@ def latest_previous_india_metrics(date_text: str) -> dict | None:
     return sorted(candidates, key=lambda pair: pair[0], reverse=True)[0][1]
 
 
+def latest_india_metrics_snapshot() -> dict | None:
+    path = PUBLIC_DATA_ROOT / "india_metrics" / "latest.json"
+    if not path.exists():
+        return None
+    with path.open("r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def india_metrics_from_snapshot(snapshot: dict | None) -> dict:
+    if not snapshot:
+        return {}
+    domestic = snapshot.get("domesticSugarPrice") or {}
+    up_ex = snapshot.get("upExMillPrice") or {}
+    stock = snapshot.get("carryoverStock") or {}
+    result = {
+        "dataDate": snapshot.get("targetDate"),
+        "sourceStatus": "dynamic_fetch",
+        "fetchLog": snapshot.get("fetchLog", []),
+    }
+    if domestic:
+        result["domesticSugarPrice"] = {
+            "status": domestic.get("status", "ok"),
+            "priceDate": domestic.get("data_date"),
+            "grade": "Sugar",
+            "market": "All India Average",
+            "quoteType": "official wholesale and retail",
+            "priceInrPerQuintal": domestic.get("wholesale_price_inr_per_quintal"),
+            "priceInrPerKg": domestic.get("wholesale_price_inr_per_kg"),
+            "retailPriceInrPerKg": domestic.get("retail_price_inr_per_kg"),
+            "previousInrPerQuintal": domestic.get("previous_value"),
+            "changeInrPerQuintal": domestic.get("change_value"),
+            "changePct": domestic.get("change_percent"),
+            "originalUnit": "₹/quintal and ₹/kg",
+            "sourceName": domestic.get("source_name"),
+            "sourceUrl": domestic.get("source_url"),
+            "publishedDate": domestic.get("data_date"),
+            "fetchedAt": domestic.get("fetched_at"),
+        }
+    if up_ex:
+        result["upExMillPrice"] = {
+            "status": up_ex.get("status", "ok"),
+            "priceDate": up_ex.get("data_date"),
+            "grade": "M/30",
+            "market": "Uttar Pradesh / Muzaffarnagar",
+            "quoteType": "ex-mill",
+            "rangeInrPerQuintal": {"low": up_ex.get("up_ex_mill_min_inr_per_quintal"), "high": up_ex.get("up_ex_mill_max_inr_per_quintal")},
+            "previousRangeInrPerQuintal": {"low": up_ex.get("previous_min"), "high": up_ex.get("previous_max")},
+            "changeInrPerQuintal": up_ex.get("change_value"),
+            "direction": up_ex.get("change_direction"),
+            "gstStatus": up_ex.get("gst_status"),
+            "originalUnit": "₹/quintal",
+            "sourceName": up_ex.get("source_name"),
+            "sourceUrl": up_ex.get("source_url"),
+            "publishedDate": up_ex.get("data_date"),
+            "fetchedAt": up_ex.get("fetched_at"),
+        }
+    if stock:
+        result["carryoverStock"] = {
+            "status": stock.get("status", "ok"),
+            "dataDate": stock.get("forecast_date") or stock.get("data_date"),
+            "season": stock.get("season"),
+            "stockWanTonnes": stock.get("closing_stock_ten_thousand_tonnes"),
+            "stockLakhTonnes": stock.get("closing_stock_lakh_tonnes"),
+            "stockMillionTonnes": stock.get("closing_stock_million_tonnes"),
+            "previousForecastWanTonnes": stock.get("previous_forecast_value"),
+            "revisionWanTonnes": stock.get("forecast_revision"),
+            "yoyChangeWanTonnes": stock.get("year_on_year_change"),
+            "sourceName": stock.get("forecast_organization") or stock.get("source_name"),
+            "sourceUrl": stock.get("source_url"),
+            "publishedDate": stock.get("forecast_date"),
+            "fetchedAt": stock.get("fetched_at"),
+        }
+    forecasts = snapshot.get("carryoverStockForecasts") or []
+    if forecasts:
+        result["carryoverStockForecasts"] = forecasts
+    return result
+
+
 def normalize_india_metrics(data: dict, date_text: str) -> dict:
     raw = data.get("indiaMetrics") or data.get("india_metrics")
+    snapshot_raw = india_metrics_from_snapshot(latest_india_metrics_snapshot())
     previous = latest_previous_india_metrics(date_text) or {}
-    source = raw if isinstance(raw, dict) else previous if isinstance(previous, dict) else {}
+    source = raw if isinstance(raw, dict) else snapshot_raw if snapshot_raw else previous if isinstance(previous, dict) else {}
     domestic = source.get("domesticSugarPrice") if isinstance(source, dict) else None
     up_ex_mill = source.get("upExMillPrice") if isinstance(source, dict) else None
     stock = source.get("carryoverStock") if isinstance(source, dict) else None
@@ -1002,12 +1090,18 @@ def normalize_india_metrics(data: dict, date_text: str) -> dict:
         "title": "印度糖价与库存",
         "dataDate": (source.get("dataDate") if isinstance(source, dict) else None) or date_text,
         "updatedAt": beijing_now().isoformat(timespec="seconds"),
-        "sourceStatus": "verified" if raw else "carried_forward" if previous else "pending",
+        "sourceStatus": "verified" if raw else "dynamic_fetch" if snapshot_raw else "carried_forward" if previous else "pending",
         "domesticSugarPrice": normalize_price_metric(domestic, "domesticSugarPrice") if domestic else pending_metric("domesticSugarPrice"),
         "upExMillPrice": normalize_price_metric(up_ex_mill, "upExMillPrice") if up_ex_mill else pending_metric("upExMillPrice"),
         "carryoverStock": normalize_stock_metric(stock) if stock else pending_metric("carryoverStock"),
     }
-    if not raw and previous:
+    if not raw and snapshot_raw:
+        payload["note"] = source.get("note") or "印度糖价与库存指标来自本次动态抓取；未通过口径核验的库存候选不发布数值。"
+        if source.get("fetchLog"):
+            payload["fetchLog"] = source.get("fetchLog")
+        if source.get("carryoverStockForecasts"):
+            payload["carryoverStockForecasts"] = source.get("carryoverStockForecasts")
+    elif not raw and previous:
         payload["note"] = "本期未发现新的已核验印度糖价或结转库存数据，沿用最近一期有效数据并保留原始数据日期。"
     elif not raw:
         payload["note"] = "本期未获取到已完成日期、口径和来源核验的印度糖价与结转库存数据。"
@@ -1183,6 +1277,15 @@ def write_task_log(task_root: Path, date_text: str, payload: dict) -> None:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
 
+def refresh_india_metrics(date_text: str) -> dict:
+    try:
+        from india_sugar_metrics import collect
+        snapshot = collect(date_text)
+        return {"status": "success", "snapshotUpdatedAt": snapshot.get("updatedAt")}
+    except Exception as exc:
+        return {"status": "failed", "error": str(exc)[:1000]}
+
+
 def main() -> int:
     args = parse_args()
     date_text = target_date(args.date)
@@ -1194,6 +1297,7 @@ def main() -> int:
         return 0
 
     try:
+        india_metrics_refresh = refresh_india_metrics(date_text)
         data = load_verified_or_fail(task_root, date_text, offline_only=args.offline_only, allow_rss_autogen=args.allow_rss_autogen)
         items = normalize_items(data)
         excel_file = write_excel(task_root, date_text, items)
@@ -1208,6 +1312,7 @@ def main() -> int:
             "excel_file": str(excel_file),
             "dashboard_report": str(report_path),
             "dashboard_index": str(index_path),
+            "india_metrics_refresh": india_metrics_refresh,
             "checks": checks,
         }
         write_task_log(task_root, date_text, log_payload)
