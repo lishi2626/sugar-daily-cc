@@ -61,6 +61,13 @@
       color: var(--muted);
       font-size: 13px;
     }
+    .actions {
+      display: flex;
+      align-items: end;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
     select {
       min-width: 180px;
       border: 1px solid var(--line);
@@ -69,6 +76,37 @@
       padding: 9px 34px 9px 12px;
       font-size: 14px;
       color: var(--text);
+    }
+    button {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      min-height: 39px;
+      padding: 9px 13px;
+      font-size: 14px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    button:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    button:disabled {
+      cursor: wait;
+      color: var(--muted);
+      background: #f2f4f7;
+    }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+    .download-btn svg {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
     }
     main { padding: 22px 0 36px; }
     .country {
@@ -133,9 +171,38 @@
       background: #fff8f8;
       color: #8a2525;
     }
+    .export-stage {
+      position: fixed;
+      left: -20000px;
+      top: 0;
+      z-index: -1;
+      width: 1120px;
+      background: #fff;
+      color: var(--text);
+      padding: 40px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+    .export-stage .export-title {
+      margin: 0 0 8px;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .export-stage .export-meta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 14px;
+    }
     @media (max-width: 760px) {
       .wrap { width: min(100vw - 24px, 1120px); }
       .top { grid-template-columns: 1fr; align-items: start; padding-top: 22px; }
+      .actions { width: 100%; justify-content: stretch; }
+      .actions label { flex: 1 1 100%; }
+      .download-btn { width: 100%; justify-content: center; }
       article { grid-template-columns: 1fr; }
       h1 { font-size: 24px; }
       select { width: 100%; }
@@ -152,16 +219,27 @@
           <span id="updatedAt"></span>
         </div>
       </div>
-      <label>
-        历史日期
-        <select id="dateSelect" aria-label="选择历史日期"></select>
-      </label>
+      <div class="actions">
+        <label>
+          历史日期
+          <select id="dateSelect" aria-label="选择历史日期"></select>
+        </label>
+        <button id="downloadImage" class="download-btn" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <path d="M7 10l5 5 5-5"></path>
+            <path d="M12 15V3"></path>
+          </svg>
+          <span>下载为图片</span>
+        </button>
+      </div>
     </div>
   </header>
   <main class="wrap">
     <div id="error" class="error"></div>
     <div id="content"></div>
   </main>
+  <script src="/public/sugar-news/vendor/html2canvas.min.js"></script>
   <script>
     const indexUrl = "/public/sugar-news/data/index.json";
     const contentEl = document.getElementById("content");
@@ -169,6 +247,9 @@
     const dateEl = document.getElementById("newsDate");
     const updatedEl = document.getElementById("updatedAt");
     const errorEl = document.getElementById("error");
+    const downloadBtn = document.getElementById("downloadImage");
+    const downloadBtnText = downloadBtn.querySelector("span");
+    let currentPayload = null;
 
     function fresh(url) {
       return `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`;
@@ -206,6 +287,11 @@
       errorEl.style.display = "block";
     }
 
+    function clearError() {
+      errorEl.textContent = "";
+      errorEl.style.display = "none";
+    }
+
     async function loadJson(url) {
       const response = await fetch(fresh(url), { cache: "no-store" });
       if (!response.ok) throw new Error(`${url} ${response.status}`);
@@ -214,6 +300,8 @@
 
     async function renderReport(path) {
       const payload = await loadJson(path);
+      currentPayload = payload;
+      clearError();
       dateEl.textContent = `新闻日期：${cnDate(payload.newsDate)}`;
       updatedEl.textContent = `最后更新时间：${cnTime(payload.updatedAt)}（北京时间）`;
       contentEl.innerHTML = "";
@@ -254,6 +342,97 @@
         });
     }
 
+    function buildExportNode() {
+      if (!currentPayload || !contentEl.children.length) {
+        throw new Error("当前没有可导出的 Sugar News 报告。");
+      }
+      const node = document.createElement("div");
+      node.className = "export-stage";
+
+      const title = document.createElement("h1");
+      title.className = "export-title";
+      title.textContent = "Sugar News";
+
+      const meta = document.createElement("div");
+      meta.className = "export-meta";
+      const newsDate = document.createElement("span");
+      newsDate.textContent = `新闻日期：${cnDate(currentPayload.newsDate)}`;
+      const updated = document.createElement("span");
+      updated.textContent = `最后更新时间：${cnTime(currentPayload.updatedAt)}（北京时间）`;
+      meta.append(newsDate, updated);
+
+      const body = contentEl.cloneNode(true);
+      node.append(title, meta, body);
+      return node;
+    }
+
+    async function waitForFonts() {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+    }
+
+    async function downloadReportImage() {
+      if (downloadBtn.disabled) return;
+      downloadBtn.disabled = true;
+      downloadBtnText.textContent = "正在生成图片…";
+      clearError();
+
+      let exportNode;
+      let pngUrl;
+      try {
+        if (!window.html2canvas) {
+          throw new Error("图片导出组件加载失败，请刷新页面后重试。");
+        }
+        await waitForFonts();
+        exportNode = buildExportNode();
+        document.body.appendChild(exportNode);
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+        const width = Math.ceil(exportNode.scrollWidth);
+        const height = Math.ceil(exportNode.scrollHeight);
+        const scale = 2;
+        const canvasWidth = width * scale;
+        const canvasHeight = height * scale;
+        const maxSide = 32767;
+        const maxArea = 160000000;
+        if (canvasWidth > maxSide || canvasHeight > maxSide || canvasWidth * canvasHeight > maxArea) {
+          throw new Error("报告内容过长，图片尺寸超过当前浏览器限制，无法一次性完整导出。");
+        }
+
+        const canvas = await html2canvas(exportNode, {
+          backgroundColor: "#ffffff",
+          scale,
+          width,
+          height,
+          windowWidth: width,
+          windowHeight: height,
+          scrollX: 0,
+          scrollY: 0,
+          useCORS: true,
+          allowTaint: false,
+          logging: false
+        });
+
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+        if (!blob) throw new Error("PNG 文件生成失败，请更换浏览器后重试。");
+        pngUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = pngUrl;
+        link.download = `sugar-news-${currentPayload.newsDate}.png`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        if (exportNode) exportNode.remove();
+        if (pngUrl) setTimeout(() => URL.revokeObjectURL(pngUrl), 1000);
+        downloadBtn.disabled = false;
+        downloadBtnText.textContent = "下载为图片";
+      }
+    }
+
     async function init() {
       try {
         const index = await loadJson(indexUrl);
@@ -270,6 +449,7 @@
           selectEl.value = index.reports[0].path;
           await renderReport(index.reports[0].path);
         }
+        downloadBtn.addEventListener("click", () => downloadReportImage());
       } catch (error) {
         showError(`Sugar News 数据加载失败：${error.message}`);
       }
