@@ -1,24 +1,11 @@
 {
   "latestNewsDate": "2026-07-21",
-  "lastRunAt": "2026-07-22T10:37:19+08:00",
-  "lastRunStatus": "success",
+  "lastRunAt": "2026-07-23T07:12:59+08:00",
+  "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "verified_count": 23,
-    "excel_count": 23,
-    "dashboard_count": 23,
-    "excel_matches_verified": true,
-    "dashboard_matches_verified": true,
-    "country_order_ok": true,
-    "no_empty_country_sections": true,
-    "counts_by_country": {
-      "巴西": 5,
-      "印度": 11,
-      "泰国": 3,
-      "欧盟": 3,
-      "印度尼西亚": 1
-    },
-    "china_count": 0,
-    "other_country_count": 4
-  }
+    "target_date": "2026-07-22",
+    "task_root": "/tmp/Sugar News"
+  },
+  "error": "'/tmp/Sugar News/reports/2026/07/Sugar News 2026-07-22.xlsx' is not in the subpath of '/home/runner/work/sugar-daily-cc'"
 }
