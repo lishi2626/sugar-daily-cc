@@ -17,7 +17,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: sugar-news-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && inputs.date || 'scheduled' }}
+  group: sugar-news-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -58,16 +58,23 @@ jobs:
       - name: Build Sugar News Excel and dashboard data
         id: build
         run: |
-          if [ -n "${{ inputs.date }}" ]; then
-            TARGET_DATE="${{ inputs.date }}"
-          else
-            TARGET_DATE="$(python - <<'PY'
+          TARGET_DATE="$(python - <<'PY'
+          import json
+          import os
           from datetime import datetime, timedelta
           from zoneinfo import ZoneInfo
-          print((datetime.now(ZoneInfo("Asia/Shanghai")).date() - timedelta(days=1)).isoformat())
+
+          event_path = os.environ.get("GITHUB_EVENT_PATH")
+          requested = ""
+          if event_path and os.path.exists(event_path):
+              with open(event_path, "r", encoding="utf-8") as f:
+                  requested = ((json.load(f).get("inputs") or {}).get("date") or "").strip()
+          if requested:
+              print(requested)
+          else:
+              print((datetime.now(ZoneInfo("Asia/Shanghai")).date() - timedelta(days=1)).isoformat())
           PY
           )"
-          fi
           echo "target_date=$TARGET_DATE" >> "$GITHUB_OUTPUT"
           {
             echo "run_started_at=$(date -Iseconds)"
