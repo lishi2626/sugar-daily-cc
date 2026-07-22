@@ -33,7 +33,7 @@ jobs:
     timeout-minutes: 45
     env:
       TZ: Asia/Shanghai
-      SUGAR_NEWS_ROOT: ${{ runner.temp }}/Sugar News
+      SUGAR_NEWS_ROOT: /tmp/Sugar News
       VERCEL_BASE_URL: https://sugar-daily-cc.vercel.app
       SUGAR_NEWS_LOG_DIR: ${{ github.workspace }}/sugar-news-run-logs
       SUGAR_NEWS_METRIC_REFRESH_TIMEOUT: "90"
