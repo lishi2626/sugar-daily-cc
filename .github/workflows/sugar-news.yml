@@ -7,6 +7,13 @@ on:
         description: "Target news date YYYY-MM-DD. Leave blank for Beijing yesterday."
         required: false
         type: string
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sugar-news.yml"
+      - "scripts/sugar_news_target_date.py"
+      - "scripts/sugar_news_online_verify_retry.py"
   schedule:
     # Beijing 06:00, 06:10 and 06:30. GitHub Actions cron uses UTC.
     - cron: "0 22 * * *"
@@ -58,23 +65,7 @@ jobs:
       - name: Build Sugar News Excel and dashboard data
         id: build
         run: |
-          TARGET_DATE="$(python - <<'PY'
-          import json
-          import os
-          from datetime import datetime, timedelta
-          from zoneinfo import ZoneInfo
-
-          event_path = os.environ.get("GITHUB_EVENT_PATH")
-          requested = ""
-          if event_path and os.path.exists(event_path):
-              with open(event_path, "r", encoding="utf-8") as f:
-                  requested = ((json.load(f).get("inputs") or {}).get("date") or "").strip()
-          if requested:
-              print(requested)
-          else:
-              print((datetime.now(ZoneInfo("Asia/Shanghai")).date() - timedelta(days=1)).isoformat())
-          PY
-          )"
+          TARGET_DATE="$(python scripts/sugar_news_target_date.py)"
           echo "target_date=$TARGET_DATE" >> "$GITHUB_OUTPUT"
           {
             echo "run_started_at=$(date -Iseconds)"
@@ -88,14 +79,9 @@ jobs:
 
       - name: Record successful local generation
         run: |
-          cat > public/sugar-news/data/last-success.json <<EOF
-          {
-            "targetDate": "${{ steps.build.outputs.target_date }}",
-            "completedAt": "$(date -Iseconds)",
-            "workflowRunId": "${{ github.run_id }}",
-            "workflowRunAttempt": "${{ github.run_attempt }}"
-          }
-          EOF
+          python -c "import json, os; from datetime import datetime, timedelta, timezone; data={'targetDate': os.environ['TARGET_DATE'], 'completedAt': datetime.now(timezone(timedelta(hours=8))).isoformat(), 'workflowRunId': os.environ['GITHUB_RUN_ID'], 'workflowRunAttempt': os.environ['GITHUB_RUN_ATTEMPT']}; open('public/sugar-news/data/last-success.json', 'w', encoding='utf-8').write(json.dumps(data, ensure_ascii=False, indent=2) + '\n')"
+        env:
+          TARGET_DATE: ${{ steps.build.outputs.target_date }}
 
       - name: Commit and push Sugar News update
         run: |
@@ -126,30 +112,7 @@ jobs:
           }
 
       - name: Verify Vercel Sugar News page
-        env:
-          TARGET_DATE: ${{ steps.build.outputs.target_date }}
-        run: |
-          python - <<'PY' 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/online-verify.log"
-          import os
-          import subprocess
-          import sys
-          import time
-
-          date = os.environ["TARGET_DATE"]
-          base = os.environ["VERCEL_BASE_URL"]
-          for attempt in range(1, 19):
-              result = subprocess.run(
-                  [sys.executable, "scripts/verify_sugar_news_dashboard.py", "--date", date, "--base-url", base],
-                  text=True,
-                  capture_output=True,
-              )
-              if result.returncode == 0:
-                  print(result.stdout)
-                  raise SystemExit(0)
-              print(f"Vercel not ready attempt {attempt}/18: {result.stderr or result.stdout}")
-              time.sleep(20)
-          raise SystemExit("Vercel Sugar News verification failed after retry window")
-          PY
+        run: python scripts/sugar_news_online_verify_retry.py --date "${{ steps.build.outputs.target_date }}" --base-url "$VERCEL_BASE_URL" 2>&1 | tee "$SUGAR_NEWS_LOG_DIR/online-verify.log"
 
       - name: Upload Sugar News run logs
         if: always()
