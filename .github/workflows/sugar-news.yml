@@ -17,7 +17,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: sugar-news-${{ github.ref }}-${{ github.event.inputs.date || 'scheduled' }}
+  group: sugar-news-${{ github.ref }}-${{ github.event_name == 'workflow_dispatch' && inputs.date || 'scheduled' }}
   cancel-in-progress: false
 
 jobs:
