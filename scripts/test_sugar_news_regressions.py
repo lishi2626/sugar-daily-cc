@@ -102,6 +102,31 @@ def test_excel_dashboard_consistency() -> None:
         assert phrase in dashboard_text
 
 
+def test_india_metrics_price_changes_and_stock_source_rules() -> None:
+    report = read_json(PROJECT_ROOT / "public" / "sugar-news" / "data" / "reports" / "2026" / "07" / f"{TARGET_DATE}.json")
+    metrics = report["indiaMetrics"]
+    for field in ("domesticWholesalePrice", "domesticRetailPrice", "upExMillPrice"):
+        metric = metrics[field]
+        assert metric["status"] == "ok"
+        assert metric["previousDataDate"]
+        assert metric["changePct"] is not None
+        if field == "domesticRetailPrice":
+            assert metric["changeInrPerKg"] is not None
+        else:
+            assert metric["changeInrPerQuintal"] is not None
+        if field == "upExMillPrice":
+            low = metric["rangeInrPerQuintal"]["low"]
+            high = metric["rangeInrPerQuintal"]["high"]
+            assert metric["midpointInrPerQuintal"] == (low + high) / 2
+
+    stock = metrics["carryoverStock"]
+    if stock["status"] == "ok":
+        source = stock.get("organization") or stock.get("sourceName") or ""
+        assert any(token in source for token in ("Government of India", "Department of Food", "ISMA", "NFCSF", "印度政府"))
+    for forecast in metrics.get("carryoverStockForecasts", []):
+        assert forecast.get("sourceTier") == "market_forecast_comparison_only"
+
+
 def main() -> None:
     tests = [
         test_india_relevance_helpers,
@@ -110,6 +135,7 @@ def main() -> None:
         test_ist_utc_beijing_date_handling,
         test_verified_news_contains_required_india_items,
         test_excel_dashboard_consistency,
+        test_india_metrics_price_changes_and_stock_source_rules,
     ]
     for test in tests:
         test()
