@@ -57,7 +57,7 @@ def verify_payload(payload: dict, expected_date: str) -> dict:
             for field in ("news", "impactType", "impact", "sourceName", "sourceUrl"):
                 if not item.get(field):
                     raise AssertionError(f"Item missing {field}")
-            if item["impactType"] not in {"偏多糖价", "偏空糖价", "中性", "影响有限"}:
+            if item["impactType"] not in {"偏多糖价", "偏空糖价", "利多", "利空", "中性", "影响有限"}:
                 raise AssertionError(f"Invalid impactType: {item['impactType']}")
             if any(text in item["news"] for text in ("暂无新闻", "暂无最新数据", "暂无最新对比数据")):
                 raise AssertionError("Placeholder wording found")

@@ -442,6 +442,8 @@
     function impactClass(type) {
       if (type === "偏多糖价") return "bull";
       if (type === "偏空糖价") return "bear";
+      if (type === "利多") return "bull";
+      if (type === "利空") return "bear";
       if (type === "中性") return "neutral";
       return "limited";
     }
