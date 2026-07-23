@@ -1,11 +1,11 @@
 {
   "latestNewsDate": "2026-07-21",
-  "lastRunAt": "2026-07-23T07:33:00+08:00",
+  "lastRunAt": "2026-07-24T07:06:35+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-07-22",
+    "target_date": "2026-07-23",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "'/tmp/Sugar News/reports/2026/07/Sugar News 2026-07-22.xlsx' is not in the subpath of '/home/runner/work/sugar-daily-cc'"
+  "error": "'/tmp/Sugar News/reports/2026/07/Sugar News 2026-07-23.xlsx' is not in the subpath of '/home/runner/work/sugar-daily-cc'"
 }
