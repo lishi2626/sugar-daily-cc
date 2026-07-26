@@ -135,6 +135,22 @@ MISSING_DATA_RE = re.compile(
     r"[^。；;\n]{0,80}[。；;]?"
 )
 
+MACHINE_DATA_PROCESS_PHRASES = [
+    "沿用最新一期已确认数据",
+    "采用最新一期已确认数据",
+    "使用上一期已确认数据",
+    "沿用最近一期已确认或预估数据",
+    "暂无更新，沿用此前数据",
+    "数据未更新，继续采用",
+    "按照最新确认值",
+]
+
+MACHINE_DATA_PROCESS_RE = re.compile(
+    r"(?:沿用|采用|使用)(?:最新一期|上一期|此前|最近一期)?(?:已确认或预估|已确认|有效)?数据"
+    r"|(?:暂无更新|数据未更新)[^。；;\n]{0,30}(?:沿用|继续采用)[^。；;\n]*"
+    r"|按照最新确认值"
+)
+
 
 def _format_wan_ton(value: float) -> str:
     if abs(value - round(value)) < 1e-9:
@@ -163,6 +179,37 @@ def remove_missing_data_prompts(text: str) -> str:
     cleaned = re.sub(r"\s{2,}", " ", cleaned)
     cleaned = re.sub(r"([。；;]){2,}", r"\1", cleaned)
     return cleaned.strip(" ，,；;")
+
+
+def remove_machine_data_process_language(text: str) -> str:
+    """Rewrite or remove backend data-handling language from report prose."""
+    if not text:
+        return ""
+    cleaned = text.replace(
+        "国内25/26榨季沿用最近一期已确认或预估数据",
+        "国内25/26榨季产销与库存格局保持稳定",
+    )
+    cleaned = re.sub(
+        r"(?:由于)?(?:最新)?数据(?:尚未|未|暂无)更新[，,\s]*(?:因此)?(?:沿用|继续采用|采用|使用)[^。；;\n]*[。；;]?",
+        "",
+        cleaned,
+    )
+    cleaned = re.sub(
+        r"(?:沿用|采用|使用)(?:最新一期|上一期|此前|最近一期)?(?:已确认或预估|已确认|有效)?数据(?:，?为)?",
+        "为",
+        cleaned,
+    )
+    cleaned = cleaned.replace("按照最新确认值", "")
+    cleaned = re.sub(r"[，,]\s*(?=。)", "", cleaned)
+    cleaned = re.sub(r"\s{2,}", " ", cleaned)
+    cleaned = re.sub(r"([。；;]){2,}", r"\1", cleaned)
+    return cleaned.strip(" ，,；;")
+
+
+def contains_machine_data_process_language(text: str) -> bool:
+    return any(phrase in (text or "") for phrase in MACHINE_DATA_PROCESS_PHRASES) or bool(
+        MACHINE_DATA_PROCESS_RE.search(text or "")
+    )
 
 
 def ice_price_sustained_above_15(market: dict | None) -> bool:
@@ -197,6 +244,7 @@ def enforce_international_price_wording(text: str, market: dict | None = None) -
 def sanitize_report_body(text: str, market: dict | None = None) -> str:
     text = normalize_report_units(text or "")
     text = remove_missing_data_prompts(text)
+    text = remove_machine_data_process_language(text)
     text = enforce_international_price_wording(text, market)
     text = re.sub(r"\s{2,}", " ", text)
     text = re.sub(r"([。；;]){2,}", r"\1", text)
@@ -818,6 +866,9 @@ def _validate_model_content(text: str, fundamentals_input: str, market_summary: 
     if forbidden_missing or re.search(r"对比数据不足|数据缺失|尚未公布", text):
         return False, "正文出现数据缺失提示类表述"
 
+    if contains_machine_data_process_language(text):
+        return False, "正文出现机器化数据处理表述"
+
     if re.search(r"\b(?:lmt|lmts)\b", text, re.I):
         return False, "正文出现原始英文产量单位代码"
 
@@ -1088,6 +1139,9 @@ def call_deepseek(market_summary: str, fundamentals_text: str, approved_view: di
         f"【表达风格——参照研究员样例】\n"
         f"- 短句、直接、先说矛盾，再说对盘面的含义\n"
         f"- 不要写成数据来源清单，不要机械罗列\n"
+        f"- 正文不得解释数据抓取、缓存、数据库更新、程序处理或后台取值方式\n"
+        f"- 禁止写'沿用最新一期已确认数据''沿用最近一期已确认或预估数据''数据未更新，继续采用''按照最新确认值'及同类表述\n"
+        f"- 最新有效值仍来自上一统计期时，直接陈述数值、统计期和市场含义；数据不变可写'维持在''保持稳定''未见明显变化'\n"
         f"- 分析重点是因果逻辑，不是堆砌数字\n\n"
         f"【全球供需规则——只写2026/27年度】\n"
         f"- 日报只围绕2026/27年度全球供需预估\n"
@@ -1138,7 +1192,7 @@ def call_deepseek(market_summary: str, fundamentals_text: str, approved_view: di
         f"- 如果全国数据缺失但广西有数据，直接使用广西，不需要整段判空\n"
         f"- 有产销量/库存数据时写: '截至最新数据期，广西累计产糖……万吨，累计销糖……万吨，工业库存……万吨'\n"
         f"- 有预估数据时必须保留'预计''预估''有望'等表述，不得写成已确认\n"
-        f"- 如果CSV中有valid_cached状态的数据且在有效期内，应使用该数据，写'国内25/26榨季沿用最近一期已确认或预估数据'\n"
+        f"- 如果CSV中有valid_cached状态的数据且在有效期内，应直接使用该记录的数值和统计期进行分析，不得在正文说明缓存、沿用或后台取值过程\n"
         f"- 当所有渠道均无有效数据时，直接省略该项对比内容，不得写'暂无新的已验证产销和库存数据'或类似缺失提示\n"
         f"- 禁止: '榨季已结束''格局已定''供给基本定型''供应宽松'（除非输入数据明确支持）\n"
         f"- 座谈会、产业大会、招商活动不进入基本面正文\n"
@@ -1390,6 +1444,8 @@ def final_consistency_check(
             issues.append("fundamentals text needs writing-rule sanitization before publishing")
         if any(phrase in fundamentals_ai for phrase in MISSING_DATA_PHRASES) or re.search(r"对比数据不足|数据缺失|尚未公布", fundamentals_ai):
             issues.append("fundamentals text contains missing-data prompt wording")
+        if contains_machine_data_process_language(fundamentals_ai):
+            issues.append("fundamentals text contains backend data-processing wording")
         if re.search(r"\b(?:lmt|lmts)\b", fundamentals_ai, re.I):
             issues.append("fundamentals text contains raw lmt/Lmts unit")
         if (not ice_price_sustained_above_15(market)) and re.search(r"偏强|震荡偏强|价格表现偏强", fundamentals_ai):
@@ -1828,8 +1884,7 @@ def run(target_date: str | None = None) -> Path | None:
             # 检查国内是否有有效缓存
             domestic_records = [r for r in cache_records if r.get("country") == "中国"]
             if domestic_records:
-                domestic_regions = set(r.get("region", "") for r in domestic_records)
-                desc += f" 国内方面，{', '.join(r for r in domestic_regions if r)}沿用最近一期已确认或预估数据。"
+                desc += " 国内方面，25/26榨季产销与库存格局保持稳定，广西、云南主产区生产情况未见明显变化，市场关注后续产销进度与天气变化。"
             if missing_countries:
                 desc += ""
             fundamentals_ai = desc
