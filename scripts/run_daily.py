@@ -1912,6 +1912,9 @@ def run(target_date: str | None = None) -> Path | None:
 
     # ── 自动推送到 GitHub（触发 Vercel 部署）──
     try:
+        if os.getenv("SUGAR_DAILY_SKIP_GIT_PUSH") == "1":
+            logger.info("已跳过 run_daily.py 内置 Git 推送；由 Publish-Web.ps1 统一发布")
+            return out_path
         import subprocess
         os.chdir(str(PROJECT_ROOT))
         # 检查是否有变化

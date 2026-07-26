@@ -166,6 +166,8 @@ try {
     }
 
     $PythonScript = Join-Path $ProjectRoot "scripts\run_daily.py"
+    # Publish-Web.ps1 is the single Git/Vercel publisher for scheduled runs.
+    $env:SUGAR_DAILY_SKIP_GIT_PUSH = "1"
     Invoke-ReportRun -PythonExe $PythonExe -PythonScript $PythonScript -Date $TargetDate
     $exitCode = $script:ReportRunExitCode
 

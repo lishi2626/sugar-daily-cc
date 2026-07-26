@@ -115,7 +115,7 @@ if ($profitItem -and $profitItem.articleTitleDate -and $profitItem.dataDate -ne 
 }
 
 Write-Host "`n=== Checking Git status ===" -ForegroundColor Cyan
-$status = git status --porcelain
+$status = git status --porcelain -- index.html public .gitignore
 $ahead = git status -sb | Select-String -Pattern "\[ahead [0-9]+\]"
 if (-not $status) {
     if ($ahead) {

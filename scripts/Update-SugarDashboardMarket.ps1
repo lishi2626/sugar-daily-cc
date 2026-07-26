@@ -132,8 +132,27 @@ try {
         return
     }
 
+    function Sync-GitRemoteMain {
+        Write-Step "Synchronize with origin/main before dashboard push"
+        git fetch origin main
+        if ($LASTEXITCODE -ne 0) { return $false }
+
+        git merge-base --is-ancestor origin/main HEAD
+        if ($LASTEXITCODE -eq 0) { return $true }
+
+        Write-Step "origin/main advanced; rebase dashboard commit with autostash"
+        git rebase --autostash origin/main
+        if ($LASTEXITCODE -eq 0) { return $true }
+
+        git rebase --abort 2>$null
+        return $false
+    }
+
     $MaxPushAttempts = 12
     $pushOk = $false
+    if (-not (Sync-GitRemoteMain)) {
+        throw "Cannot safely synchronize origin/main before dashboard push."
+    }
     for ($i = 1; $i -le $MaxPushAttempts; $i++) {
         Write-Step "git push attempt $i/$MaxPushAttempts"
         git push
@@ -142,6 +161,7 @@ try {
             break
         }
         if ($i -lt $MaxPushAttempts) {
+            if (-not (Sync-GitRemoteMain)) { break }
             Start-Sleep -Seconds ([Math]::Min(300, 30 * $i))
         }
     }
