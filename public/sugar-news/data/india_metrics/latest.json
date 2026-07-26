@@ -1,0 +1,469 @@
+{
+  "targetDate": "2026-07-26",
+  "updatedAt": "2026-07-27T07:06:39+08:00",
+  "domesticWholesalePrice": {
+    "indicator": "india_wholesale_price",
+    "data_date": "2026-07-26",
+    "price_inr_per_quintal": 4534.53,
+    "price_inr_per_kg": 45.3453,
+    "previous_data_date": null,
+    "previous_value": null,
+    "change_value": null,
+    "change_percent": null,
+    "previous_year_date": null,
+    "previous_year_value": null,
+    "year_on_year_change": null,
+    "year_on_year_change_percent": null,
+    "source_name": "Department of Consumer Affairs Price Monitoring",
+    "source_url": "https://fcainfoweb.nic.in/",
+    "fetched_at": "2026-07-27T07:06:07+08:00",
+    "status": "ok"
+  },
+  "domesticRetailPrice": {
+    "indicator": "india_retail_price",
+    "data_date": "2026-07-26",
+    "price_inr_per_kg": 48.68,
+    "previous_data_date": null,
+    "previous_value": null,
+    "change_value": null,
+    "change_percent": null,
+    "previous_year_date": null,
+    "previous_year_value": null,
+    "year_on_year_change": null,
+    "year_on_year_change_percent": null,
+    "source_name": "Department of Consumer Affairs Price Monitoring",
+    "source_url": "https://fcainfoweb.nic.in/",
+    "fetched_at": "2026-07-27T07:06:07+08:00",
+    "status": "ok"
+  },
+  "domesticSugarPrice": {
+    "indicator": "india_wholesale_price",
+    "data_date": "2026-07-26",
+    "price_inr_per_quintal": 4534.53,
+    "price_inr_per_kg": 45.3453,
+    "previous_data_date": null,
+    "previous_value": null,
+    "change_value": null,
+    "change_percent": null,
+    "previous_year_date": null,
+    "previous_year_value": null,
+    "year_on_year_change": null,
+    "year_on_year_change_percent": null,
+    "source_name": "Department of Consumer Affairs Price Monitoring",
+    "source_url": "https://fcainfoweb.nic.in/",
+    "fetched_at": "2026-07-27T07:06:07+08:00",
+    "status": "ok"
+  },
+  "upExMillPrice": null,
+  "carryoverStock": null,
+  "authorizedCarryoverStockAlternatives": [],
+  "carryoverStockForecasts": [],
+  "fetchLog": [
+    {
+      "source": "FCA price monitoring",
+      "url": "https://fcainfoweb.nic.in/",
+      "requestedAt": "2026-07-27T07:06:05+08:00",
+      "httpStatus": 200,
+      "parsed": true,
+      "dataDate": "2026-07-26",
+      "retailPrice": 48.68,
+      "wholesalePrice": 4534.53
+    },
+    {
+      "source": "ChiniMandi",
+      "url": "https://www.chinimandi.com/daily-sugar-market-update-by-vizzie-26-07-2026/",
+      "requestedAt": "2026-07-27T07:06:07+08:00",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "source": "ChiniMandi",
+      "url": "https://www.chinimandi.com/?s=Daily+Sugar+Market+Update+26%2F07%2F2026",
+      "requestedAt": "2026-07-27T07:06:08+08:00",
+      "httpStatus": 200,
+      "parsed": false,
+      "reason": "ex-mill Uttar Pradesh table not found"
+    },
+    {
+      "source": "ChiniMandi",
+      "url": "https://www.chinimandi.com/?s=Uttar+Pradesh+sugar+ex-mill+price+today",
+      "requestedAt": "2026-07-27T07:06:13+08:00",
+      "httpStatus": 200,
+      "parsed": false,
+      "reason": "ex-mill Uttar Pradesh table not found"
+    },
+    {
+      "source": "ChiniMandi",
+      "url": "https://www.chinimandi.com/?s=UP+M%2F30+sugar+ex-mill+rate",
+      "requestedAt": "2026-07-27T07:06:18+08:00",
+      "httpStatus": 200,
+      "parsed": false,
+      "reason": "ex-mill Uttar Pradesh table not found"
+    },
+    {
+      "source": "ChiniMandi",
+      "url": "https://www.chinimandi.com/?s=Muzaffarnagar+M-grade+sugar+price",
+      "requestedAt": "2026-07-27T07:06:23+08:00",
+      "httpStatus": 200,
+      "parsed": false,
+      "reason": "ex-mill Uttar Pradesh table not found"
+    },
+    {
+      "source": "ChiniMandi",
+      "url": "https://www.chinimandi.com/?s=site%3Achinimandi.com+Daily+Sugar+Market+Update",
+      "requestedAt": "2026-07-27T07:06:28+08:00",
+      "httpStatus": 200,
+      "parsed": false,
+      "reason": "ex-mill Uttar Pradesh table not found"
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "Department of Food and Public Distribution sugar stock",
+      "url": "https://news.google.com/rss/search?q=Department+of+Food+and+Public+Distribution+sugar+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:32+08:00",
+      "httpStatus": 200,
+      "candidateCount": 3,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "Department of Food & Public Distribution sugar stock",
+      "url": "https://news.google.com/rss/search?q=Department+of+Food+%26+Public+Distribution+sugar+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:33+08:00",
+      "httpStatus": 200,
+      "candidateCount": 3,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "India sugar balance sheet",
+      "url": "https://news.google.com/rss/search?q=India+sugar+balance+sheet+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:33+08:00",
+      "httpStatus": 200,
+      "candidateCount": 3,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "India sugar closing stock",
+      "url": "https://news.google.com/rss/search?q=India+sugar+closing+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:33+08:00",
+      "httpStatus": 200,
+      "candidateCount": 13,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "India sugar opening stock",
+      "url": "https://news.google.com/rss/search?q=India+sugar+opening+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:34+08:00",
+      "httpStatus": 200,
+      "candidateCount": 29,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "sugar stock position India",
+      "url": "https://news.google.com/rss/search?q=sugar+stock+position+India+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:34+08:00",
+      "httpStatus": 200,
+      "candidateCount": 13,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "site:dfpd.gov.in sugar stock",
+      "url": "https://news.google.com/rss/search?q=site%3Adfpd.gov.in+sugar+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:34+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "site:gov.in India sugar closing stock",
+      "url": "https://news.google.com/rss/search?q=site%3Agov.in+India+sugar+closing+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:34+08:00",
+      "httpStatus": 200,
+      "candidateCount": 38,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "ISMA sugar closing stock",
+      "url": "https://news.google.com/rss/search?q=ISMA+sugar+closing+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:35+08:00",
+      "httpStatus": 200,
+      "candidateCount": 6,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "ISMA sugar balance sheet",
+      "url": "https://news.google.com/rss/search?q=ISMA+sugar+balance+sheet+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:35+08:00",
+      "httpStatus": 200,
+      "candidateCount": 1,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "ISMA sugar production estimate",
+      "url": "https://news.google.com/rss/search?q=ISMA+sugar+production+estimate+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:35+08:00",
+      "httpStatus": 200,
+      "candidateCount": 10,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "ISMA opening stock and closing stock",
+      "url": "https://news.google.com/rss/search?q=ISMA+opening+stock+and+closing+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:36+08:00",
+      "httpStatus": 200,
+      "candidateCount": 3,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "site:ismaindia.com closing stock sugar",
+      "url": "https://news.google.com/rss/search?q=site%3Aismaindia.com+closing+stock+sugar+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:36+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "NFCSF India sugar closing stock",
+      "url": "https://news.google.com/rss/search?q=NFCSF+India+sugar+closing+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:36+08:00",
+      "httpStatus": 200,
+      "candidateCount": 4,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "NFCSF sugar balance sheet",
+      "url": "https://news.google.com/rss/search?q=NFCSF+sugar+balance+sheet+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:37+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "NFCSF sugar production estimate",
+      "url": "https://news.google.com/rss/search?q=NFCSF+sugar+production+estimate+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:37+08:00",
+      "httpStatus": 200,
+      "candidateCount": 3,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "National Federation Cooperative Sugar Factories closing stock",
+      "url": "https://news.google.com/rss/search?q=National+Federation+Cooperative+Sugar+Factories+closing+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:37+08:00",
+      "httpStatus": 200,
+      "candidateCount": 6,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS inventory discovery",
+      "query": "site:coopsugar.org closing stock",
+      "url": "https://news.google.com/rss/search?q=site%3Acoopsugar.org+closing+stock+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:37+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "sourceTier": "authoritative_main_value_only",
+      "allowedMainSources": [
+        "Government of India",
+        "Department of Food and Public Distribution",
+        "ISMA",
+        "NFCSF"
+      ],
+      "reason": "Inventory candidates require source-page season, organization and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS market forecast discovery",
+      "query": "ICRA India sugar closing inventory",
+      "url": "https://news.google.com/rss/search?q=ICRA+India+sugar+closing+inventory+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:38+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "sourceTier": "market_forecast_comparison_only",
+      "reason": "Market forecasts are comparison-only and require original report date, season and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS market forecast discovery",
+      "query": "India sugar carryover stock market forecast",
+      "url": "https://news.google.com/rss/search?q=India+sugar+carryover+stock+market+forecast+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:38+08:00",
+      "httpStatus": 200,
+      "candidateCount": 2,
+      "parsed": false,
+      "sourceTier": "market_forecast_comparison_only",
+      "reason": "Market forecasts are comparison-only and require original report date, season and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS market forecast discovery",
+      "query": "India sugar ending stocks agency forecast",
+      "url": "https://news.google.com/rss/search?q=India+sugar+ending+stocks+agency+forecast+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:38+08:00",
+      "httpStatus": 200,
+      "candidateCount": 0,
+      "parsed": false,
+      "sourceTier": "market_forecast_comparison_only",
+      "reason": "Market forecasts are comparison-only and require original report date, season and closing-stock verification before publication."
+    },
+    {
+      "source": "Google News RSS market forecast discovery",
+      "query": "India sugar balance sheet closing stocks rating agency",
+      "url": "https://news.google.com/rss/search?q=India+sugar+balance+sheet+closing+stocks+rating+agency+2026-07-26&hl=en-US&gl=US&ceid=US:en",
+      "requestedAt": "2026-07-27T07:06:38+08:00",
+      "httpStatus": 200,
+      "candidateCount": 1,
+      "parsed": false,
+      "sourceTier": "market_forecast_comparison_only",
+      "reason": "Market forecasts are comparison-only and require original report date, season and closing-stock verification before publication."
+    }
+  ]
+}
