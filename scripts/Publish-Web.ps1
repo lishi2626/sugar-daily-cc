@@ -137,9 +137,38 @@ if ($status) {
     }
 }
 
+function Sync-GitRemoteMain {
+    Write-Host "Synchronizing with origin/main before push..." -ForegroundColor Cyan
+    git fetch origin main
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "git fetch origin main failed." -ForegroundColor Yellow
+        return $false
+    }
+
+    git merge-base --is-ancestor origin/main HEAD
+    if ($LASTEXITCODE -eq 0) {
+        return $true
+    }
+
+    Write-Host "origin/main contains new commits; rebasing local daily commits with autostash." -ForegroundColor Yellow
+    git rebase --autostash origin/main
+    if ($LASTEXITCODE -eq 0) {
+        return $true
+    }
+
+    Write-Host "git rebase failed; aborting the rebase and preserving local commits." -ForegroundColor Red
+    git rebase --abort 2>$null
+    return $false
+}
+
 $MaxPushAttempts = 12
 $pushOk = $false
 if ($status -or $ahead) {
+    if (-not (Sync-GitRemoteMain)) {
+        Write-Host "Cannot safely synchronize origin/main; local commit is kept and publication is stopped." -ForegroundColor Red
+        exit 1
+    }
+
     for ($i = 1; $i -le $MaxPushAttempts; $i++) {
         Write-Host "git push attempt $i/$MaxPushAttempts" -ForegroundColor Cyan
         git push
@@ -148,6 +177,10 @@ if ($status -or $ahead) {
             break
         }
         if ($i -lt $MaxPushAttempts) {
+            if (-not (Sync-GitRemoteMain)) {
+                Write-Host "Remote synchronization failed after push rejection; stopping retries." -ForegroundColor Red
+                break
+            }
             Start-Sleep -Seconds ([Math]::Min(300, 30 * $i))
         }
     }
