@@ -137,11 +137,32 @@ if ($status) {
     }
 }
 
+function Invoke-GitFetchWithRetry {
+    param(
+        [int]$MaxAttempts = 6
+    )
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        Write-Host "git fetch origin main attempt $attempt/$MaxAttempts" -ForegroundColor Cyan
+        git fetch origin main
+        if ($LASTEXITCODE -eq 0) {
+            return $true
+        }
+
+        if ($attempt -lt $MaxAttempts) {
+            $delaySeconds = [Math]::Min(120, 15 * $attempt)
+            Write-Host "git fetch failed; retrying in $delaySeconds seconds." -ForegroundColor Yellow
+            Start-Sleep -Seconds $delaySeconds
+        }
+    }
+
+    Write-Host "git fetch origin main failed after $MaxAttempts attempts." -ForegroundColor Red
+    return $false
+}
+
 function Sync-GitRemoteMain {
     Write-Host "Synchronizing with origin/main before push..." -ForegroundColor Cyan
-    git fetch origin main
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "git fetch origin main failed." -ForegroundColor Yellow
+    if (-not (Invoke-GitFetchWithRetry)) {
         return $false
     }
 
