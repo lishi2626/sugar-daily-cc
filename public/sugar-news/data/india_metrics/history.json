@@ -49,7 +49,7 @@
       "year_on_year_change_percent": null,
       "source_name": "Department of Consumer Affairs Price Monitoring",
       "source_url": "https://fcainfoweb.nic.in/",
-      "fetched_at": "2026-07-29T07:09:44+08:00",
+      "fetched_at": "2026-07-29T07:18:20+08:00",
       "status": "ok"
     },
     {
@@ -103,7 +103,7 @@
       "year_on_year_change_percent": null,
       "source_name": "Department of Consumer Affairs Price Monitoring",
       "source_url": "https://fcainfoweb.nic.in/",
-      "fetched_at": "2026-07-29T07:09:44+08:00",
+      "fetched_at": "2026-07-29T07:18:20+08:00",
       "status": "ok"
     },
     {
@@ -165,9 +165,9 @@
       "gst_status": "excluding GST",
       "source_name": "ChiniMandi",
       "source_url": "https://www.chinimandi.com/daily-sugar-market-update-by-vizzie-28-07-2026/",
-      "fetched_at": "2026-07-29T07:09:46+08:00",
+      "fetched_at": "2026-07-29T07:18:22+08:00",
       "status": "ok"
     }
   ],
-  "lastUpdatedAt": "2026-07-29T07:09:52+08:00"
+  "lastUpdatedAt": "2026-07-29T07:18:27+08:00"
 }
