@@ -36,6 +36,23 @@
       "status": "ok"
     },
     {
+      "indicator": "india_retail_price",
+      "data_date": "2026-07-28",
+      "price_inr_per_kg": 48.96,
+      "previous_data_date": "2026-07-27",
+      "previous_value": 48.91,
+      "change_value": 0.05,
+      "change_percent": 0.1,
+      "previous_year_date": null,
+      "previous_year_value": null,
+      "year_on_year_change": null,
+      "year_on_year_change_percent": null,
+      "source_name": "Department of Consumer Affairs Price Monitoring",
+      "source_url": "https://fcainfoweb.nic.in/",
+      "fetched_at": "2026-07-29T07:09:44+08:00",
+      "status": "ok"
+    },
+    {
       "indicator": "india_wholesale_price",
       "data_date": "2026-07-26",
       "price_inr_per_quintal": 4534.53,
@@ -72,6 +89,24 @@
       "status": "ok"
     },
     {
+      "indicator": "india_wholesale_price",
+      "data_date": "2026-07-28",
+      "price_inr_per_quintal": 4537.44,
+      "price_inr_per_kg": 45.3744,
+      "previous_data_date": "2026-07-27",
+      "previous_value": 4532.33,
+      "change_value": 5.11,
+      "change_percent": 0.11,
+      "previous_year_date": null,
+      "previous_year_value": null,
+      "year_on_year_change": null,
+      "year_on_year_change_percent": null,
+      "source_name": "Department of Consumer Affairs Price Monitoring",
+      "source_url": "https://fcainfoweb.nic.in/",
+      "fetched_at": "2026-07-29T07:09:44+08:00",
+      "status": "ok"
+    },
+    {
       "indicator": "up_ex_mill_price",
       "data_date": "2026-07-27",
       "grade": "M/30",
@@ -101,7 +136,38 @@
       "source_url": "https://www.chinimandi.com/daily-sugar-market-update-by-vizzie-27-07-2026/",
       "fetched_at": "2026-07-28T07:37:05+08:00",
       "status": "ok"
+    },
+    {
+      "indicator": "up_ex_mill_price",
+      "data_date": "2026-07-28",
+      "grade": "M/30",
+      "region": "Uttar Pradesh",
+      "quote_type": "ex-mill",
+      "up_ex_mill_min_inr_per_quintal": 4500.0,
+      "up_ex_mill_max_inr_per_quintal": 4570.0,
+      "up_ex_mill_mid_inr_per_quintal": 4535.0,
+      "up_ex_mill_min_inr_per_kg": 45.0,
+      "up_ex_mill_max_inr_per_kg": 45.7,
+      "up_ex_mill_mid_inr_per_kg": 45.35,
+      "previous_data_date": "2026-07-27",
+      "previous_min": 4480.0,
+      "previous_max": 4550.0,
+      "previous_mid": 4515.0,
+      "change_value": 20.0,
+      "change_percent": 0.44,
+      "previous_year_date": null,
+      "previous_year_min": null,
+      "previous_year_max": null,
+      "previous_year_mid": null,
+      "year_on_year_change": null,
+      "year_on_year_change_percent": null,
+      "change_direction": "up",
+      "gst_status": "excluding GST",
+      "source_name": "ChiniMandi",
+      "source_url": "https://www.chinimandi.com/daily-sugar-market-update-by-vizzie-28-07-2026/",
+      "fetched_at": "2026-07-29T07:09:46+08:00",
+      "status": "ok"
     }
   ],
-  "lastUpdatedAt": "2026-07-28T07:37:10+08:00"
+  "lastUpdatedAt": "2026-07-29T07:09:52+08:00"
 }
