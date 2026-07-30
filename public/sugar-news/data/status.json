@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-07-30T07:40:52+08:00",
+  "lastRunAt": "2026-07-31T07:15:32+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-07-29",
+    "target_date": "2026-07-30",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "RSS autogeneration found no publishable Sugar News items"
+  "error": "Thai weather item 13 is outside main cane areas and should be impact-limited"
 }
