@@ -121,6 +121,23 @@
       "status": "ok"
     },
     {
+      "indicator": "india_retail_price",
+      "data_date": "2026-08-02",
+      "price_inr_per_kg": 49.33,
+      "previous_data_date": "2026-08-01",
+      "previous_value": 49.4,
+      "change_value": -0.07,
+      "change_percent": -0.14,
+      "previous_year_date": null,
+      "previous_year_value": null,
+      "year_on_year_change": null,
+      "year_on_year_change_percent": null,
+      "source_name": "Department of Consumer Affairs Price Monitoring",
+      "source_url": "https://fcainfoweb.nic.in/",
+      "fetched_at": "2026-08-03T07:02:49+08:00",
+      "status": "ok"
+    },
+    {
       "indicator": "india_wholesale_price",
       "data_date": "2026-07-26",
       "price_inr_per_quintal": 4534.53,
@@ -244,6 +261,24 @@
       "source_name": "Department of Consumer Affairs Price Monitoring",
       "source_url": "https://fcainfoweb.nic.in/",
       "fetched_at": "2026-08-02T07:31:18+08:00",
+      "status": "ok"
+    },
+    {
+      "indicator": "india_wholesale_price",
+      "data_date": "2026-08-02",
+      "price_inr_per_quintal": 4594.1,
+      "price_inr_per_kg": 45.941,
+      "previous_data_date": "2026-08-01",
+      "previous_value": 4593.62,
+      "change_value": 0.48,
+      "change_percent": 0.01,
+      "previous_year_date": null,
+      "previous_year_value": null,
+      "year_on_year_change": null,
+      "year_on_year_change_percent": null,
+      "source_name": "Department of Consumer Affairs Price Monitoring",
+      "source_url": "https://fcainfoweb.nic.in/",
+      "fetched_at": "2026-08-03T07:02:49+08:00",
       "status": "ok"
     },
     {
@@ -371,5 +406,5 @@
       "status": "ok"
     }
   ],
-  "lastUpdatedAt": "2026-08-02T07:31:35+08:00"
+  "lastUpdatedAt": "2026-08-03T07:03:25+08:00"
 }
