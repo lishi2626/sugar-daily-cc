@@ -1,10 +1,10 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-08-06T07:32:03+08:00",
+  "lastRunAt": "2026-08-07T09:33:45+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-08-05",
+    "target_date": "2026-08-06",
     "task_root": "/tmp/Sugar News"
   },
   "error": "Missing template: /tmp/Sugar News/templates/新闻格式.xlsx"
