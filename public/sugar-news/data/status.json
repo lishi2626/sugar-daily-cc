@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-08-19T06:48:19+08:00",
+  "lastRunAt": "2026-08-19T06:56:21+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
     "target_date": "2026-08-18",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "RSS autogeneration found no publishable Sugar News items"
+  "error": "Missing template: /tmp/Sugar News/templates/新闻格式.xlsx"
 }
