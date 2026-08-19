@@ -202,7 +202,7 @@
       "year_on_year_change_percent": null,
       "source_name": "Department of Consumer Affairs Price Monitoring",
       "source_url": "https://fcainfoweb.nic.in/",
-      "fetched_at": "2026-08-20T06:42:10+08:00",
+      "fetched_at": "2026-08-20T06:53:37+08:00",
       "status": "ok"
     },
     {
@@ -418,7 +418,7 @@
       "year_on_year_change_percent": null,
       "source_name": "Department of Consumer Affairs Price Monitoring",
       "source_url": "https://fcainfoweb.nic.in/",
-      "fetched_at": "2026-08-20T06:42:10+08:00",
+      "fetched_at": "2026-08-20T06:53:37+08:00",
       "status": "ok"
     },
     {
@@ -546,5 +546,5 @@
       "status": "ok"
     }
   ],
-  "lastUpdatedAt": "2026-08-20T06:42:49+08:00"
+  "lastUpdatedAt": "2026-08-20T06:54:19+08:00"
 }
