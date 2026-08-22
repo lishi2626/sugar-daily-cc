@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-08-23T06:31:20+08:00",
+  "lastRunAt": "2026-08-23T06:39:21+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
     "target_date": "2026-08-22",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "Verified item 9 contains raw LMT/lmt unit"
+  "error": "Verified item 10 contains raw LMT/lmt unit"
 }
