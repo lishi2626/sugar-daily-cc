@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-08-26T06:58:09+08:00",
+  "lastRunAt": "2026-08-27T11:04:45+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-08-25",
+    "target_date": "2026-08-26",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "Thai weather item 45 is outside main cane areas and should be impact-limited"
+  "error": "Missing template: /tmp/Sugar News/templates/新闻格式.xlsx"
 }
