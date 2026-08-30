@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-08-29T11:55:34+08:00",
+  "lastRunAt": "2026-08-30T08:12:23+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-08-28",
+    "target_date": "2026-08-29",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "India weather item 10 is outside main cane regions and should be impact-limited"
+  "error": "RSS autogeneration found no publishable Sugar News items"
 }
