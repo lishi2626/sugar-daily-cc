@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-09-03T08:33:25+08:00",
+  "lastRunAt": "2026-09-04T07:57:09+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-09-02",
+    "target_date": "2026-09-03",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "Missing template: /tmp/Sugar News/templates/新闻格式.xlsx"
+  "error": "India weather item 14 is outside main cane regions and should be impact-limited"
 }
