@@ -248,6 +248,7 @@ def _try_float(val) -> float | None:
     s = str(val).strip()
     if not s:
         return None
+    s = s.replace("−", "-").replace("－", "-")
     try:
         return float(s)
     except (ValueError, TypeError):
@@ -597,6 +598,7 @@ def _clean_html(raw: str) -> str:
 def _parse_profit_fields(raw: str) -> dict | None:
     """从 HTML 中解析进口成本和利润字段。返回 dict 或 None。"""
     clean = _clean_html(raw)
+    signed_num = r"([-+−－]?\d+(?:\.\d+)?)"
     m = re.search(
         r"(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日[，,]\s*"
         r"ICE原糖主力合约收盘价为\s*([\d.]+)\s*美分[/／]磅[，,]\s*"
@@ -608,34 +610,41 @@ def _parse_profit_fields(raw: str) -> dict | None:
     body_date = f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
     ice_close = float(m.group(4))
     usd_cny = float(m.group(5))
+    reference_match = re.search(r"与([^，,；;]{1,40})比", clean)
+    profit_reference_spot = reference_match.group(1).strip() if reference_match else "未识别比较基准"
 
     cp = re.search(
-        r"配额内巴西糖加工完税估算成本\s*([\d.]+)\s*元[/／]吨[，,]\s*"
-        r"配额外巴西糖加工完税估算成本为\s*([\d.]+)\s*元[/／]吨[；;]\s*"
-        r"与日照白糖现货价比[，,]?\s*"
-        r"配额内巴西糖加工完税估算利润为\s*([\d.]+)\s*元[/／]吨[，,]\s*"
-        r"配额外巴西糖加工完税估算利润为\s*([\d.]+)\s*元[/／]吨",
+        rf"配额内巴西糖加工完税估算成本\s*{signed_num}\s*元[/／]吨[，,]\s*"
+        rf"配额外巴西糖加工完税估算成本为\s*{signed_num}\s*元[/／]吨[；;]\s*"
+        rf"与[^，,；;]{{1,40}}比[，,]?\s*"
+        rf"配额内巴西糖加工完税估算利润为\s*{signed_num}\s*元[/／]吨[，,]\s*"
+        rf"配额外巴西糖加工完税估算利润为\s*{signed_num}\s*元[/／]吨",
         clean
     )
     if not cp:
         cp = re.search(
-            r"配额内.*?成本\s*([\d.]+)\s*元[/／]吨.*?"
-            r"配额外.*?成本[为]?\s*([\d.]+)\s*元[/／]吨.*?"
-            r"配额内.*?利润[为]?\s*([\d.]+)\s*元[/／]吨.*?"
-            r"配额外.*?利润[为]?\s*([\d.]+)\s*元[/／]吨",
+            rf"配额内.*?成本\s*{signed_num}\s*元[/／]吨.*?"
+            rf"配额外.*?成本[为]?\s*{signed_num}\s*元[/／]吨.*?"
+            rf"配额内.*?利润[为]?\s*{signed_num}\s*元[/／]吨.*?"
+            rf"配额外.*?利润[为]?\s*{signed_num}\s*元[/／]吨",
             clean
         )
         if not cp:
             return None
 
+    parsed_values = [_try_float(cp.group(i)) for i in range(1, 5)]
+    if any(value is None for value in parsed_values):
+        return None
+
     return {
         "body_date": body_date,
         "ice_close": ice_close,
         "usd_cny": usd_cny,
-        "quota_inside_cost": float(cp.group(1)),
-        "quota_outside_cost": float(cp.group(2)),
-        "quota_inside_profit": float(cp.group(3)),
-        "quota_outside_profit": float(cp.group(4)),
+        "quota_inside_cost": parsed_values[0],
+        "quota_outside_cost": parsed_values[1],
+        "quota_inside_profit": parsed_values[2],
+        "quota_outside_profit": parsed_values[3],
+        "profit_reference_spot": profit_reference_spot,
     }
 
 
@@ -747,12 +756,12 @@ def fetch_hisugar_import_profit(target_date: str | None = None) -> dict | None:
 
         errors = []
         warnings = []
-        if fields["quota_outside_profit"] <= 0:
-            errors.append(f"配额外利润 {fields['quota_outside_profit']} 无效")
+        if fields["quota_inside_cost"] <= 0 or fields["quota_outside_cost"] <= 0:
+            errors.append("进口成本无效")
         if fields["ice_close"] <= 0 or fields["ice_close"] > 50:
             errors.append(f"ICE价格 {fields['ice_close']} 异常")
-        if "日照" not in _clean_html(raw):
-            warnings.append("正文未提及日照白糖现货价")
+        if fields.get("profit_reference_spot") == "未识别比较基准":
+            warnings.append("正文未识别进口利润比较基准")
         if errors:
             logger.warning("泛糖候选无效 id=%s: %s", article_id, "; ".join(errors))
             skipped.append(f"{article_id}: {'; '.join(errors)}")
@@ -781,7 +790,7 @@ def fetch_hisugar_import_profit(target_date: str | None = None) -> dict | None:
             "quota_outside_cost": fields["quota_outside_cost"],
             "quota_inside_profit": fields["quota_inside_profit"],
             "quota_outside_profit": fields["quota_outside_profit"],
-            "profit_reference_spot": "日照白糖现货价",
+            "profit_reference_spot": fields.get("profit_reference_spot", "未识别比较基准"),
             "source_name": cfg.get("source_name", "泛糖科技"),
             "source_url": f"{HISUGAR_BASE}/home/articleContent?id={article_id}",
             "article_id": article_id,
@@ -1103,7 +1112,7 @@ def collect_market_data(target_date: str | None = None) -> dict:
 
     # 配额外巴西糖加工完税估算利润 — 优先使用泛糖科技
     hisugar_data = fetch_hisugar_import_profit(target_date)
-    if hisugar_data and hisugar_data.get("quota_outside_profit"):
+    if hisugar_data and hisugar_data.get("quota_outside_profit") is not None:
         profit_val = hisugar_data["quota_outside_profit"]
         profit_date = hisugar_data["data_date"]
         profit_src = hisugar_data["source_name"]
@@ -1124,7 +1133,7 @@ def collect_market_data(target_date: str | None = None) -> dict:
             "status": hisugar_data.get("status", ""),
         }
         logger.info("巴西进口利润来自泛糖科技: %.0f 元/吨 (数据日期 %s)", profit_val, profit_date)
-    elif csv_extra.get("brazil_profit") and csv_extra.get("quota_outside_profit_data_date"):
+    elif csv_extra.get("brazil_profit") is not None and csv_extra.get("quota_outside_profit_data_date"):
         # CSV 备用（需同时有日期和来源）
         profit_val = csv_extra["brazil_profit"]
         csv_profit_date = csv_extra.get("quota_outside_profit_data_date", trade_date)
