@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-09-29T10:14:00+08:00",
+  "lastRunAt": "2026-09-30T09:13:44+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-09-28",
+    "target_date": "2026-09-29",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "India weather item 10 is outside main cane regions and should be impact-limited"
+  "error": "India weather item 16 indicates harvest/crushing disruption and should be bullish"
 }
