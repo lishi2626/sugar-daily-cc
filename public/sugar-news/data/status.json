@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-10-24T08:40:55+08:00",
+  "lastRunAt": "2026-10-24T09:08:43+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
     "target_date": "2026-10-23",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "India weather item 14 indicates harvest/crushing disruption and should be bullish"
+  "error": "RSS autogeneration found no publishable Sugar News items"
 }
