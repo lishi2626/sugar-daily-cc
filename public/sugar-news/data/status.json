@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-10-23T08:52:15+08:00",
+  "lastRunAt": "2026-10-24T08:28:39+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-10-22",
+    "target_date": "2026-10-23",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "Verified item 19 contains raw LMT/lmt unit"
+  "error": "India weather item 14 indicates harvest/crushing disruption and should be bullish"
 }
