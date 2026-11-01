@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-10-31T09:46:57+08:00",
+  "lastRunAt": "2026-11-01T08:57:40+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-10-30",
+    "target_date": "2026-10-31",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "Verified item 12 contains raw LMT/lmt unit"
+  "error": "Missing template: /tmp/Sugar News/templates/新闻格式.xlsx"
 }
