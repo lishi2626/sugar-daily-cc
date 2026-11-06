@@ -1,11 +1,11 @@
 {
   "latestNewsDate": null,
-  "lastRunAt": "2026-11-05T10:42:29+08:00",
+  "lastRunAt": "2026-11-06T10:12:43+08:00",
   "lastRunStatus": "failed",
   "timezone": "Asia/Shanghai",
   "details": {
-    "target_date": "2026-11-04",
+    "target_date": "2026-11-05",
     "task_root": "/tmp/Sugar News"
   },
-  "error": "Missing template: /tmp/Sugar News/templates/新闻格式.xlsx"
+  "error": "India weather item 6 indicates harvest/crushing disruption and should be bullish"
 }
